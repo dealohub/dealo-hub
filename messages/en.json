@@ -1,0 +1,262 @@
+{
+  "app": {
+    "name": "Dealo Hub",
+    "tagline": "The first AI-Protected C2C Marketplace in the Gulf"
+  },
+  "home": {
+    "heroHeadline": "Dealo Hub — Coming Soon",
+    "heroSubline": "The first AI-Protected C2C marketplace in the Gulf. Human-written listings, safer chat, trust you can feel.",
+    "bootstrapStatus": "System status:"
+  },
+  "landing": {
+    "meta": {
+      "title": "Dealo Hub — AI-Protected C2C Marketplace for the Gulf",
+      "description": "Buy and sell from people in Kuwait and the Gulf. Private chat, human-written listings, AI fraud protection."
+    },
+    "hero": {
+      "badge": "Beta launch soon",
+      "headlinePrefix": "The ",
+      "headlineAccent": "buying & selling ",
+      "headlineSuffix": "experience the Gulf deserves.",
+      "subline": "Human-written listings. Private chat — no exposed phone numbers. AI fraud protection. Launching in Kuwait, then the Gulf.",
+      "pill1": "Private chat",
+      "pill2": "AI-Protected",
+      "pill3": "Video for luxury items",
+      "cards": {
+        "card1Category": "Electronics",
+        "card1Title": "iPhone 14 Pro Max",
+        "card1Tag": "Negotiable",
+        "card2Category": "Luxury",
+        "card2Title": "Designer bag with video",
+        "card2Tag": "Video ✓",
+        "card3Category": "Furniture",
+        "card3Title": "6-piece living room set",
+        "card3Tag": "Pickup only"
+      }
+    },
+    "waitlist": {
+      "emailPlaceholder": "Your email address",
+      "submit": "Join the list",
+      "sellerCheckbox": "I'd like to sell at launch",
+      "privacyNote": "We'll only email you when we launch. Never shared.",
+      "success": "You're on the list.",
+      "alreadyOnList": "You're already on the list — thanks for your interest.",
+      "successDetail": "We'll notify you the moment we launch — expect a message within 4-6 weeks.",
+      "errorInvalidEmail": "Please enter a valid email",
+      "errorRateLimited": "Too many attempts. Please try again in a few minutes.",
+      "errorServer": "Something went wrong. Please try again."
+    },
+    "trust": {
+      "eyebrow": "Why Dealo Hub",
+      "heading": "Three pillars that set us apart",
+      "subheading": "Every product decision serves one principle: trust first.",
+      "pillars": {
+        "chat": {
+          "title": "Private chat — no phone number",
+          "description": "Phone numbers stay hidden. All conversations happen in-app via structured chat. No WhatsApp spam, no harassment.",
+          "vsCompetitor": "Instead of your number being public to every visitor on OpenSooq or Dubizzle."
+        },
+        "ai": {
+          "title": "AI-Protected marketplace",
+          "description": "Every listing passes 5 AI safety checks before going live: authentic photos, clean text, reasonable pricing, no duplicates, verified seller.",
+          "vsCompetitor": "The first C2C platform in the Gulf with proactive AI protection for both buyer and seller."
+        },
+        "human": {
+          "title": "Human-written listings",
+          "description": "AI helps with categorization and pricing — but YOU write the description. Every listing reflects the seller's own voice.",
+          "vsCompetitor": "Instead of machine-generated listings that all sound identical."
+        }
+      }
+    },
+    "categories": {
+      "eyebrow": "Launch categories",
+      "heading": "10 focused categories — not 50 empty ones",
+      "subheading": "We focus on markets with real demand and room for better UX — rather than opening everything and becoming another generic classifieds site.",
+      "listingsSoon": "listings at launch",
+      "footnote": "Starred (★) categories are our launch priority — electronics, furniture, luxury, baby & kids."
+    }
+  },
+  "footer": {
+    "allRightsReserved": "All rights reserved.",
+    "launchingSoonInKuwait": "Launching soon in Kuwait"
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "home": "Home",
+    "listings": "Listings",
+    "sell": "Sell",
+    "messages": "Messages",
+    "profile": "Profile",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signUp": "Sign up"
+  },
+  "listing": {
+    "priceMode": {
+      "fixed": "Fixed",
+      "negotiable": "Negotiable",
+      "bestOffer": "Best Offer"
+    },
+    "condition": {
+      "new": "New",
+      "newWithTags": "New with tags",
+      "likeNew": "Like new",
+      "excellentUsed": "Used — Excellent",
+      "goodUsed": "Used — Good",
+      "fairUsed": "Used — Fair"
+    },
+    "deliveryOptions": {
+      "pickup": "Pickup from seller",
+      "sellerDelivers": "Seller can deliver",
+      "buyerShips": "Buyer arranges shipping"
+    },
+    "status": {
+      "draft": "Draft",
+      "live": "Live",
+      "archived": "Expired",
+      "sold": "Sold",
+      "held": "Under review"
+    },
+    "cta": {
+      "contactSeller": "Contact Seller",
+      "makeOffer": "Make Offer",
+      "save": "Save",
+      "report": "Report",
+      "share": "Share"
+    }
+  },
+  "trust": {
+    "foundingPartner": "Founding Partner",
+    "idVerified": "ID Verified",
+    "phoneVerified": "Phone Verified",
+    "sellerRating": "Seller Rating",
+    "videoIncluded": "Video Included",
+    "documentationIncluded": "Documentation Included",
+    "authenticityStatement": "Authenticity Statement",
+    "memberSince": "Member since",
+    "aiSafetyChecked": "AI Safety Checked",
+    "humanWritten": "Human-Written"
+  },
+  "safety": {
+    "tipsTitle": "Safety Tips",
+    "tips": [
+      "Meet in a safe public place",
+      "Never send money in advance",
+      "Inspect the item before paying"
+    ]
+  },
+  "auth": {
+    "methodEmail": "Email",
+    "methodPhone": "Phone",
+    "comingSoon": "Soon",
+    "signOut": "Sign out",
+    "signup": {
+      "metaTitle": "Create account",
+      "title": "Create your Dealo Hub account",
+      "subtitle": "Join the waitlist and start selling the moment we launch.",
+      "cta": "Sign up",
+      "displayNameLabel": "Your name",
+      "displayNamePlaceholder": "e.g. Fawzi",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "phoneLabel": "Phone number",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "At least 10 characters",
+      "passwordHint": "10+ characters with letters and numbers.",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "haveAccount": "Already have an account? <link>Sign in</link>",
+      "termsAcceptance": "I agree to the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
+      "phoneComingSoonNote": "Phone signup arrives with our Kuwait SMS launch. Use email for now.",
+      "checkEmail": "Check your inbox — we sent a confirmation link to finish signup."
+    },
+    "signin": {
+      "metaTitle": "Sign in",
+      "title": "Welcome back",
+      "subtitle": "Sign in to manage your listings and messages.",
+      "cta": "Sign in",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "phoneLabel": "Phone number",
+      "passwordLabel": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "New to Dealo Hub? <link>Create an account</link>"
+    },
+    "verifyOtp": {
+      "metaTitle": "Verify",
+      "title": "Verify your account",
+      "subtitle": "We sent a confirmation link to your email.",
+      "emailOnlyNote": "Open the email from Dealo Hub and click the link inside — you'll be signed in automatically.",
+      "phoneComingSoon": "Phone verification arrives with our Kuwait SMS launch in Sprint 6.",
+      "backLink": "Return to <link>sign in</link>"
+    },
+    "reset": {
+      "metaTitle": "Reset password",
+      "title": "Reset your password",
+      "subtitle": "Enter your email and we'll send you a reset link.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "submit": "Send reset link",
+      "submitting": "Sending…",
+      "emailSent": "If an account exists for that email, we sent a reset link. Check your inbox.",
+      "backLink": "Back to <link>sign in</link>"
+    },
+    "resetConfirm": {
+      "metaTitle": "Set new password",
+      "title": "Choose a new password",
+      "subtitle": "Pick something strong — 10+ characters with letters and numbers.",
+      "passwordLabel": "New password",
+      "passwordPlaceholder": "At least 10 characters",
+      "passwordHint": "10+ characters with letters and numbers.",
+      "submit": "Update password",
+      "submitting": "Updating…",
+      "success": "Password updated. You can now sign in with your new password.",
+      "backLink": "Return to <link>sign in</link>"
+    },
+    "myListings": {
+      "title": "My listings",
+      "signedInAs": "Signed in as {name}.",
+      "placeholder": "Your listings will show here once the listing creation flow ships (BRIEF-004)."
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "validation_failed": "Please check the form and try again.",
+      "email_invalid": "Enter a valid email address.",
+      "email_too_long": "Email is too long.",
+      "email_already_registered": "An account with this email already exists.",
+      "email_not_confirmed": "Please confirm your email first — check your inbox for the link.",
+      "password_required": "Password is required.",
+      "password_too_short": "Password must be at least 10 characters.",
+      "password_too_long": "Password is too long.",
+      "password_needs_letter": "Password must include at least one letter.",
+      "password_needs_number": "Password must include at least one number.",
+      "password_too_weak": "Password is too weak. Use at least 10 characters with letters and numbers.",
+      "name_too_short": "Name must be at least 2 characters.",
+      "name_too_long": "Name is too long.",
+      "phone_invalid": "Enter a valid Kuwait phone number.",
+      "otp_invalid_format": "Code must be 6 digits.",
+      "terms_required": "Please accept the Terms and Privacy Policy to continue.",
+      "invalid_credentials": "Incorrect email or password.",
+      "signup_failed": "We couldn't create your account. Please try again.",
+      "signin_failed": "We couldn't sign you in. Please try again.",
+      "update_password_failed": "We couldn't update your password. The link may have expired.",
+      "phone_auth_not_available": "Phone signup isn't available yet — use email."
+    }
+  }
+}

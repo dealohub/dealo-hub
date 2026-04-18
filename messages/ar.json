@@ -1,0 +1,262 @@
+{
+  "app": {
+    "name": "Dealo Hub",
+    "tagline": "منصة C2C الخليجية الأولى المحمية بالذكاء الاصطناعي"
+  },
+  "home": {
+    "heroHeadline": "Dealo Hub — قريباً",
+    "heroSubline": "منصة C2C الخليجية المحمية بالذكاء الاصطناعي. إعلانات مكتوبة بإنسان، محادثات آمنة، ثقة أعلى من أي مكان ثاني.",
+    "bootstrapStatus": "حالة النظام:"
+  },
+  "landing": {
+    "meta": {
+      "title": "Dealo Hub — منصة C2C الخليجية المحمية بالذكاء الاصطناعي",
+      "description": "منصة بيع وشراء بين الأفراد في الكويت. محادثة آمنة، إعلانات مكتوبة بإنسان، حماية من الاحتيال بالذكاء الاصطناعي."
+    },
+    "hero": {
+      "badge": "إطلاق تجريبي قريب",
+      "headlinePrefix": "منصة ",
+      "headlineAccent": "البيع والشراء ",
+      "headlineSuffix": "اللي تستحقها — بثقة ووضوح.",
+      "subline": "إعلانات مكتوبة بإنسان. محادثات آمنة بدون أرقام هواتف مكشوفة. حماية من الاحتيال بالذكاء الاصطناعي. نطلق قريباً في الكويت، ثم الخليج.",
+      "pill1": "محادثة آمنة",
+      "pill2": "محمي بـ AI",
+      "pill3": "فيديو للمنتجات الفاخرة",
+      "cards": {
+        "card1Category": "إلكترونيات",
+        "card1Title": "iPhone 14 Pro Max",
+        "card1Tag": "قابل للتفاوض",
+        "card2Category": "فاخرة",
+        "card2Title": "حقيبة مع فيديو تفقّدي",
+        "card2Tag": "فيديو ✓",
+        "card3Category": "أثاث",
+        "card3Title": "طقم صالة 6 قطع",
+        "card3Tag": "استلام فقط"
+      }
+    },
+    "waitlist": {
+      "emailPlaceholder": "بريدك الإلكتروني",
+      "submit": "انضم للقائمة",
+      "sellerCheckbox": "أرغب بالبيع عند الإطلاق",
+      "privacyNote": "نستخدم بريدك فقط لإشعارك عند الإطلاق. لن نشاركه مع أي جهة.",
+      "success": "أهلاً! أنت على القائمة.",
+      "alreadyOnList": "أنت بالفعل على القائمة — شكراً لاهتمامك.",
+      "successDetail": "راح نرسلك إشعار فور الإطلاق. توقّع رسالة منا خلال 4-6 أسابيع.",
+      "errorInvalidEmail": "البريد الإلكتروني غير صحيح",
+      "errorRateLimited": "محاولات كثيرة. جرّب مرة ثانية بعد دقائق.",
+      "errorServer": "حدث خطأ. حاول مرة أخرى."
+    },
+    "trust": {
+      "eyebrow": "لماذا Dealo Hub",
+      "heading": "ثلاث ركائز تفصلنا عن البقية",
+      "subheading": "كل قرار في المنتج يخدم مبدأ واحد: الثقة أولاً.",
+      "pillars": {
+        "chat": {
+          "title": "محادثة آمنة — بدون رقم هاتف",
+          "description": "أرقام الهواتف مخفية تماماً. كل المحادثات داخل المنصة، بـ chat منظّم. لا spam على WhatsApp، لا ازعاج.",
+          "vsCompetitor": "بدل أن يطلع رقمك لكل الناس في OpenSooq أو Dubizzle."
+        },
+        "ai": {
+          "title": "محمي بالذكاء الاصطناعي",
+          "description": "كل إعلان يمر على 5 طبقات فحص قبل النشر: صور أصلية، نصوص نظيفة، أسعار معقولة، بدون تكرار، بائع موثّق.",
+          "vsCompetitor": "أول منصة C2C في الخليج تحمي البائع والمشتري بذكاء اصطناعي نشط."
+        },
+        "human": {
+          "title": "إعلانات مكتوبة بيد البائع",
+          "description": "الذكاء الاصطناعي يساعد في التصنيف والسعر، بس الوصف تكتبه أنت. كل إعلان يحمل شخصية صاحبه.",
+          "vsCompetitor": "بدل إعلانات مولّدة آلياً ومتطابقة في كل منصة."
+        }
+      }
+    },
+    "categories": {
+      "eyebrow": "فئات الإطلاق",
+      "heading": "10 فئات دقيقة — لا 50 فئة فارغة",
+      "subheading": "نركّز على الأسواق اللي فيها طلب حقيقي ومحتاجة تجربة أفضل — بدل أن نفتح كل شي ونصير مجرد موقع عام ثاني.",
+      "listingsSoon": "إعلان متوقّع",
+      "footnote": "الفئات المميّزة بنجمة (★) هي الفئات الأساسية للإطلاق — electronics، أثاث، فاخرة، مستلزمات أطفال."
+    }
+  },
+  "footer": {
+    "allRightsReserved": "جميع الحقوق محفوظة.",
+    "launchingSoonInKuwait": "نطلق قريباً في الكويت"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "retry": "حاول مرة أخرى",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "continue": "متابعة",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "yes": "نعم",
+    "no": "لا"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "listings": "الإعلانات",
+    "sell": "بيع",
+    "messages": "رسائل",
+    "profile": "حسابي",
+    "signIn": "دخول",
+    "signOut": "خروج",
+    "signUp": "إنشاء حساب"
+  },
+  "listing": {
+    "priceMode": {
+      "fixed": "ثابت",
+      "negotiable": "قابل للتفاوض",
+      "bestOffer": "يقبل العروض"
+    },
+    "condition": {
+      "new": "جديد",
+      "newWithTags": "جديد بالعلامات",
+      "likeNew": "كالجديد",
+      "excellentUsed": "مستعمل — ممتاز",
+      "goodUsed": "مستعمل — جيد",
+      "fairUsed": "مستعمل — مقبول"
+    },
+    "deliveryOptions": {
+      "pickup": "استلام من الموقع",
+      "sellerDelivers": "البائع يقدر يوصّل",
+      "buyerShips": "المشتري يرتّب الشحن"
+    },
+    "status": {
+      "draft": "مسودة",
+      "live": "نشط",
+      "archived": "منتهي",
+      "sold": "مُباع",
+      "held": "قيد المراجعة"
+    },
+    "cta": {
+      "contactSeller": "تواصل مع البائع",
+      "makeOffer": "قدّم عرضاً",
+      "save": "احفظ",
+      "report": "إبلاغ",
+      "share": "مشاركة"
+    }
+  },
+  "trust": {
+    "foundingPartner": "شريك مؤسس",
+    "idVerified": "هوية موثّقة",
+    "phoneVerified": "هاتف موثّق",
+    "sellerRating": "تقييم البائع",
+    "videoIncluded": "فيديو متوفر",
+    "documentationIncluded": "وثائق متوفرة",
+    "authenticityStatement": "إقرار الأصالة",
+    "memberSince": "عضو منذ",
+    "aiSafetyChecked": "محمي بالذكاء الاصطناعي",
+    "humanWritten": "مكتوب بيد البائع"
+  },
+  "safety": {
+    "tipsTitle": "نصائح الأمان",
+    "tips": [
+      "التقِ في مكان عام آمن",
+      "لا ترسل مبالغ مسبقاً",
+      "تحقق من المنتج قبل الدفع"
+    ]
+  },
+  "auth": {
+    "methodEmail": "البريد",
+    "methodPhone": "الهاتف",
+    "comingSoon": "قريباً",
+    "signOut": "تسجيل الخروج",
+    "signup": {
+      "metaTitle": "إنشاء حساب",
+      "title": "أنشئ حسابك في Dealo Hub",
+      "subtitle": "سجّل في قائمة الانتظار وابدأ البيع فور إطلاقنا.",
+      "cta": "إنشاء حساب",
+      "displayNameLabel": "اسمك",
+      "displayNamePlaceholder": "مثال: فوزي",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "you@example.com",
+      "phoneLabel": "رقم الهاتف",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "10 أحرف على الأقل",
+      "passwordHint": "10 أحرف على الأقل مع أرقام وحروف.",
+      "submit": "إنشاء الحساب",
+      "submitting": "جاري الإنشاء…",
+      "haveAccount": "عندك حساب؟ <link>سجّل الدخول</link>",
+      "termsAcceptance": "أوافق على <terms>الشروط</terms> و<privacy>سياسة الخصوصية</privacy>.",
+      "phoneComingSoonNote": "التسجيل بالهاتف يصل مع إطلاق SMS الكويت. استخدم البريد حالياً.",
+      "checkEmail": "افحص بريدك — أرسلنا رابط تأكيد لإكمال التسجيل."
+    },
+    "signin": {
+      "metaTitle": "تسجيل الدخول",
+      "title": "أهلاً بعودتك",
+      "subtitle": "سجّل الدخول لإدارة إعلاناتك ومحادثاتك.",
+      "cta": "تسجيل الدخول",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "you@example.com",
+      "phoneLabel": "رقم الهاتف",
+      "passwordLabel": "كلمة المرور",
+      "forgotPassword": "نسيت كلمة المرور؟",
+      "submit": "تسجيل الدخول",
+      "submitting": "جاري الدخول…",
+      "noAccount": "جديد على Dealo Hub؟ <link>أنشئ حساب</link>"
+    },
+    "verifyOtp": {
+      "metaTitle": "تأكيد",
+      "title": "أكّد حسابك",
+      "subtitle": "أرسلنا رابط تأكيد إلى بريدك.",
+      "emailOnlyNote": "افتح البريد من Dealo Hub واضغط على الرابط داخله — راح تدخل تلقائياً.",
+      "phoneComingSoon": "تأكيد الهاتف يصل مع إطلاق SMS الكويت في Sprint 6.",
+      "backLink": "رجوع إلى <link>تسجيل الدخول</link>"
+    },
+    "reset": {
+      "metaTitle": "استعادة كلمة المرور",
+      "title": "استعد كلمة المرور",
+      "subtitle": "أدخل بريدك ونرسل لك رابط الاستعادة.",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "you@example.com",
+      "submit": "أرسل رابط الاستعادة",
+      "submitting": "جاري الإرسال…",
+      "emailSent": "إذا كان هناك حساب لهذا البريد، أرسلنا رابط استعادة. افحص صندوق الوارد.",
+      "backLink": "رجوع إلى <link>تسجيل الدخول</link>"
+    },
+    "resetConfirm": {
+      "metaTitle": "تعيين كلمة مرور جديدة",
+      "title": "اختر كلمة مرور جديدة",
+      "subtitle": "اختر كلمة قوية — 10 أحرف على الأقل مع أرقام وحروف.",
+      "passwordLabel": "كلمة المرور الجديدة",
+      "passwordPlaceholder": "10 أحرف على الأقل",
+      "passwordHint": "10 أحرف على الأقل مع أرقام وحروف.",
+      "submit": "تحديث كلمة المرور",
+      "submitting": "جاري التحديث…",
+      "success": "تم تحديث كلمة المرور. تقدر الآن تسجّل دخول بكلمتك الجديدة.",
+      "backLink": "رجوع إلى <link>تسجيل الدخول</link>"
+    },
+    "myListings": {
+      "title": "إعلاناتي",
+      "signedInAs": "أنت مسجّل باسم {name}.",
+      "placeholder": "إعلاناتك راح تظهر هنا بعد إطلاق تدفق إنشاء الإعلانات (BRIEF-004)."
+    },
+    "errors": {
+      "generic": "صار خطأ. حاول مرة ثانية.",
+      "validation_failed": "راجع الحقول وحاول مرة ثانية.",
+      "email_invalid": "أدخل بريد إلكتروني صحيح.",
+      "email_too_long": "البريد طويل جداً.",
+      "email_already_registered": "يوجد حساب بنفس هذا البريد.",
+      "email_not_confirmed": "أكّد بريدك أولاً — راح تلقى الرابط في صندوق الوارد.",
+      "password_required": "كلمة المرور مطلوبة.",
+      "password_too_short": "كلمة المرور يجب أن تكون 10 أحرف على الأقل.",
+      "password_too_long": "كلمة المرور طويلة جداً.",
+      "password_needs_letter": "كلمة المرور يجب أن تحتوي على حرف واحد على الأقل.",
+      "password_needs_number": "كلمة المرور يجب أن تحتوي على رقم واحد على الأقل.",
+      "password_too_weak": "كلمة المرور ضعيفة. استخدم 10 أحرف على الأقل مع حروف وأرقام.",
+      "name_too_short": "الاسم قصير جداً — حرفان على الأقل.",
+      "name_too_long": "الاسم طويل جداً.",
+      "phone_invalid": "أدخل رقم هاتف كويتي صحيح.",
+      "otp_invalid_format": "الرمز يجب أن يكون 6 أرقام.",
+      "terms_required": "وافق على الشروط وسياسة الخصوصية للمتابعة.",
+      "invalid_credentials": "البريد أو كلمة المرور غير صحيحة.",
+      "signup_failed": "تعذّر إنشاء الحساب. حاول مرة ثانية.",
+      "signin_failed": "تعذّر تسجيل الدخول. حاول مرة ثانية.",
+      "update_password_failed": "تعذّر تحديث كلمة المرور. ربما انتهت صلاحية الرابط.",
+      "phone_auth_not_available": "التسجيل بالهاتف غير متوفر حالياً — استخدم البريد."
+    }
+  }
+}

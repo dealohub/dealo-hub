@@ -1,0 +1,48 @@
+{
+  "mcpServers": {
+    "puppeteer": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-puppeteer"]
+    },
+    "glance": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "glance-mcp"]
+    },
+    "github": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-github"]
+    },
+    "filesystem": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-filesystem", "D:/Dealo Hub"]
+    },
+    "sequential-thinking": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "memory": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-memory"]
+    },
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp"
+    },
+    "vercel": {
+      "type": "http",
+      "url": "https://mcp.vercel.com"
+    },
+    "sentry": {
+      "type": "http",
+      "url": "https://mcp.sentry.dev/mcp"
+    },
+    "linear": {
+      "type": "http",
+      "url": "https://mcp.linear.app/mcp"
+    },
+    "shadcnblocks": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "shadcn@latest", "mcp"]
+    }
+  }
+}
