@@ -607,5 +607,83 @@
       "insert_failed": "تعذّر نشر الإعلان — حاول مرة ثانية.",
       "not_implemented_yet_session2": "النشر لسه ما اتربط — قريباً."
     }
+  },
+  "browse": {
+    "index": {
+      "title": "تصفّح كل الفئات",
+      "subtitle": "اكتشف إعلانات موثوقة في الكويت — من الإلكترونيات إلى الحقائب الفاخرة.",
+      "metaTitle": "الفئات · Dealo Hub",
+      "metaDescription": "تصفّح كل فئات Dealo Hub — إعلانات آمنة ومحمية بالذكاء الاصطناعي."
+    },
+    "category": {
+      "metaTitle": "{name} · Dealo Hub",
+      "metaDescription": "تصفّح {name} في الكويت على Dealo Hub — إعلانات موثوقة ومحادثة آمنة.",
+      "resultCount": "{count} إعلان متاح"
+    },
+    "sort": {
+      "newest": "الأحدث",
+      "price_asc": "السعر: من الأقل",
+      "price_desc": "السعر: من الأعلى",
+      "most_saved": "الأكثر حفظاً"
+    },
+    "pagination": {
+      "label": "التنقّل بين الصفحات",
+      "prev": "السابق",
+      "next": "التالي",
+      "page": "صفحة {current} من {total}"
+    },
+    "empty": {
+      "title": "لا توجد إعلانات",
+      "description": "جرّب إزالة بعض الفلاتر أو تصفّح فئة ثانية.",
+      "clearAction": "مسح الفلاتر",
+      "browseAction": "تصفّح الفئات"
+    },
+    "notFound": {
+      "title": "الفئة غير موجودة",
+      "description": "الفئة اللي تدوّر عليها تغيّر عنوانها أو ما عادت متوفرة.",
+      "backToCategories": "العودة للفئات"
+    },
+    "chips": {
+      "from": "من",
+      "phoneVerified": "هاتف موثّق",
+      "hasVideo": "فيديو متوفر",
+      "hasDocumentation": "وثائق متوفرة"
+    },
+    "filter": {
+      "title": "الفلاتر",
+      "button": "فلاتر",
+      "close": "إغلاق",
+      "apply": "تطبيق",
+      "clearAll": "مسح الكل",
+      "priceRange": "نطاق السعر",
+      "condition": "الحالة",
+      "priceMode": "طريقة السعر",
+      "delivery": "خيارات التسليم",
+      "location": {
+        "title": "الموقع",
+        "allKuwait": "كل الكويت",
+        "loadingAreas": "جاري التحميل…"
+      },
+      "trust": {
+        "title": "إشارات الثقة",
+        "phoneVerified": "هاتف موثّق فقط",
+        "hasVideo": "فيه فيديو تفقّدي",
+        "hasDocumentation": "مع وثائق أصالة"
+      }
+    }
+  },
+  "search": {
+    "placeholder": "ابحث عن أي شي…",
+    "aiEnabled": "بحث ذكي مفعّل",
+    "metaTitle": "البحث · Dealo Hub",
+    "metaTitleWithQuery": "{query} · البحث · Dealo Hub",
+    "emptyQueryTitle": "ابحث عن إعلان",
+    "emptyQueryHint": "اكتب كلمة أو جملة كاملة — بحث Dealo يفهم اللهجة.",
+    "noResultsHint": "ما لقينا إعلانات لـ \"{query}\". جرّب كلمات أخرى أو تصفّح الفئات.",
+    "header": {
+      "title": "نتائج \"{query}\"",
+      "resultCount": "{count} نتيجة",
+      "smartSearch": "بحث ذكي"
+    }
   }
 }

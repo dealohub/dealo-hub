@@ -1,4 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
+import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
@@ -16,10 +17,13 @@ import { cn } from '@/lib/utils';
  *   md  → 40px tall (default)
  *   lg  → 48px tall (hero CTAs)
  *   icon → 40x40 square
+ *
+ * `asChild` delegates rendering to the single child while preserving Button's
+ * classNames — enables `<Button asChild><Link>...</Link></Button>` composition
+ * and satisfies Radix `Trigger asChild` consumers (BACKLOG-008).
  */
 
 const buttonVariants = cva(
-  // Base — shared across all variants
   [
     'inline-flex items-center justify-center gap-2 whitespace-nowrap',
     'font-semibold rounded-lg',
@@ -34,7 +38,6 @@ const buttonVariants = cva(
         primary: [
           'bg-warm-amber text-white',
           'hover:bg-warm-amber-700',
-          // NO outer glow — banned per DESIGN.md Section 22
         ],
         secondary: [
           'bg-pure-surface border-[1.5px] border-zinc-200 text-charcoal-ink',
@@ -65,12 +68,21 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => (
-    <button ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />
-  )
+  ({ className, variant, size, asChild, ...props }, ref) => {
+    const Comp = asChild ? Slot : 'button';
+    return (
+      <Comp
+        ref={ref as never}
+        className={cn(buttonVariants({ variant, size }), className)}
+        {...props}
+      />
+    );
+  }
 );
 
 Button.displayName = 'Button';

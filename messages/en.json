@@ -607,5 +607,83 @@
       "insert_failed": "Couldn’t publish the listing — please try again.",
       "not_implemented_yet_session2": "Publish not wired up yet — coming soon."
     }
+  },
+  "browse": {
+    "index": {
+      "title": "Browse all categories",
+      "subtitle": "Find trusted listings across Kuwait — from electronics to luxury bags.",
+      "metaTitle": "Categories · Dealo Hub",
+      "metaDescription": "Browse every Dealo Hub category — safe, AI-protected listings."
+    },
+    "category": {
+      "metaTitle": "{name} · Dealo Hub",
+      "metaDescription": "Browse {name} in Kuwait on Dealo Hub — trusted listings, safe chat.",
+      "resultCount": "{count} listings available"
+    },
+    "sort": {
+      "newest": "Newest",
+      "price_asc": "Price: low to high",
+      "price_desc": "Price: high to low",
+      "most_saved": "Most saved"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "prev": "Previous",
+      "next": "Next",
+      "page": "Page {current} of {total}"
+    },
+    "empty": {
+      "title": "No listings",
+      "description": "Try clearing a filter or browsing a different category.",
+      "clearAction": "Clear filters",
+      "browseAction": "Browse categories"
+    },
+    "notFound": {
+      "title": "Category not found",
+      "description": "That category's slug may have changed or it's no longer active.",
+      "backToCategories": "Back to categories"
+    },
+    "chips": {
+      "from": "From",
+      "phoneVerified": "Phone verified",
+      "hasVideo": "Has video",
+      "hasDocumentation": "Has documentation"
+    },
+    "filter": {
+      "title": "Filters",
+      "button": "Filters",
+      "close": "Close",
+      "apply": "Apply",
+      "clearAll": "Clear all",
+      "priceRange": "Price range",
+      "condition": "Condition",
+      "priceMode": "Price mode",
+      "delivery": "Delivery options",
+      "location": {
+        "title": "Location",
+        "allKuwait": "All Kuwait",
+        "loadingAreas": "Loading…"
+      },
+      "trust": {
+        "title": "Trust signals",
+        "phoneVerified": "Phone verified only",
+        "hasVideo": "Has inspection video",
+        "hasDocumentation": "With authenticity documents"
+      }
+    }
+  },
+  "search": {
+    "placeholder": "Search anything…",
+    "aiEnabled": "Smart search enabled",
+    "metaTitle": "Search · Dealo Hub",
+    "metaTitleWithQuery": "{query} · Search · Dealo Hub",
+    "emptyQueryTitle": "Search listings",
+    "emptyQueryHint": "Try a phrase, not just keywords — Dealo understands Gulf dialect.",
+    "noResultsHint": "We didn't find listings for \"{query}\". Try different words or browse categories.",
+    "header": {
+      "title": "Results for \"{query}\"",
+      "resultCount": "{count} results",
+      "smartSearch": "Smart search"
+    }
   }
 }
