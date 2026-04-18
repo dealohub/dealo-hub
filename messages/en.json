@@ -143,6 +143,15 @@
       "subtitle": "We’ve saved it as a draft. Our AI safety checks will publish it within minutes.",
       "myListings": "Go to my listings",
       "sellAnother": "Sell another"
+    },
+    "card": {
+      "save": "Save",
+      "saved": "Saved",
+      "unsave": "Remove from saved",
+      "videoBadge": "Video",
+      "authenticity": "Authentic",
+      "phoneVerified": "Phone verified",
+      "minOffer": "Min {price}"
     }
   },
   "trust": {

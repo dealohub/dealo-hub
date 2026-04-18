@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { moveDraftImagesToListing } from '@/lib/supabase/storage-listings';
+import { generateListingEmbedding } from './embeddings';
 import { PublishSchema } from './validators';
 import type { DraftState, WizardStep } from './draft';
 
@@ -239,7 +240,10 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
       authenticity_confirmed: v.authenticity_confirmed,
       has_receipt: v.has_receipt,
       serial_number: v.serial_number ?? null,
-      status: 'draft',
+      // Publish immediately. BRIEF-007 will gate via `fraud_status`, not `status`.
+      status: 'live',
+      published_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     })
     .select('id')
     .single();
@@ -286,6 +290,14 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
 
   // Delete draft + orphan cleanup by cascade (unused — draft row had no images left).
   await supabase.from('listing_drafts').delete().eq('user_id', user.id);
+
+  // Fire embedding generation — fail-open so a transient OpenAI outage never
+  // blocks publishing. Also shielded from missing OPENAI_API_KEY inside the fn.
+  try {
+    await generateListingEmbedding(listingId);
+  } catch (err) {
+    console.error('[listings/actions] embedding generation failed:', (err as Error).message);
+  }
 
   revalidatePath('/sell');
   revalidatePath(`/listings/${listingId}`);

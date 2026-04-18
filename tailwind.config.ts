@@ -152,6 +152,8 @@ const config: Config = {
     },
   },
   plugins: [
+    // Radix-compatible animation utilities (animate-in, slide-in-from-bottom, etc.)
+    require('tailwindcss-animate'),
     // Logical properties plugin (ms-* / me-* / ps-* / pe-*)
     require('tailwindcss-logical'),
     // Tabular nums for prices + data

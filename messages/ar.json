@@ -143,6 +143,15 @@
       "subtitle": "حفظناه كمسودة. فحوصات الذكاء الاصطناعي راح تفعّله خلال دقائق.",
       "myListings": "إلى إعلاناتي",
       "sellAnother": "بيع منتج ثاني"
+    },
+    "card": {
+      "save": "حفظ",
+      "saved": "محفوظ",
+      "unsave": "إزالة من المحفوظات",
+      "videoBadge": "فيديو",
+      "authenticity": "أصلي",
+      "phoneVerified": "هاتف موثّق",
+      "minOffer": "الحد الأدنى {price}"
     }
   },
   "trust": {
