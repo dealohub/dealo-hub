@@ -26,9 +26,9 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import Image from 'next/image';
 import { Camera, Plus, Trash2, GripVertical } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { FormMessage } from '@/components/ui/FormMessage';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Button } from '@/components/ui/button';
+import { FormMessage } from '@/components/ui/form-message';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   resizeImageToWebp,
   uploadDraftImage,

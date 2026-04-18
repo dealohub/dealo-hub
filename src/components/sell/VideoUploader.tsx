@@ -3,9 +3,9 @@
 import { useRef, useState, useTransition, type ChangeEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { Upload, Trash2, Clapperboard } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { FormMessage } from '@/components/ui/FormMessage';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Button } from '@/components/ui/button';
+import { FormMessage } from '@/components/ui/form-message';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   getVideoDuration,
   uploadDraftVideo,

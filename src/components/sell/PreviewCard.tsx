@@ -12,8 +12,8 @@ import {
   Video as VideoIcon,
   AlertCircle,
 } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { FormMessage } from '@/components/ui/FormMessage';
+import { Button } from '@/components/ui/button';
+import { FormMessage } from '@/components/ui/form-message';
 import { PriceModeBadge } from './PriceModeBadge';
 import { publishListing } from '@/lib/listings/actions';
 import type {

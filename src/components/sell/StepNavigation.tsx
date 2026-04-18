@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 
 interface StepNavigationProps {
   onBack?: () => void;

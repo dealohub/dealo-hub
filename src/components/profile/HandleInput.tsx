@@ -10,9 +10,9 @@ import {
 } from 'react';
 import { useTranslations } from 'next-intl';
 import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { FormMessage } from '@/components/ui/FormMessage';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { FormMessage } from '@/components/ui/form-message';
 import { checkHandleAvailabilityAction } from '@/lib/profile/actions';
 import { cn } from '@/lib/utils';
 

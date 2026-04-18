@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 import { CheckCircle2 } from 'lucide-react';
 import { Link } from '@/i18n/routing';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Nav } from '@/components/layout/Nav';
 import { createClient } from '@/lib/supabase/server';
 import { PriceModeBadge } from '@/components/sell/PriceModeBadge';

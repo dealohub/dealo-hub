@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { ArrowRight } from 'lucide-react';
 import { Link } from '@/i18n/routing';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { getCurrentProfile } from '@/lib/profile/queries';
 
 /**

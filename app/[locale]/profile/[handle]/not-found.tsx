@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { UserX } from 'lucide-react';
 import { Link } from '@/i18n/routing';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 
 /**
  * /profile/[handle] not-found page. Rendered when `getProfileByHandle` returns null.

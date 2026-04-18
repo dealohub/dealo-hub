@@ -3,10 +3,10 @@
 import { useState, useTransition } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { FormMessage } from '@/components/ui/FormMessage';
-import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { FormMessage } from '@/components/ui/form-message';
+import { Button } from '@/components/ui/button';
 import { HandleInput } from './HandleInput';
 import { updateProfile, type ProfileActionResult } from '@/lib/profile/actions';
 

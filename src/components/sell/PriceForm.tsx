@@ -4,11 +4,11 @@ import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import { ArrowRight, Lock, MessageCircle, Target } from 'lucide-react';
 import { useRouter } from '@/i18n/routing';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { FormMessage } from '@/components/ui/FormMessage';
-import { RadioCard } from '@/components/ui/RadioCard';
-import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { FormMessage } from '@/components/ui/form-message';
+import { RadioCard } from '@/components/ui/radio-card';
+import { Button } from '@/components/ui/button';
 import { Step4PriceSchema, type PriceMode } from '@/lib/listings/validators';
 import { saveDraft } from '@/lib/listings/actions';
 

@@ -4,12 +4,12 @@ import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import { ArrowRight } from 'lucide-react';
 import { useRouter } from '@/i18n/routing';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { Textarea } from '@/components/ui/Textarea';
-import { FormMessage } from '@/components/ui/FormMessage';
-import { RadioCard } from '@/components/ui/RadioCard';
-import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { FormMessage } from '@/components/ui/form-message';
+import { RadioCard } from '@/components/ui/radio-card';
+import { Button } from '@/components/ui/button';
 import {
   Step3DetailsSchema,
   Step3DetailsLuxurySchema,

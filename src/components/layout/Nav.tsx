@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { LocaleSwitcher } from '@/components/layout/LocaleSwitcher';
 import { UserMenu } from '@/components/layout/UserMenu';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Plus, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 

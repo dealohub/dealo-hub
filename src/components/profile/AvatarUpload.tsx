@@ -11,9 +11,9 @@ import {
 } from 'react';
 import { useTranslations } from 'next-intl';
 import { Camera, Upload } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { FormMessage } from '@/components/ui/FormMessage';
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Button } from '@/components/ui/button';
+import { FormMessage } from '@/components/ui/form-message';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AvatarDisplay } from './AvatarDisplay';
 import { uploadAvatar, type ProfileActionResult } from '@/lib/profile/actions';
 import { AVATAR_ALLOWED_MIME, AVATAR_MAX_BYTES } from '@/lib/profile/validators';

@@ -7,7 +7,7 @@ import * as Icons from 'lucide-react';
 import type { ParentCategory } from '@/lib/listings/queries';
 import { saveDraft } from '@/lib/listings/actions';
 import { saveLocalDraft } from '@/lib/listings/draft';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface CategoryPickerProps {

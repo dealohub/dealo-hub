@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { ArrowRight, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { joinWaitlist, type WaitlistResult } from '@/lib/actions/waitlist';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 /**

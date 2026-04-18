@@ -3,10 +3,10 @@
 import { useState, useTransition } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { FormMessage } from '@/components/ui/FormMessage';
-import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { FormMessage } from '@/components/ui/form-message';
+import { Button } from '@/components/ui/button';
 import { AuthMethodToggle, type AuthMethod } from './AuthMethodToggle';
 import { PhoneInput } from './PhoneInput';
 import { signUpWithEmail, type AuthActionResult } from '@/lib/auth/actions';

@@ -4,11 +4,11 @@ import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import { ArrowRight, ShieldCheck, ReceiptText } from 'lucide-react';
 import { useRouter } from '@/i18n/routing';
-import { Checkbox } from '@/components/ui/Checkbox';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { FormMessage } from '@/components/ui/FormMessage';
-import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { FormMessage } from '@/components/ui/form-message';
+import { Button } from '@/components/ui/button';
 import { Step7AuthenticitySchema } from '@/lib/listings/validators';
 import { saveDraft } from '@/lib/listings/actions';
 

@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Settings2 } from 'lucide-react';
 import { Link } from '@/i18n/routing';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { AvatarDisplay } from './AvatarDisplay';
 import { TrustSignalsStack } from './TrustSignalsStack';
 import { SellerStatsBar } from './SellerStatsBar';

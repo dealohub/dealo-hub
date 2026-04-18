@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
 import { Construction } from 'lucide-react';
 import { Link } from '@/i18n/routing';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { WizardShell } from '@/components/sell/WizardShell';
 import { getCurrentDraft, getCategoriesWithSubs } from '@/lib/listings/queries';
 import type { WizardStep } from '@/lib/listings/draft';
