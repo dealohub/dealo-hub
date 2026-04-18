@@ -137,6 +137,12 @@
       "save": "احفظ",
       "report": "إبلاغ",
       "share": "مشاركة"
+    },
+    "publishSuccess": {
+      "title": "إعلانك راح ينشر بعد قليل.",
+      "subtitle": "حفظناه كمسودة. فحوصات الذكاء الاصطناعي راح تفعّله خلال دقائق.",
+      "myListings": "إلى إعلاناتي",
+      "sellAnother": "بيع منتج ثاني"
     }
   },
   "trust": {
@@ -404,12 +410,193 @@
         "saving": "جاري الحفظ…",
         "subtitleChoose": "اختر فئة فرعية في {category}",
         "subOptional": "اختياري — تقدر تتخطى."
+      },
+      "media": {
+        "headline": "ارفع من {min} إلى {max} صور",
+        "help": "PNG أو JPG أو WebP. حتى 5 ميجابايت للصورة. الإضاءة الطبيعية تبيع أسرع.",
+        "add": "إضافة صور",
+        "camera": "الكاميرا",
+        "cover": "الغلاف",
+        "remove": "حذف",
+        "addFirst": "ارفع الصورة الأولى",
+        "saving": "جاري الحفظ…",
+        "readyToContinue": "جاهز للمتابعة",
+        "moreNeeded": "باقي {more}",
+        "requirements": "محتاج {min} صور على الأقل للمتابعة.",
+        "requirementsLuxury": "الفئة الفاخرة تحتاج {min} صور + فيديو تفقّدي.",
+        "continue": "متابعة"
+      },
+      "video": {
+        "headline": "فيديو تفقّدي للمنتج الفاخر (30–120 ثانية)",
+        "help": "صوّر المنتج من كل جوانبه. أظهر الرقم التسلسلي والخياطة والنقوش عن قرب.",
+        "upload": "رفع الفيديو",
+        "replace": "استبدال الفيديو",
+        "remove": "حذف",
+        "ready": "الفيديو جاهز"
+      },
+      "details": {
+        "titleLabel": "العنوان",
+        "titlePlaceholder": "مثال: iPhone 14 Pro Max 256GB أسود",
+        "titleHint": "من 5 إلى 120 حرف. اكتب الماركة والموديل عشان البحث يسهل.",
+        "descriptionLabel": "الوصف",
+        "descriptionPlaceholder": "شنو اللي يميّز هذا المنتج؟ اذكر الحالة، العمر، والمرفقات.",
+        "descriptionHint": "حتى 5000 حرف. الصراحة تبني ثقة وزبائن دائمين.",
+        "conditionLabel": "الحالة",
+        "brandLabel": "الماركة",
+        "brandPlaceholder": "مثال: Apple",
+        "brandHint": "اختياري — يساعد البحث.",
+        "modelLabel": "الموديل",
+        "modelPlaceholder": "مثال: iPhone 14 Pro Max",
+        "saving": "جاري الحفظ…",
+        "continue": "متابعة"
+      },
+      "price": {
+        "priceLabel": "السعر",
+        "priceHint": "الدينار الكويتي. تقدر تغيّره لاحقاً.",
+        "modeLabel": "نوع السعر",
+        "minOfferLabel": "الحد الأدنى المقبول للعرض",
+        "minOfferHint": "اختياري — المشترون لا يشوفون هذا الرقم؛ العروض تحته تُرفض تلقائياً.",
+        "saving": "جاري الحفظ…",
+        "continue": "متابعة"
+      },
+      "location": {
+        "countryLabel": "الدولة",
+        "countryFixedKW": "الكويت (الدولة الوحيدة عند الإطلاق).",
+        "cityLabel": "المحافظة",
+        "areaLabel": "المنطقة (اختياري)",
+        "areaHint": "المشتري يشوف المنطقة، مو عنوانك بالضبط.",
+        "loadingAreas": "جاري تحميل المناطق…",
+        "saving": "جاري الحفظ…",
+        "continue": "متابعة"
+      },
+      "delivery": {
+        "saving": "جاري الحفظ…",
+        "continue": "متابعة"
+      },
+      "authenticity": {
+        "headline": "الأصالة مهمة في الفاخرة",
+        "subheadline": "بيان قصير + دليل اختياري يعطي المشتري ثقة — ويحميك من الخلافات.",
+        "statementHeadline": "أضمن أصالة هذا المنتج",
+        "statementBody": "أقبل استرجاعه بالكامل خلال 7 أيام من الاستلام إذا ثبت أنه غير أصلي.",
+        "receiptLabel": "عندي فاتورة / إيصال أصلي",
+        "receiptHint": "تقدر تشاركها بشكل خاص عبر المحادثة لاحقاً.",
+        "serialLabel": "الرقم التسلسلي",
+        "serialPlaceholder": "اختياري",
+        "serialHint": "يضيف علامة \"الرقم التسلسلي موثّق\".",
+        "saving": "جاري الحفظ…",
+        "continue": "متابعة"
+      },
+      "preview": {
+        "videoIncluded": "مع فيديو",
+        "minOfferLabel": "الحد الأدنى للعروض",
+        "conditionLabel": "الحالة",
+        "edit": "تعديل",
+        "section": {
+          "category": "الفئة",
+          "description": "الوصف",
+          "location": "الموقع",
+          "delivery": "التسليم",
+          "authenticity": "الأصالة"
+        },
+        "authConfirmed": "البائع يضمن الأصالة",
+        "receiptIncluded": "الفاتورة موثّقة",
+        "publish": "نشر الإعلان",
+        "publishing": "جاري النشر…",
+        "validationFailed": "فيه حقول تحتاج مراجعة قبل النشر"
       }
     },
     "stub": {
       "title": "هذه الخطوة تصل في الجلسة القادمة",
       "subtitle": "هذه الخطوة في المعالج لسه ما تجهّزت. الخطوة الأولى (الفئة) جاهزة بالكامل — ارجع لها تحت.",
       "backToCategory": "رجوع للفئات"
+    },
+    "condition": {
+      "new": {
+        "label": "جديد",
+        "description": "مختوم أو ما استُعمل."
+      },
+      "new_with_tags": {
+        "label": "جديد بالتاقات",
+        "description": "ما استُعمل، التاقات موجودة."
+      },
+      "like_new": {
+        "label": "شبه جديد",
+        "description": "استُعمل مرة أو مرتين فقط."
+      },
+      "excellent_used": {
+        "label": "مستعمل ممتاز",
+        "description": "استعمال خفيف، بدون عيوب ظاهرة."
+      },
+      "good_used": {
+        "label": "مستعمل جيّد",
+        "description": "استعمال مع أثر طبيعي."
+      },
+      "fair_used": {
+        "label": "مستعمل مقبول",
+        "description": "استعمال واضح، ويعمل بكفاءة."
+      }
+    },
+    "priceMode": {
+      "fixed": {
+        "label": "ثابت",
+        "description": "السعر نهائي، ما فيه فاصل."
+      },
+      "negotiable": {
+        "label": "قابل للتفاوض",
+        "description": "مفتوح للعروض المعقولة في المحادثة."
+      },
+      "best_offer": {
+        "label": "يقبل العروض",
+        "description": "المشترون يقدّمون عروضاً، وأنت تختار."
+      }
+    },
+    "delivery": {
+      "pickup": {
+        "label": "استلام",
+        "description": "المشتري يقابلك في مكان متّفق عليه."
+      },
+      "seller_delivers": {
+        "label": "أوصّله أنا",
+        "description": "راح توصّله لمنطقة المشتري."
+      },
+      "buyer_ships": {
+        "label": "الشحن على المشتري",
+        "description": "المشتري يرتّب الشحن ويتكفّل بتكلفته."
+      }
+    },
+    "errors": {
+      "generic": "صار خطأ. حاول مرة ثانية.",
+      "not_authenticated": "سجّل الدخول أولاً.",
+      "save_failed": "تعذّر حفظ المسودة — حاول مرة ثانية.",
+      "upload_failed": "الرفع فشل. جرّب ملف أصغر أو مختلف.",
+      "too_many": "وصلت للحد الأقصى من الصور.",
+      "too_large": "الملف كبير جداً. الحد الأقصى 12 ميجابايت لكل صورة مصدر.",
+      "invalid_format": "فقط PNG أو JPG أو WebP مسموح.",
+      "video_invalid_format": "فقط MP4 أو WebM أو MOV مسموح.",
+      "video_too_large": "الفيديو يجب أن يكون 50 ميجابايت أو أقل.",
+      "video_duration_out_of_range": "مدة الفيديو يجب بين 30 و120 ثانية.",
+      "video_metadata_unreadable": "ما قدرنا نقرا مدة الفيديو — جرّب إعادة ترميزه.",
+      "category_required": "اختر فئة للمتابعة.",
+      "title_too_short": "العنوان يجب 5 أحرف على الأقل.",
+      "title_too_long": "العنوان طويل جداً (120 كحد أقصى).",
+      "description_too_short": "الوصف يجب 10 أحرف على الأقل.",
+      "description_too_long": "الوصف طويل جداً (5000 كحد أقصى).",
+      "phone_not_allowed_in_text": "أرقام الهواتف ممنوعة في العنوان والوصف — المحادثة داخل المنصة.",
+      "counterfeit_term_not_allowed": "الفئة الفاخرة ما تسمح بكلمات \"نسخة\" أو \"تقليد\" أو ما شابه.",
+      "price_required": "حدّد السعر للمتابعة.",
+      "min_offer_only_for_best_offer": "الحد الأدنى للعروض مسموح فقط مع \"يقبل العروض\".",
+      "min_offer_must_be_less_than_price": "الحد الأدنى يجب أن يكون أقل من السعر.",
+      "city_required": "اختر محافظة.",
+      "delivery_required": "اختر خيار تسليم واحد على الأقل.",
+      "authenticity_required": "يجب تأكيد الأصالة لنشر الإعلانات الفاخرة.",
+      "condition_required": "اختر الحالة.",
+      "images_too_few": "محتاج صور أكثر للمتابعة.",
+      "images_too_many": "الصور كثيرة — الحد 10.",
+      "video_required": "الفئة الفاخرة تحتاج فيديو تفقّدي.",
+      "validation_failed": "فيه حقول تحتاج مراجعة.",
+      "no_draft": "ما لقينا مسودتك — ابدأ إعلان جديد.",
+      "insert_failed": "تعذّر نشر الإعلان — حاول مرة ثانية.",
+      "not_implemented_yet_session2": "النشر لسه ما اتربط — قريباً."
     }
   }
 }

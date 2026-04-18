@@ -97,7 +97,8 @@
       "Bash(rm -rf .next)",
       "Bash(node -p \"require\\('./node_modules/@radix-ui/react-checkbox/package.json'\\).version\")",
       "Bash(node -p \"require\\('@radix-ui/react-checkbox/package.json'\\).version\")",
-      "Bash(node scripts/add-sell-i18n.mjs)"
+      "Bash(node scripts/add-sell-i18n.mjs)",
+      "Bash(node scripts/add-sell-i18n-v2.mjs)"
     ]
   },
   "enableAllProjectMcpServers": true,
