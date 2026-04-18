@@ -6,7 +6,16 @@
   "home": {
     "heroHeadline": "Dealo Hub — قريباً",
     "heroSubline": "منصة C2C الخليجية المحمية بالذكاء الاصطناعي. إعلانات مكتوبة بإنسان، محادثات آمنة، ثقة أعلى من أي مكان ثاني.",
-    "bootstrapStatus": "حالة النظام:"
+    "bootstrapStatus": "حالة النظام:",
+    "marketplace": {
+      "aiSearchLabel": "بحث ذكي",
+      "greeting": "مرحباً — شنو تدوّر؟",
+      "greetingNamed": "أهلاً {name} — شنو تدوّر اليوم؟",
+      "heroSubline": "ابحث بلغتك الطبيعية. Dealo يفهم اللهجة الخليجية.",
+      "categoriesTitle": "تصفّح الفئات",
+      "featuredLuxuryTitle": "الأكثر زيارة في الفاخر",
+      "recentTitle": "أحدث الإعلانات"
+    }
   },
   "landing": {
     "meta": {
@@ -98,6 +107,7 @@
   "nav": {
     "home": "الرئيسية",
     "listings": "الإعلانات",
+    "saved": "المحفوظات",
     "sell": "نشر إعلان",
     "messages": "رسائل",
     "profile": "ملفي",
@@ -684,6 +694,17 @@
       "title": "نتائج \"{query}\"",
       "resultCount": "{count} نتيجة",
       "smartSearch": "بحث ذكي"
+    },
+    "featured": {
+      "seeMore": "شوف الكل"
     }
+  },
+  "saved": {
+    "metaTitle": "المحفوظات · Dealo Hub",
+    "title": "محفوظاتي",
+    "subtitle": "{count} إعلان في قائمتك",
+    "emptyTitle": "ما عندك محفوظات لحد الآن",
+    "emptyDescription": "اضغط على علامة القلب على أي إعلان لحفظه هنا.",
+    "browseAction": "تصفّح الفئات"
   }
 }

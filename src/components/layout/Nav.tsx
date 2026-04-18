@@ -3,6 +3,7 @@ import { Link } from '@/i18n/routing';
 import { LocaleSwitcher } from '@/components/layout/LocaleSwitcher';
 import { UserMenu } from '@/components/layout/UserMenu';
 import { Button } from '@/components/ui/button';
+import { SearchInput } from '@/components/search/SearchInput';
 import { Plus, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 
@@ -59,6 +60,11 @@ export async function Nav() {
             {t('name')}
           </span>
         </Link>
+
+        {/* Search — takes up the middle on md+ */}
+        <div className="hidden md:flex flex-1 justify-center px-6 max-w-xl">
+          <SearchInput />
+        </div>
 
         {/* Right side */}
         <div className="flex items-center gap-2">

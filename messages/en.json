@@ -6,7 +6,16 @@
   "home": {
     "heroHeadline": "Dealo Hub — Coming Soon",
     "heroSubline": "The first AI-Protected C2C marketplace in the Gulf. Human-written listings, safer chat, trust you can feel.",
-    "bootstrapStatus": "System status:"
+    "bootstrapStatus": "System status:",
+    "marketplace": {
+      "aiSearchLabel": "Smart search",
+      "greeting": "Welcome — what are you looking for?",
+      "greetingNamed": "Hi {name} — what are you looking for today?",
+      "heroSubline": "Ask in your own words. Dealo understands Gulf dialect.",
+      "categoriesTitle": "Browse categories",
+      "featuredLuxuryTitle": "Most viewed in Luxury",
+      "recentTitle": "Newest listings"
+    }
   },
   "landing": {
     "meta": {
@@ -98,6 +107,7 @@
   "nav": {
     "home": "Home",
     "listings": "Listings",
+    "saved": "Saved",
     "sell": "Create listing",
     "messages": "Messages",
     "profile": "My profile",
@@ -684,6 +694,17 @@
       "title": "Results for \"{query}\"",
       "resultCount": "{count} results",
       "smartSearch": "Smart search"
+    },
+    "featured": {
+      "seeMore": "See all"
     }
+  },
+  "saved": {
+    "metaTitle": "Saved · Dealo Hub",
+    "title": "My saved",
+    "subtitle": "{count} listings in your list",
+    "emptyTitle": "Nothing saved yet",
+    "emptyDescription": "Tap the heart on any listing to save it here.",
+    "browseAction": "Browse categories"
   }
 }

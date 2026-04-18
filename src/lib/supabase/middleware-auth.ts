@@ -47,6 +47,7 @@ export const PROTECTED_PATH_SEGMENTS = [
   '/messages',
   '/profile/edit',
   '/profile/me',
+  '/saved',
   '/sell',
 ] as const;
 

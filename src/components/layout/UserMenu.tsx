@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import * as Dropdown from '@radix-ui/react-dropdown-menu';
-import { ChevronDown, LogOut, Package, Plus, Settings2, User } from 'lucide-react';
+import { ChevronDown, Heart, LogOut, Package, Plus, Settings2, User } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { AvatarDisplay } from '@/components/profile/AvatarDisplay';
 import { signOut } from '@/lib/auth/actions';
@@ -84,6 +84,9 @@ export function UserMenu({ displayName, handle, avatarUrl }: UserMenuProps) {
           </Item>
           <Item href="/my-listings" icon={<Package className="size-4" />}>
             {t('listings')}
+          </Item>
+          <Item href="/saved" icon={<Heart className="size-4" />}>
+            {t('saved')}
           </Item>
           <Item href="/profile/edit" icon={<Settings2 className="size-4" />}>
             {tAuth('editProfile')}
