@@ -98,9 +98,9 @@
   "nav": {
     "home": "Home",
     "listings": "Listings",
-    "sell": "Sell",
+    "sell": "Create listing",
     "messages": "Messages",
-    "profile": "Profile",
+    "profile": "My profile",
     "signIn": "Sign in",
     "signOut": "Sign out",
     "signUp": "Sign up"
@@ -232,7 +232,8 @@
     "myListings": {
       "title": "My listings",
       "signedInAs": "Signed in as {name}.",
-      "placeholder": "Your listings will show here once the listing creation flow ships (BRIEF-004)."
+      "placeholder": "Your listings will show here once the listing creation flow ships (BRIEF-004).",
+      "viewProfile": "View my profile"
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",
@@ -257,6 +258,158 @@
       "signin_failed": "We couldn't sign you in. Please try again.",
       "update_password_failed": "We couldn't update your password. The link may have expired.",
       "phone_auth_not_available": "Phone signup isn't available yet — use email."
+    },
+    "editProfile": "Edit profile"
+  },
+  "profile": {
+    "header": {
+      "noHandleYet": "No handle yet — pick one from Edit profile.",
+      "editProfile": "Edit profile"
+    },
+    "public": {
+      "defaultDescription": "{name} on Dealo Hub — {count, plural, =0{no listings yet} one{# active listing} other{# active listings}}."
+    },
+    "notFound": {
+      "metaTitle": "Profile not found",
+      "title": "This seller doesn’t exist here.",
+      "subtitle": "The handle you followed may have been changed or removed.",
+      "home": "Back to home"
+    },
+    "completion": {
+      "title": "Complete your profile",
+      "subtitle": "Add {missing} so buyers trust you faster.",
+      "cta": "Finish profile",
+      "fields": {
+        "avatar": "avatar",
+        "bio": "bio",
+        "handle": "handle"
+      }
+    },
+    "trust": {
+      "foundingPartner": "Founding partner",
+      "idVerified": "ID verified",
+      "phoneVerified": "Phone verified",
+      "ratingBadge": "{avg} ({count})",
+      "memberSince": "6+ months"
+    },
+    "stats": {
+      "activeListings": "active",
+      "sold": "sold"
+    },
+    "listings": {
+      "title": "Listings",
+      "placeholderTitle": "No listings yet.",
+      "placeholderSubtitle": "The listing creation flow ships soon — check back shortly."
+    },
+    "avatar": {
+      "help": "PNG, JPG or WebP. Up to 2 MB. Square images look best.",
+      "upload": "Upload avatar",
+      "change": "Change avatar",
+      "takePhoto": "Take a photo"
+    },
+    "edit": {
+      "metaTitle": "Edit profile",
+      "title": "Edit profile",
+      "subtitle": "How buyers see you on Dealo Hub.",
+      "avatarHeading": "Avatar",
+      "detailsHeading": "Details",
+      "displayNameLabel": "Display name",
+      "handleLabel": "Handle",
+      "handleHint": "3–20 characters. Lowercase letters, numbers, underscores.",
+      "handleChecking": "Checking availability…",
+      "handleAvailable": "Available.",
+      "bioLabel": "Bio",
+      "bioPlaceholder": "A sentence or two about what you sell.",
+      "bioHint": "Up to 300 characters.",
+      "localeLabel": "Preferred language",
+      "localeOptions": {
+        "ar": "العربية",
+        "en": "English"
+      },
+      "save": "Save changes",
+      "saving": "Saving…",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "not_authenticated": "Please sign in first.",
+      "update_failed": "Couldn’t save your profile — please try again.",
+      "upload_failed": "Avatar upload failed. Try a smaller or different image.",
+      "avatar_too_large": "Avatar must be 2 MB or smaller.",
+      "avatar_invalid_format": "Avatar must be PNG, JPG, or WebP.",
+      "avatar_missing": "Choose an image first.",
+      "name_too_short": "Name must be at least 2 characters.",
+      "name_too_long": "Name is too long.",
+      "bio_too_long": "Bio is too long (300 characters max).",
+      "handle_invalid_format": "Use 3–20 lowercase letters, numbers, or underscores.",
+      "handle_underscore_edges": "Handle can’t start or end with an underscore.",
+      "handle_reserved": "That handle is reserved — try another.",
+      "handle_taken": "That handle is already taken."
+    }
+  },
+  "sell": {
+    "ctaShort": "Sell",
+    "cta": "Start selling",
+    "metaTitle": "Create a listing",
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "publish": "Publish listing"
+    },
+    "steps": {
+      "category": {
+        "metaTitle": "Pick a category",
+        "title": "What are you listing?",
+        "subtitle": "Pick the category that fits best. You can narrow it with a sub-category."
+      },
+      "media": {
+        "metaTitle": "Add photos",
+        "title": "Add your photos",
+        "subtitle": "Upload 5 to 10 clear shots (8 minimum for luxury). First photo is the cover."
+      },
+      "details": {
+        "metaTitle": "Listing details",
+        "title": "Describe what you’re selling",
+        "subtitle": "A good title + an honest description earn trust and sell faster."
+      },
+      "price": {
+        "metaTitle": "Set a price",
+        "title": "How much are you asking?",
+        "subtitle": "Pick a price mode so buyers know whether to negotiate."
+      },
+      "location": {
+        "metaTitle": "Where are you?",
+        "title": "Pickup location",
+        "subtitle": "Buyers will see the general area — never your exact address."
+      },
+      "delivery": {
+        "metaTitle": "Delivery options",
+        "title": "How will you hand it over?",
+        "subtitle": "Pick one or more options that work for you."
+      },
+      "authenticity": {
+        "metaTitle": "Authenticity",
+        "title": "Confirm authenticity",
+        "subtitle": "Luxury listings require a seller guarantee and an inspection video."
+      },
+      "preview": {
+        "metaTitle": "Review and publish",
+        "title": "Looks good?",
+        "subtitle": "Take one last look before your listing goes live."
+      }
+    },
+    "step": {
+      "category": {
+        "continue": "Continue",
+        "saving": "Saving…",
+        "subtitleChoose": "Pick a sub-category in {category}",
+        "subOptional": "Optional — you can skip this."
+      }
+    },
+    "stub": {
+      "title": "Step coming in the next session",
+      "subtitle": "This step of the wizard isn’t wired up yet. The first step (category) is fully functional — return to it below.",
+      "backToCategory": "Back to categories"
     }
   }
 }

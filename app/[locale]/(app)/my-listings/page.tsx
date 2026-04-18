@@ -1,37 +1,40 @@
 import { getTranslations } from 'next-intl/server';
-import { createClient } from '@/lib/supabase/server';
+import { ArrowRight } from 'lucide-react';
+import { Link } from '@/i18n/routing';
+import { Button } from '@/components/ui/Button';
+import { getCurrentProfile } from '@/lib/profile/queries';
 
 /**
- * /my-listings — placeholder page used to prove auth-gated access.
- *
- * Real listings management UI arrives in BRIEF-004. For now we show the
- * signed-in user's email + profile display name as a sanity check.
+ * /my-listings — placeholder page for auth-gated access.
+ * Real listings management UI arrives in BRIEF-004.
  */
 export default async function MyListingsPage({ params }: { params: { locale: string } }) {
   const t = await getTranslations({ locale: params.locale, namespace: 'auth.myListings' });
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const profile = await getCurrentProfile();
 
-  let displayName: string | null = null;
-  if (user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('display_name')
-      .eq('id', user.id)
-      .maybeSingle();
-    displayName = profile?.display_name ?? null;
-  }
+  const profileHref = profile?.handle
+    ? `/profile/${profile.handle}`
+    : profile
+      ? `/profile/u/${profile.id}`
+      : '/profile/me';
 
   return (
     <main className="container py-16">
       <div className="max-w-2xl flex flex-col gap-4">
         <h1 className="text-heading-1 text-charcoal-ink">{t('title')}</h1>
         <p className="text-body text-muted-steel">
-          {t('signedInAs', { name: displayName ?? user?.email ?? '' })}
+          {t('signedInAs', { name: profile?.display_name ?? '' })}
         </p>
         <p className="text-body-small text-muted-steel">{t('placeholder')}</p>
+
+        <div>
+          <Link href={profileHref}>
+            <Button variant="secondary" size="sm">
+              <span>{t('viewProfile')}</span>
+              <ArrowRight className="size-4 rtl:rotate-180" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </main>
   );

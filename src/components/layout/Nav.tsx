@@ -1,9 +1,9 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { LocaleSwitcher } from '@/components/layout/LocaleSwitcher';
-import { SignOutButton } from '@/components/auth/SignOutButton';
+import { UserMenu } from '@/components/layout/UserMenu';
 import { Button } from '@/components/ui/Button';
-import { Sparkles, UserCircle2 } from 'lucide-react';
+import { Plus, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 
 /**
@@ -13,6 +13,7 @@ import { createClient } from '@/lib/supabase/server';
 export async function Nav() {
   const t = await getTranslations('app');
   const tAuth = await getTranslations('auth');
+  const tSell = await getTranslations('sell');
 
   const supabase = createClient();
   const {
@@ -20,13 +21,17 @@ export async function Nav() {
   } = await supabase.auth.getUser();
 
   let displayName: string | null = null;
+  let handle: string | null = null;
+  let avatarUrl: string | null = null;
   if (user) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('display_name')
+      .select('display_name, handle, avatar_url')
       .eq('id', user.id)
       .maybeSingle();
     displayName = profile?.display_name ?? null;
+    handle = profile?.handle ?? null;
+    avatarUrl = profile?.avatar_url ?? null;
   }
 
   return (
@@ -57,27 +62,23 @@ export async function Nav() {
 
         {/* Right side */}
         <div className="flex items-center gap-2">
+          {user && (
+            <Link href="/sell" className="inline-flex">
+              <Button variant="primary" size="sm" className="gap-1.5">
+                <Plus className="size-4" strokeWidth={2.5} />
+                <span>{tSell('ctaShort')}</span>
+              </Button>
+            </Link>
+          )}
+
           <LocaleSwitcher />
 
           {user ? (
-            <div className="flex items-center gap-2">
-              <Link
-                href="/my-listings"
-                className="
-                  hidden sm:inline-flex items-center gap-1.5
-                  h-9 px-3 rounded-md
-                  text-body-small text-charcoal-ink
-                  hover:bg-zinc-100
-                  transition-colors duration-150
-                "
-              >
-                <UserCircle2 className="size-4" />
-                <span className="max-w-[120px] truncate">
-                  {displayName ?? user.email?.split('@')[0]}
-                </span>
-              </Link>
-              <SignOutButton />
-            </div>
+            <UserMenu
+              displayName={displayName ?? user.email?.split('@')[0] ?? ''}
+              handle={handle}
+              avatarUrl={avatarUrl}
+            />
           ) : (
             <div className="flex items-center gap-2">
               <Link href="/signin">

@@ -40,7 +40,15 @@ export async function refreshSession(request: NextRequest, response: NextRespons
 
 // Paths that require authentication (under (app) route group).
 // Checked as substrings against the pathname, e.g., "/ar/my-listings".
-export const PROTECTED_PATH_SEGMENTS = ['/my-listings', '/messages', '/profile', '/sell'] as const;
+// NOTE: `/profile` is NOT blanket-protected — only `/profile/edit` and `/profile/me`.
+// The public viewer routes `/profile/[handle]` and `/profile/u/[uuid]` must stay open.
+export const PROTECTED_PATH_SEGMENTS = [
+  '/my-listings',
+  '/messages',
+  '/profile/edit',
+  '/profile/me',
+  '/sell',
+] as const;
 
 export function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PATH_SEGMENTS.some(seg => pathname.includes(seg));
