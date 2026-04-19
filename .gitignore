@@ -71,3 +71,6 @@ logs/
 
 # Generated types (can be regenerated)
 # src/types/database.ts  ← commit this actually, for type safety
+
+# playwright-mcp dev artifacts
+.playwright-mcp/
