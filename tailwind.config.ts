@@ -6,8 +6,15 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Geist', 'ui-sans-serif', 'system-ui'],
-        calSans: ['Bricolage Grotesque', 'Geist', 'ui-sans-serif', 'system-ui'],
+        sans: ['var(--font-geist-sans)', 'Geist', 'ui-sans-serif', 'system-ui'],
+        calSans: [
+          'var(--font-bricolage)',
+          'Bricolage Grotesque',
+          'var(--font-geist-sans)',
+          'Geist',
+          'ui-sans-serif',
+          'system-ui',
+        ],
       },
       colors: {
         border: 'hsl(var(--border))',

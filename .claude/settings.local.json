@@ -111,7 +111,10 @@
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/en)",
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/ar)",
       "Bash(curl -s http://localhost:3000/ar)",
-      "Bash(curl -s http://localhost:3000/en)"
+      "Bash(curl -s http://localhost:3000/en)",
+      "Bash(node -e \"const g = require\\('next/font/google'\\); console.log\\(Object.keys\\(g\\).filter\\(k => k.toLowerCase\\(\\).includes\\('geist'\\) || k.toLowerCase\\(\\).includes\\('bricolage'\\)\\)\\)\")",
+      "Bash(node -e \"const g = require\\('next/font/google'\\); console.log\\(Object.keys\\(g\\).filter\\(k => k.toLowerCase\\(\\).startsWith\\('b'\\)\\).sort\\(\\)\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/en)"
     ]
   },
   "enableAllProjectMcpServers": true,

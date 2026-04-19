@@ -1,8 +1,17 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { Bricolage_Grotesque } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
 import { ThemeProvider } from 'next-themes';
 import { routing, type Locale } from '@/i18n/routing';
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-bricolage',
+  display: 'swap',
+});
 
 export default async function LocaleLayout({
   children,
@@ -19,19 +28,12 @@ export default async function LocaleLayout({
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={dir} className="dark" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html
+      lang={locale}
+      dir={dir}
+      className={`${GeistSans.variable} ${bricolage.variable} dark`}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <NextIntlClientProvider locale={locale} messages={messages}>
