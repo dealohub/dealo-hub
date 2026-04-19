@@ -103,7 +103,15 @@
       "mcp__plugin_playwright_playwright__browser_navigate",
       "mcp__plugin_playwright_playwright__browser_take_screenshot",
       "mcp__plugin_playwright_playwright__browser_evaluate",
-      "Bash(grep -E \"playwright-mcp|\\\\.png$|briefs\" .gitignore)"
+      "Bash(grep -E \"playwright-mcp|\\\\.png$|briefs\" .gitignore)",
+      "Bash(curl -s -o /dev/null -w '__TRACKED_VAR__|%{http_code}\\\\n' https://www.shadcnblocks.com/block/background-pattern__TRACKED_VAR__)",
+      "WebFetch(domain:api.anthropic.com)",
+      "Bash(npx tsc *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} redirect=%{redirect_url}\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/en)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/ar)",
+      "Bash(curl -s http://localhost:3000/ar)",
+      "Bash(curl -s http://localhost:3000/en)"
     ]
   },
   "enableAllProjectMcpServers": true,

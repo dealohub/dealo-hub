@@ -1,0 +1,136 @@
+/**
+ * Feature 283 — "Built by and for Developers"
+ * Center: heading + subheading + CTA. 6 images scattered absolutely around the
+ * center column. Each image: drag + scroll-in + hover (others blur, self scale).
+ * framer-motion owns transforms, so each card is wrapped in a static positioning
+ * <div> that carries the absolute+translate classes.
+ */
+const Feature283 = ({ className = "" }) => {
+  const { motion } = window.Motion;
+  const { Forward, Search } = window;
+  const { useState } = React;
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [activeCat, setActiveCat] = useState("All");
+  const categories = ["All", "Motors", "Jobs", "Classifieds", "Property", "New Projects", "Community"];
+
+  const DealoSearchInline = () => (
+    <div className="relative z-10 mt-10 w-full max-w-lg">
+      {/* Row 1 — category pills */}
+      <div className="flex flex-nowrap items-center gap-x-3 overflow-x-auto whitespace-nowrap text-[11px] font-medium [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <span className="font-semibold text-foreground">Searching in</span>
+        {categories.map((cat) => {
+          const isActive = activeCat === cat;
+          return (
+            <button
+              key={cat}
+              onClick={() => setActiveCat(cat)}
+              className={
+                "whitespace-nowrap rounded-full transition " +
+                (isActive
+                  ? "bg-[#e30613] px-2.5 py-0.5 text-white shadow"
+                  : "px-1 py-0.5 text-foreground/80 hover:text-foreground")
+              }
+            >
+              {cat}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Row 2 — input + Search CTA */}
+      <div className="mt-2.5 flex items-stretch gap-2">
+        <div className="relative flex h-9 flex-1 items-center rounded-md bg-white px-3 shadow">
+          <input
+            type="text"
+            placeholder="Search for anything"
+            className="h-full w-full border-0 bg-transparent pr-7 text-xs text-neutral-900 placeholder:text-neutral-500 outline-none focus:outline-none"
+          />
+          <Search size={14} className="absolute right-3 text-neutral-500" />
+        </div>
+        <button className="inline-flex h-9 items-center justify-center rounded-md bg-[#e30613] px-4 text-xs font-semibold text-white shadow transition hover:bg-[#c80510]">
+          Search
+        </button>
+      </div>
+    </div>
+  );
+
+  const images = [
+    {
+      src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=800&auto=format&fit=crop",
+      wrap: "w-40 h-52 absolute -left-10 top-1/2 -translate-x-full -translate-y-1/2",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
+      wrap: "size-28 absolute -top-3 left-10 -translate-x-full -translate-y-full",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop",
+      wrap: "size-32 absolute -bottom-3 left-10 -translate-x-full translate-y-full",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800&auto=format&fit=crop",
+      wrap: "w-44 h-52 absolute -right-10 top-1/2 -translate-y-1/2 translate-x-full",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=800&auto=format&fit=crop",
+      wrap: "size-28 absolute -top-3 right-10 -translate-y-full translate-x-full",
+    },
+    {
+      src: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?q=80&w=800&auto=format&fit=crop",
+      wrap: "size-32 absolute -bottom-3 right-10 translate-x-full translate-y-full",
+    },
+  ];
+
+  return (
+    <section className={"flex min-h-[calc(100vh-3.5rem)] items-center overflow-hidden py-16 " + className}>
+      <div className="container mx-auto flex h-full w-full max-w-7xl flex-col items-center justify-center px-4">
+        <div className="relative flex w-full max-w-lg flex-col items-center justify-center">
+          <h2 className="relative py-2 text-center font-sans text-4xl font-semibold tracking-tighter md:text-5xl">
+            Built by and for Developers
+          </h2>
+          <p className="mx-auto mt-2 max-w-xl px-5 text-center text-sm text-muted-foreground/50 md:text-base">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem
+            suscipit dolor blanditiis voluptatum minus est labore amet
+            necessitatibus quod distinctio! ipsum dolor sit
+          </p>
+          <DealoSearchInline />
+
+          {images.map((image, index) => (
+            <div key={index} className={image.wrap}>
+              <motion.div
+                drag
+                initial={{ y: "50%", opacity: 0, scale: 0.8 }}
+                whileInView={{ y: 0, opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 0.2,
+                  ease: "easeOut",
+                  delay: index * 0.1 + 0.5,
+                }}
+                animate={{
+                  filter:
+                    hoveredIndex !== null && hoveredIndex !== index
+                      ? "blur(10px)"
+                      : "blur(0px)",
+                  scale: hoveredIndex === index ? 1.05 : 1,
+                  transition: { duration: 0.3, ease: "easeOut", delay: 0 },
+                }}
+                onHoverStart={() => setHoveredIndex(index)}
+                onHoverEnd={() => setHoveredIndex(null)}
+                className="size-full overflow-hidden rounded-2xl cursor-grab active:cursor-grabbing"
+              >
+                <img
+                  src={image.src}
+                  alt=""
+                  className="pointer-events-none size-full object-cover"
+                />
+              </motion.div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+Object.assign(window, { Feature283 });

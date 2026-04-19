@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>BackgroundPattern115 + EcommerceNavbar1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Geist','ui-sans-serif','system-ui'],
+          calSans: ['Bricolage Grotesque','Geist','ui-sans-serif','system-ui'],
+        },
+        colors: {
+          border: 'hsl(var(--border))',
+          input: 'hsl(var(--input))',
+          ring: 'hsl(var(--ring))',
+          background: 'hsl(var(--background))',
+          foreground: 'hsl(var(--foreground))',
+          primary: { DEFAULT: 'var(--primary)', foreground: 'hsl(var(--primary-foreground))' },
+          popover: { DEFAULT: 'hsl(var(--popover))', foreground: 'hsl(var(--popover-foreground))' },
+          muted:   { DEFAULT: 'hsl(var(--muted))',   foreground: 'hsl(var(--muted-foreground))' },
+        },
+        borderRadius: { lg: 'var(--radius)', md: 'calc(var(--radius) - 2px)', sm: 'calc(var(--radius) - 4px)' },
+      },
+    },
+  };
+</script>
+<style>
+  /* shadcn CSS vars */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 9%;
+    --muted: 240 6% 96%;
+    --muted-foreground: 240 4% 46%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 9%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 240 10% 9%;
+    --primary: oklch(0.58 0.19 274);
+    --primary-foreground: 0 0% 100%;
+    --radius: 0.625rem;
+  }
+  html.dark {
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+    --muted: 240 6% 10%;
+    --muted-foreground: 240 5% 65%;
+    --popover: 240 10% 6%;
+    --popover-foreground: 0 0% 98%;
+    --border: 240 6% 14%;
+    --input: 240 6% 14%;
+    --ring: 240 5% 65%;
+  }
+  html, body { font-family: 'Geist', ui-sans-serif, system-ui, sans-serif; background: hsl(var(--background)); color: hsl(var(--foreground)); }
+  body { -webkit-font-smoothing: antialiased; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/framer-motion@11.11.17/dist/framer-motion.js"></script>
+<script>window.Motion = window.Motion || window.FramerMotion || window.framerMotion;</script>
+
+<script type="text/babel" src="components/icons.jsx"></script>
+<script type="text/babel" src="components/background-pattern.jsx"></script>
+<script type="text/babel" src="components/ecommerce-navbar-1.jsx"></script>
+<script type="text/babel" src="components/feature-283.jsx"></script>
+<script type="text/babel" src="components/featured-brands.jsx"></script>
+<script type="text/babel" src="components/live-feed-parts.jsx"></script>
+<script type="text/babel" src="components/live-feed.jsx"></script>
+
+<script type="text/babel">
+  const App = () => (
+    <>
+      <window.EcommerceNavbar1 />
+      <window.Feature283 />
+      <window.FeaturedBrandsStrip />
+      <window.LiveFeed />
+      <window.BackgroundPattern115 />
+    </>
+  );
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+
+</body>
+</html>
