@@ -6,6 +6,7 @@ import FeaturedBrandsStrip from '@/components/shadcnblocks/featured-brands-strip
 import LiveFeed from '@/components/shadcnblocks/live-feed';
 import BackgroundPattern115 from '@/components/shadcnblocks/background-pattern-115';
 import ThemeToggle from '@/components/theme-toggle';
+import LocaleToggle from '@/components/locale-toggle';
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <LiveFeed />
       <BackgroundPattern115 />
       <ThemeToggle />
+      <LocaleToggle />
     </>
   );
 }
