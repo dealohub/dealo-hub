@@ -12,16 +12,8 @@ export default function HomePage() {
     <>
       <EcommerceNavbar1 />
       <Feature283 />
-      {/*
-        FeaturedBrandsStrip + LiveFeed are authored dark-only in the handoff
-        (hardcoded text-white / bg-white/X classes). We scope them to a .dark
-        subtree so they always render in dark mode, regardless of the root
-        theme. Nav + hero + pattern remain theme-responsive.
-      */}
-      <div className="dark bg-background text-foreground">
-        <FeaturedBrandsStrip />
-        <LiveFeed />
-      </div>
+      <FeaturedBrandsStrip />
+      <LiveFeed />
       <BackgroundPattern115 />
       <ThemeToggle />
     </>

@@ -21,19 +21,19 @@ export const FeaturedBrandsStrip = () => {
   const loop = [...brands, ...brands];
 
   return (
-    <section className="relative w-full border-y border-white/5 bg-background">
+    <section className="relative w-full border-y border-foreground/10 bg-background">
       <div className="mx-auto max-w-7xl px-6 py-10">
         {/* Label row */}
         <div className="mb-6 flex items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <span className="h-px w-8 bg-white/20" />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60">
+            <span className="h-px w-8 bg-foreground/20" />
+            <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/60">
               Trusted by leading brands
             </span>
           </div>
           <a
             href="#"
-            className="hidden text-xs font-medium text-white/50 transition hover:text-white md:inline-flex items-center gap-1"
+            className="hidden text-xs font-medium text-foreground/50 transition hover:text-foreground md:inline-flex items-center gap-1"
           >
             Browse all dealers
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -54,12 +54,12 @@ export const FeaturedBrandsStrip = () => {
                 <img
                   src={b.url}
                   alt={b.name}
-                  className="h-8 w-auto max-w-[110px] object-contain"
+                  className="h-8 w-auto max-w-[110px] object-contain invert dark:invert-0"
                   onError={(e) => {
                     const el = e.currentTarget;
                     el.style.display = 'none';
                     if (el.parentElement) {
-                      el.parentElement.innerHTML = `<span class='text-sm font-semibold tracking-wide text-white/70'>${b.name}</span>`;
+                      el.parentElement.innerHTML = `<span class='text-sm font-semibold tracking-wide text-foreground/70'>${b.name}</span>`;
                     }
                   }}
                 />
