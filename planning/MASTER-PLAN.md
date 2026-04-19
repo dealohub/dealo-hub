@@ -710,12 +710,11 @@ Policy example: active listings visible only if country_code IN (active countrie
 - [ ] Social accounts reserved (Instagram, Twitter/X, TikTok: @dealohub)
 - [ ] libphonenumber-js integration in auth flow
 - [ ] Write first "Why Dealo Hub" blog post للـ SEO seed
-- [x] ~~**Dubizzle Kuwait manual audit** — capture screenshots~~ ✅ **Done 2026-04-18**
-  - [x] Homepage + category page + listing detail (iPhone + Rolex) + mobile view — 9 screenshots in `design/references/dubizzle/`
+- [x] ~~**Dubizzle Kuwait manual audit** — capture screenshots~~ ✅ **Done 2026-04-18** (raw materials removed 2026-04-19; findings integrated)
+  - [x] Homepage + category page + listing detail (iPhone + Rolex) + mobile view
   - [ ] ~~Chat flow as buyer~~ — login-gated, deferred
-  - [ ] ~~"Sell with AI" flow~~ — UAE flagship Imperva-blocked; KW has no such feature (see audit §3)
+  - [ ] ~~"Sell with AI" flow~~ — UAE flagship Imperva-blocked; KW has no such feature
   - [ ] ~~Featured listings pricing~~ — login-gated, deferred
-  - ✅ Full audit notes: [`design/references/dubizzle/audit-notes.md`](../design/references/dubizzle/audit-notes.md)
   - ✅ Strategy doc updates: `COMPETITOR-DUBIZZLE.md` v1.1 + `EXECUTIVE-SUMMARY.md` v2.1 + `LAUNCH-STRATEGY.md` v1.3
 - [ ] **Draft fraud detection prompt library** (10+ Kuwait scam examples collected)
 
@@ -819,7 +818,7 @@ Policy example: active listings visible only if country_code IN (active countrie
 | 2026-04-18 | 1.0 | Initial master plan created | Fawzi + Claude |
 | 2026-04-18 | 1.1 | Categories finalized (luxury + home fitness) · Price modes finalized (3 modes) · Listing lifecycle (manual renew + archive) · GCC-ready architecture · Defensive domains · Plan B + Shop Playbook added | Fawzi + Claude |
 | 2026-04-18 | 1.2 | **Dubizzle competitive analysis** added (see COMPETITOR-DUBIZZLE.md). **AI features integrated:** V1 AI Fraud Detection + Semantic Search + Photo-to-Listing Minimal + Telemetry Infrastructure. Sprint 5 rebalanced (luxury auth UI → Sprint 6). Pre-launch AI quality gates added (Week 11-12). Budget updated: AI costs $25-55/mo launch, $400-800 Year 1 total. Week 1 actions: OpenAI + Vision + pgvector setup + Dubizzle manual audit. | Fawzi + Claude |
-| 2026-04-18 | 1.3 | **Post live-audit refinement** (Task #10 complete). Dubizzle Kuwait audit: 9 screenshots + notes in `design/references/dubizzle/`. Three strategic adjustments cascaded to `COMPETITOR-DUBIZZLE.md` v1.1, `EXECUTIVE-SUMMARY.md` v2.1, `LAUNCH-STRATEGY.md` v1.3: (1) phone-moat reframed as behavioral not technical (sellers embed phone in titles); (2) "Sell with AI" confirmed UAE/KSA-only, Kuwait first-mover window for Dealo Hub Photo-to-Listing; (3) luxury counterfeit evidence strengthened (live "Rolex 1st copy @ KWD 22" on Dubizzle KW). **Two new Sprint 2 filters** added to scope: phone-in-title hard reject (Filter A) + luxury counterfeit term reject (Filter B) — both <1d engineering, Day-1 differentiators. Week 1 `Dubizzle manual audit` checklist marked done with scope notes. | Fawzi + Claude |
+| 2026-04-18 | 1.3 | **Post live-audit refinement** (Task #10 complete). Dubizzle Kuwait audit completed; findings integrated (raw materials removed 2026-04-19). Three strategic adjustments cascaded to `COMPETITOR-DUBIZZLE.md` v1.1, `EXECUTIVE-SUMMARY.md` v2.1, `LAUNCH-STRATEGY.md` v1.3: (1) phone-moat reframed as behavioral not technical (sellers embed phone in titles); (2) "Sell with AI" confirmed UAE/KSA-only, Kuwait first-mover window for Dealo Hub Photo-to-Listing; (3) luxury counterfeit evidence strengthened (live "Rolex 1st copy @ KWD 22" on Dubizzle KW). **Two new Sprint 2 filters** added to scope: phone-in-title hard reject (Filter A) + luxury counterfeit term reject (Filter B) — both <1d engineering, Day-1 differentiators. Week 1 `Dubizzle manual audit` checklist marked done with scope notes. | Fawzi + Claude |
 
 ---
 

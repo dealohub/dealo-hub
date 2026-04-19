@@ -5,7 +5,7 @@
 **Analyst:** Fawzi + Claude planning session
 **Confidence Level:** High (based on verified public data + product audit)
 **Strategic Priority:** 🔴 P0 — This is the primary threat and the primary reference model
-**Version:** 1.1 · Updated post live audit (2026-04-18) — see [design/references/dubizzle/audit-notes.md](../design/references/dubizzle/audit-notes.md)
+**Version:** 1.1 · Updated post live audit (2026-04-18)
 
 ---
 
@@ -266,7 +266,7 @@ Dubizzle markets having 70 internal AI models. Reality check:
 - No video unboxing requirement
 - No authentication signals
 - No curation
-- **Direct evidence (live audit 2026-04-18):** A listing titled `"ROLEX watch"` in the Jewelry & Watches category was priced at **KWD 22** with the description *"rolex submariner fully automatic 1st copy."* — i.e., an openly admitted counterfeit, published, no moderation flag, 1 photo total, seller anonymous. Real Rolex Submariner MSRP >$10K USD. The authenticity gap is not theoretical; it is the default state of the category. See [audit screenshot `06-luxury-rolex-listing.png`](../design/references/dubizzle/06-luxury-rolex-listing.png).
+- **Direct evidence (live audit 2026-04-18):** A listing titled `"ROLEX watch"` in the Jewelry & Watches category was priced at **KWD 22** with the description *"rolex submariner fully automatic 1st copy."* — i.e., an openly admitted counterfeit, published, no moderation flag, 1 photo total, seller anonymous. Real Rolex Submariner MSRP >$10K USD. The authenticity gap is not theoretical; it is the default state of the category.
 - **Our play:** Luxury as a P0 category with video-mandatory + stacked trust signals + **hard submit block on "1st copy" / "replica" / "مستنسخ" / "تقليد" / "master copy"** (Sprint 2 filter, see §12).
 - **Market size:** Kuwait pre-loved luxury market estimated $200M+ annually — currently fragmented on Instagram and informal WhatsApp groups. The live audit strengthens this estimate: the fact that Instagram/WhatsApp dominate is *because* the public marketplace has been ceded to counterfeits. Real-goods sellers have nowhere to go. This is supply waiting for distribution.
 
@@ -488,7 +488,7 @@ AI features change cost structure. Updated monthly burn estimate:
 - [ ] Create AI-FEATURES.md spec
 
 ### Week 1 (When Implementation Starts)
-- [x] ~~Audit Dubizzle's Kuwait luxury listings (5-10 manual samples)~~ ✅ Done 2026-04-18 → [audit-notes.md](../design/references/dubizzle/audit-notes.md)
+- [x] ~~Audit Dubizzle's Kuwait luxury listings (5-10 manual samples)~~ ✅ Done 2026-04-18 (raw audit materials removed 2026-04-19; findings integrated throughout this doc)
 - [ ] Audit Dubizzle's chat flow (sign up as buyer, try to contact seller) — **login-gated, deferred**
 - [x] ~~Capture screenshots of their "Sell with AI" flow~~ ❌ **Blocked:** UAE flagship is Imperva-gated; KW has no such feature. Retained speculative description from public demos above.
 - [ ] Note their pricing tiers for Featured listings (specific KWD amounts) — **login-gated, deferred**
@@ -519,8 +519,6 @@ AI features change cost structure. Updated monthly burn estimate:
 - Seller profile page
 - Chat/messaging UI
 - Search results with filters
-
-Store in: `design/references/dubizzle/` (don't commit if copyrighted)
 
 ---
 
@@ -588,7 +586,7 @@ Two server-side validators that must ship with the listing submit form in Sprint
 | Date | Version | Change | Author |
 |---|---|---|---|
 | 2026-04-18 | 1.0 | Initial comprehensive competitor analysis | Fawzi + Claude |
-| 2026-04-18 | 1.1 | **Post live-audit update.** (1) Phone-visibility moat reframed as behavioral/cultural, not technical — sellers bypass via phone-in-title even if default is hidden. (2) "Sell with AI" scope corrected to UAE/KSA only; Kuwait is first-mover window. (3) Luxury weakness strengthened with direct Rolex "1st copy" evidence. (4) New §12 Sprint 2 filters: phone-in-title hard reject + counterfeit term reject. Audit trail: [design/references/dubizzle/audit-notes.md](../design/references/dubizzle/audit-notes.md) + screenshots. | Fawzi + Claude |
+| 2026-04-18 | 1.1 | **Post live-audit update.** (1) Phone-visibility moat reframed as behavioral/cultural, not technical — sellers bypass via phone-in-title even if default is hidden. (2) "Sell with AI" scope corrected to UAE/KSA only; Kuwait is first-mover window. (3) Luxury weakness strengthened with direct Rolex "1st copy" evidence. (4) New §12 Sprint 2 filters: phone-in-title hard reject + counterfeit term reject. | Fawzi + Claude |
 
 ---
 

@@ -129,7 +129,7 @@ Solo + AI-augmented (Cursor/Claude = 2-3x speed). **GCC-ready schema من V1** (
 |---|---|---|
 | 2026-04-18 | 1.0 | Initial exec summary (8 decisions, OpenSooq focus) |
 | 2026-04-18 | 2.0 | **Dubizzle integration + AI decisions (6-9).** Updated positioning to "AI-Protected Marketplace with Human-Written Listings". Decisions table expanded to 9 locked + architectural. Updated top 10 points to reflect competitive framing + AI strategy. |
-| 2026-04-18 | 2.1 | **Post live-audit updates.** (1) Point 4 phone-moat reframed: behavioral moat, not technical — added submit-time filter as the real differentiator. (2) Point 9 AI strategy: noted "Sell with AI" is UAE/KSA only, Kuwait first-mover window of months. See `COMPETITOR-DUBIZZLE.md` v1.1 + `design/references/dubizzle/audit-notes.md`. |
+| 2026-04-18 | 2.1 | **Post live-audit updates.** (1) Point 4 phone-moat reframed: behavioral moat, not technical — added submit-time filter as the real differentiator. (2) Point 9 AI strategy: noted "Sell with AI" is UAE/KSA only, Kuwait first-mover window of months. See `COMPETITOR-DUBIZZLE.md` v1.1. |
 
 ---
 *Full plan: `MASTER-PLAN.md` · Decisions: `DECISIONS.md` · Launch tactics: `LAUNCH-STRATEGY.md` · AI spec: `../design/AI-FEATURES.md` · Competitor: `COMPETITOR-DUBIZZLE.md`*
