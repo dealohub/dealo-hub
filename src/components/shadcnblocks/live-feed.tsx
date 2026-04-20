@@ -84,22 +84,16 @@ const LiveFeed = () => {
     <section className="relative w-full bg-background">
       <LiveStatusBar feed={feed} />
 
-      <div className="mx-auto max-w-7xl px-6 py-10">
+      <div className="mx-auto max-w-4xl px-6 py-10">
         <FeedHeader />
         <FilterPills value={filter} onChange={setFilter} />
 
-        {/* 2-column grid on lg+ — keeps each card narrow enough that
-            the circular image, content, and price column feel
-            balanced instead of stretched. Signal rows span full width. */}
-        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {/* Single-column stack — the circular card reads best one per row. */}
+        <div className="mt-6 space-y-3">
           <AnimatePresence initial={false}>
             {visible.map((item) => {
               if (item.kind === 'signal')
-                return (
-                  <div key={item.id} className="lg:col-span-2">
-                    <SignalRow item={item as SignalItem} />
-                  </div>
-                );
+                return <SignalRow key={item.id} item={item as SignalItem} />;
               if (item.kind === 'pricedrop')
                 return <ListingCard key={item.id} item={item as ListingItem} priceDrop />;
               return <ListingCard key={item.id} item={item as ListingItem} />;
