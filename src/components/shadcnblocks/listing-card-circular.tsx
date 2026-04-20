@@ -102,17 +102,18 @@ export const ListingCardCircular = ({ item, priceDrop = false }: Props) => {
           )}
         </div>
 
-        {/* Floating badge attached to image edge */}
+        {/* Corner chip — rides the outer ring's top-end quadrant,
+            no longer pinched below the circle. */}
         {(priceDrop || item.featured) && (
           <span
             className={
-              'absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider shadow-lg ' +
+              'absolute -top-1 end-[-8px] z-10 inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider shadow-md ring-2 ring-background ' +
               (priceDrop
                 ? 'bg-[#e30613] text-white shadow-[#e30613]/30'
-                : 'bg-[#C9A86A] text-[#1a1306]')
+                : 'bg-[#C9A86A] text-[#1a1306] shadow-[#C9A86A]/30')
             }
           >
-            {priceDrop ? `${Math.abs(item.drop ?? 0)}% OFF` : '◆ Featured'}
+            {priceDrop ? `-${Math.abs(item.drop ?? 0)}%` : '◆ Featured'}
           </span>
         )}
       </div>
