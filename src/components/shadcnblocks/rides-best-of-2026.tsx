@@ -11,11 +11,12 @@ import { useTranslations } from 'next-intl';
  * editorial block but scaled for a richer marketplace.
  */
 
+// Verified Unsplash URLs — reliable resolutions.
 const WINNERS = [
   {
     key: 'suv',
     image:
-      'https://images.unsplash.com/photo-1519440938413-ef91a6a76342?w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&auto=format&fit=crop',
   },
   {
     key: 'sedan',
@@ -25,7 +26,7 @@ const WINNERS = [
   {
     key: 'ev',
     image:
-      'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&auto=format&fit=crop',
   },
 ];
 

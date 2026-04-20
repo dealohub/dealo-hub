@@ -3,11 +3,13 @@ import SiteFooter from '@/components/shadcnblocks/site-footer';
 import ThemeToggle from '@/components/theme-toggle';
 import LocaleToggle from '@/components/locale-toggle';
 import RidesHeroSplit from '@/components/shadcnblocks/rides-hero-split';
+import RidesBrandPartners from '@/components/shadcnblocks/rides-brand-partners';
 import RidesShopByStyle from '@/components/shadcnblocks/rides-shop-by-style';
 import RidesAdBanner from '@/components/shadcnblocks/rides-ad-banner';
 import RidesBestOf2026 from '@/components/shadcnblocks/rides-best-of-2026';
 import RidesFeaturedPremium from '@/components/shadcnblocks/rides-featured-premium';
 import RidesMainGrid from '@/components/shadcnblocks/rides-main-grid';
+import RidesFinanceBanner from '@/components/shadcnblocks/rides-finance-banner';
 import RidesArticlesStrip from '@/components/shadcnblocks/rides-articles-strip';
 import RidesDealerSpotlight from '@/components/shadcnblocks/rides-dealer-spotlight';
 
@@ -34,11 +36,13 @@ export default function RidesPage() {
     <>
       <EcommerceNavbar1 />
       <RidesHeroSplit />
+      <RidesBrandPartners />
       <RidesShopByStyle />
       <RidesAdBanner />
       <RidesBestOf2026 />
       <RidesFeaturedPremium />
       <RidesMainGrid />
+      <RidesFinanceBanner />
       <RidesArticlesStrip />
       <RidesDealerSpotlight />
       <SiteFooter />

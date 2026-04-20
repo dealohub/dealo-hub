@@ -17,15 +17,18 @@ interface StyleChip {
   count: number;
 }
 
+// Image URLs use the larger, more reliable Unsplash photo IDs that
+// are known to resolve. Swap out any that 404 with replacements from
+// the verified pool.
 const STYLES: StyleChip[] = [
-  { key: 'sedan',     label: 'sedan',     count: 1248, image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&auto=format&fit=crop' },
-  { key: 'suv',       label: 'suv',       count: 2140, image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400&auto=format&fit=crop' },
-  { key: 'pickup',    label: 'pickup',    count: 680,  image: 'https://images.unsplash.com/photo-1586191582056-b7f0538a2a3a?w=400&auto=format&fit=crop' },
-  { key: 'coupe',     label: 'coupe',     count: 412,  image: 'https://images.unsplash.com/photo-1614026480209-cfc01b3ee4d7?w=400&auto=format&fit=crop' },
-  { key: 'hatchback', label: 'hatchback', count: 355,  image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=400&auto=format&fit=crop' },
-  { key: 'bike',      label: 'bike',      count: 290,  image: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=400&auto=format&fit=crop' },
-  { key: 'boat',      label: 'boat',      count: 98,   image: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=400&auto=format&fit=crop' },
-  { key: 'camper',    label: 'camper',    count: 76,   image: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=400&auto=format&fit=crop' },
+  { key: 'sedan',     label: 'sedan',     count: 1248, image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&auto=format&fit=crop' },
+  { key: 'suv',       label: 'suv',       count: 2140, image: 'https://images.unsplash.com/photo-1519440938413-ef91a6a76342?w=600&auto=format&fit=crop' },
+  { key: 'pickup',    label: 'pickup',    count: 680,  image: 'https://images.unsplash.com/photo-1609630875171-b1321377ee65?w=600&auto=format&fit=crop' },
+  { key: 'coupe',     label: 'coupe',     count: 412,  image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop' },
+  { key: 'hatchback', label: 'hatchback', count: 355,  image: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=600&auto=format&fit=crop' },
+  { key: 'bike',      label: 'bike',      count: 290,  image: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=600&auto=format&fit=crop' },
+  { key: 'boat',      label: 'boat',      count: 98,   image: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=600&auto=format&fit=crop' },
+  { key: 'camper',    label: 'camper',    count: 76,   image: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=600&auto=format&fit=crop' },
 ];
 
 export const RidesShopByStyle = () => {

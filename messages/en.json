@@ -1023,6 +1023,34 @@
       "empty": {
         "title": "No rides match your filters yet",
         "subtitle": "Try widening the price range, clearing a filter, or switching sub-type above."
+      },
+      "brands": {
+        "eyebrow": "Partner brands across the Gulf",
+        "browseAll": "Browse all brands"
+      },
+      "finance": {
+        "sponsored": "Sponsored · NBK Finance",
+        "pitch": "Finance your next ride with 0% APR for qualified buyers. Apply in 3 minutes, approval in hours, not days.",
+        "pillar1": "No hidden fees",
+        "pillar2": "Flexible 1-7 year terms",
+        "pillar3": "Instant pre-approval",
+        "calcEyebrow": "Quick calculator",
+        "calcTag": "Estimate",
+        "fieldPrice": "Price",
+        "fieldDown": "Down",
+        "fieldTerm": "Term",
+        "fieldApr": "APR",
+        "monthly": "Monthly payment",
+        "cta": "Get pre-approved",
+        "disclosure": "Paid placement by",
+        "disclosureTail": "Estimate only. Final terms subject to approval."
+      },
+      "sponsoredCard": {
+        "sponsored": "Sponsored",
+        "dealer": "Verified dealer",
+        "headline": "Drive home today. 0% APR for 60 months on certified pre-owned.",
+        "body": "AL-Futtaim Motors is running year-end clearance. 200+ vehicles inspected and ready for handover.",
+        "cta": "See the offer"
       }
     }
   }

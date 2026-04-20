@@ -1,8 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { ChevronDown, LayoutGrid, List } from 'lucide-react';
+import { useMemo, useState, Fragment } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronDown, LayoutGrid, List, ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ListingCardRides } from './listing-card-rides';
 import {
@@ -114,8 +114,12 @@ export const RidesMainGrid = () => {
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               <AnimatePresence initial={false}>
-                {visible.map((item) => (
-                  <ListingCardRides key={item.id} item={item} />
+                {visible.map((item, idx) => (
+                  <Fragment key={item.id}>
+                    <ListingCardRides item={item} />
+                    {/* Drop a sponsored card after every 7 real listings */}
+                    {idx > 0 && (idx + 1) % 7 === 0 && <SponsoredCard />}
+                  </Fragment>
                 ))}
               </AnimatePresence>
             </div>
@@ -223,6 +227,51 @@ const Chip = ({
     {children}
   </button>
 );
+
+const SponsoredCard = () => {
+  const t = useTranslations('marketplace.rides.sponsoredCard');
+  return (
+    <motion.article
+      initial={{ y: 12, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }}
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-dashed border-[#C9A86A]/40 bg-gradient-to-br from-[#C9A86A]/[0.05] via-transparent to-transparent p-5 shadow-sm transition-all duration-300 hover:border-[#C9A86A]/70 hover:shadow-lg"
+    >
+      <div className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full border border-[#C9A86A]/50 bg-[#C9A86A]/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.18em] text-[#C9A86A]">
+        {t('sponsored')}
+      </div>
+
+      <div className="mt-4 flex items-center gap-3">
+        <div className="grid size-12 place-items-center rounded-xl bg-[#C9A86A]/15 text-[14px] font-extrabold tracking-tight text-[#C9A86A]">
+          AL
+        </div>
+        <div className="min-w-0">
+          <p className="text-[13px] font-semibold text-foreground">AL-Futtaim Motors</p>
+          <p className="text-[10px] uppercase tracking-wider text-foreground/45">
+            {t('dealer')}
+          </p>
+        </div>
+      </div>
+
+      <p className="mt-4 line-clamp-2 text-[14px] font-semibold leading-snug text-foreground">
+        {t('headline')}
+      </p>
+      <p className="mt-2 line-clamp-2 text-[12px] leading-relaxed text-foreground/55">
+        {t('body')}
+      </p>
+
+      <div className="mt-auto pt-5">
+        <a
+          href="#"
+          className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-foreground py-2.5 text-[12px] font-semibold text-background transition hover:bg-foreground/90"
+        >
+          {t('cta')}
+          <ArrowRight size={12} className="rtl:rotate-180" />
+        </a>
+      </div>
+    </motion.article>
+  );
+};
 
 const EmptyState = () => {
   const t = useTranslations('marketplace.rides.empty');

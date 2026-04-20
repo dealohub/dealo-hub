@@ -132,7 +132,9 @@
       "Bash(curl -s -o /dev/null -w \"/ar/rides → %{http_code}\\\\n\" http://localhost:3000/ar/rides)",
       "Bash(curl -s http://localhost:3000/ar/rides)",
       "Bash(node scripts/update-rides-messages.mjs)",
-      "Bash(rm scripts/update-rides-messages.mjs)"
+      "Bash(rm scripts/update-rides-messages.mjs)",
+      "Bash(node scripts/add-rides-extras.mjs)",
+      "Bash(rm scripts/add-rides-extras.mjs)"
     ]
   },
   "enableAllProjectMcpServers": true,
