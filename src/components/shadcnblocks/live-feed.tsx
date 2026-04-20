@@ -6,7 +6,6 @@ import {
   LiveStatusBar,
   FeedHeader,
   FilterPills,
-  ListingCard,
   SignalRow,
   Sidebar,
   type ListingItem,
@@ -14,6 +13,9 @@ import {
   type FeedItem,
   type CategoryKey,
 } from './live-feed-parts';
+// Option A (editorial): swap the import below back to `ListingCard`
+// from './live-feed-parts' to revert to the original side-by-side card.
+import { ListingCardEditorial as ListingCard } from './listing-card-editorial';
 import { SEED_LISTINGS, SEED_PRICE_DROPS, ACTIVITY_SIGNALS } from './listings-data';
 
 /* LiveFeed — real-time marketplace activity feed */
@@ -85,10 +87,19 @@ const LiveFeed = () => {
             <FeedHeader />
             <FilterPills value={filter} onChange={setFilter} />
 
-            <div className="mt-6 space-y-3">
+            {/*
+              Editorial grid: 2 cards per row on md+. Signal rows span
+              the full grid width so they still read as dividers.
+            */}
+            <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
               <AnimatePresence initial={false}>
                 {visible.map((item) => {
-                  if (item.kind === 'signal') return <SignalRow key={item.id} item={item as SignalItem} />;
+                  if (item.kind === 'signal')
+                    return (
+                      <div key={item.id} className="md:col-span-2">
+                        <SignalRow item={item as SignalItem} />
+                      </div>
+                    );
                   if (item.kind === 'pricedrop')
                     return <ListingCard key={item.id} item={item as ListingItem} priceDrop />;
                   return <ListingCard key={item.id} item={item as ListingItem} />;
