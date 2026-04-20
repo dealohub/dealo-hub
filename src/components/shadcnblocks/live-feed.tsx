@@ -7,7 +7,6 @@ import {
   FeedHeader,
   FilterPills,
   SignalRow,
-  Sidebar,
   type ListingItem,
   type SignalItem,
   type FeedItem,
@@ -85,29 +84,21 @@ const LiveFeed = () => {
     <section className="relative w-full bg-background">
       <LiveStatusBar feed={feed} />
 
-      <div className="mx-auto max-w-7xl px-6 py-10">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
-          <div className="min-w-0">
-            <FeedHeader />
-            <FilterPills value={filter} onChange={setFilter} />
+      <div className="mx-auto max-w-5xl px-6 py-10">
+        <FeedHeader />
+        <FilterPills value={filter} onChange={setFilter} />
 
-            {/* Polished side-by-side: roomy vertical stack. */}
-            <div className="mt-6 space-y-3">
-              <AnimatePresence initial={false}>
-                {visible.map((item) => {
-                  if (item.kind === 'signal')
-                    return <SignalRow key={item.id} item={item as SignalItem} />;
-                  if (item.kind === 'pricedrop')
-                    return <ListingCard key={item.id} item={item as ListingItem} priceDrop />;
-                  return <ListingCard key={item.id} item={item as ListingItem} />;
-                })}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          <aside className="hidden lg:block">
-            <Sidebar />
-          </aside>
+        {/* Polished side-by-side: roomy vertical stack. */}
+        <div className="mt-6 space-y-3">
+          <AnimatePresence initial={false}>
+            {visible.map((item) => {
+              if (item.kind === 'signal')
+                return <SignalRow key={item.id} item={item as SignalItem} />;
+              if (item.kind === 'pricedrop')
+                return <ListingCard key={item.id} item={item as ListingItem} priceDrop />;
+              return <ListingCard key={item.id} item={item as ListingItem} />;
+            })}
+          </AnimatePresence>
         </div>
       </div>
     </section>

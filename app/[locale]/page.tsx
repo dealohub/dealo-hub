@@ -5,6 +5,7 @@ import Feature283 from '@/components/shadcnblocks/feature-283';
 import FeaturedBrandsStrip from '@/components/shadcnblocks/featured-brands-strip';
 import AIProtectionStrip from '@/components/shadcnblocks/ai-protection-strip';
 import LiveFeed from '@/components/shadcnblocks/live-feed';
+import { FeaturedPartnersSection } from '@/components/shadcnblocks/live-feed-parts';
 import BackgroundPattern115 from '@/components/shadcnblocks/background-pattern-115';
 import ThemeToggle from '@/components/theme-toggle';
 import LocaleToggle from '@/components/locale-toggle';
@@ -25,6 +26,7 @@ export default function HomePage() {
       <FeaturedBrandsStrip />
       <AIProtectionStrip />
       <LiveFeed />
+      <FeaturedPartnersSection />
       <ThemeToggle />
       <LocaleToggle />
     </>

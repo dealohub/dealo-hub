@@ -428,115 +428,121 @@ export const SignalRow = ({ item }: { item: SignalItem }) => {
   );
 };
 
-// ─── Sidebar ──────────────────────────────────────────────────
-export const Sidebar = () => {
-  const partners = [
-    { name: 'Al-Futtaim Motors', kind: 'Automotive',  tagline: 'Official Toyota, Lexus, Honda distributor',      logo: 'AF', tint: '#ef4444', stats: { listings: '1,248', years: '24 yrs', rating: '4.9' } },
-    { name: 'Emaar Properties',  kind: 'Real Estate', tagline: 'Developer of Downtown Dubai & Marina',           logo: 'EM', tint: '#3b82f6', stats: { listings: '892',   years: '28 yrs', rating: '4.8' } },
-    { name: 'Damac Properties',  kind: 'Real Estate', tagline: 'Luxury developer · 12,000+ units delivered',     logo: 'DM', tint: '#3b82f6', stats: { listings: '634',   years: '22 yrs', rating: '4.7' } },
-    { name: 'Gargash Motors',    kind: 'Automotive',  tagline: 'Official Mercedes-Benz dealer',                  logo: 'GM', tint: '#ef4444', stats: { listings: '446',   years: '61 yrs', rating: '4.9' } },
-  ];
+// ─── Featured Partners (standalone full-width section) ────────
+const PARTNERS = [
+  { name: 'Al-Futtaim Motors', kind: 'Automotive',  tagline: 'Official Toyota, Lexus, Honda distributor',      logo: 'AF', tint: '#ef4444', stats: { listings: '1,248', years: '24 yrs', rating: '4.9' } },
+  { name: 'Emaar Properties',  kind: 'Real Estate', tagline: 'Developer of Downtown Dubai & Marina',           logo: 'EM', tint: '#3b82f6', stats: { listings: '892',   years: '28 yrs', rating: '4.8' } },
+  { name: 'Damac Properties',  kind: 'Real Estate', tagline: 'Luxury developer · 12,000+ units delivered',     logo: 'DM', tint: '#3b82f6', stats: { listings: '634',   years: '22 yrs', rating: '4.7' } },
+  { name: 'Gargash Motors',    kind: 'Automotive',  tagline: 'Official Mercedes-Benz dealer',                  logo: 'GM', tint: '#ef4444', stats: { listings: '446',   years: '61 yrs', rating: '4.9' } },
+];
 
-  return (
-    <div className="sticky top-16 space-y-8">
-      <div>
-        <div className="mb-4 flex items-center gap-3">
-          <span className="h-px flex-1 bg-foreground/10" />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/50">Featured Partners</span>
-          <span className="h-px flex-1 bg-foreground/10" />
+export const FeaturedPartnersSection = () => (
+  <section className="relative w-full bg-background">
+    <div className="mx-auto max-w-7xl px-6 py-16">
+      {/* Centered header */}
+      <div className="mb-10 flex flex-col items-center text-center">
+        <div className="mb-3 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/50">
+          <span className="h-px w-6 bg-foreground/20" />
+          Featured partners
+          <span className="h-px w-6 bg-foreground/20" />
         </div>
-
-        <ul className="space-y-4">
-          {partners.map((p) => (
-            <li
-              key={p.name}
-              className="group relative overflow-hidden rounded-lg border border-foreground/10 bg-foreground/[0.02] p-3 transition hover:border-foreground/20 hover:bg-foreground/[0.04]"
-            >
-              <span aria-hidden className="absolute left-0 top-0 h-full w-[2px] opacity-40" style={{ background: p.tint }} />
-
-              <div className="flex items-center gap-2.5">
-                <div
-                  className="flex size-9 shrink-0 items-center justify-center rounded-md text-[10px] font-bold tracking-tight"
-                  style={{ background: `${p.tint}18`, color: p.tint }}
-                >
-                  {p.logo}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <p className="truncate text-[12.5px] font-semibold text-foreground">{p.name}</p>
-                    <svg width="11" height="11" viewBox="0 0 24 24" className="shrink-0">
-                      <path d="M12 2l2.4 2.4 3.3-.4.6 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.6 3.3-3.3-.4L12 22l-2.4-2.4-3.3.4-.6-3.3-3-1.5 1.5-3-1.5-3 3-1.5.6-3.3 3.3.4L12 2z" fill="#3B82F6" />
-                      <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                  <p className="text-[10px] uppercase tracking-wider text-foreground/40">{p.kind}</p>
-                </div>
-              </div>
-
-              <p className="mt-2.5 text-[11px] leading-relaxed text-foreground/55 line-clamp-2">{p.tagline}</p>
-
-              <div className="mt-3 flex items-center gap-3 border-t border-foreground/5 pt-2.5 text-[10px]">
-                <div>
-                  <div className="font-semibold tabular-nums text-foreground/90">{p.stats.listings}</div>
-                  <div className="text-foreground/40">listings</div>
-                </div>
-                <div className="h-6 w-px bg-foreground/10" />
-                <div>
-                  <div className="font-semibold tabular-nums text-foreground/90">{p.stats.years}</div>
-                  <div className="text-foreground/40">active</div>
-                </div>
-                <div className="h-6 w-px bg-foreground/10" />
-                <div>
-                  <div className="inline-flex items-center gap-0.5 font-semibold tabular-nums text-foreground/90">
-                    <svg width="9" height="9" viewBox="0 0 24 24" fill="#F59E0B">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                    {p.stats.rating}
-                  </div>
-                  <div className="text-foreground/40">rating</div>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <a
-          href="#"
-          className="mt-4 flex items-center justify-center gap-1.5 rounded-lg border border-foreground/10 bg-foreground/[0.02] py-2.5 text-[11px] font-medium text-foreground/70 transition hover:border-foreground/20 hover:bg-foreground/[0.05] hover:text-foreground"
-        >
-          Browse all 240+ partners
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14M13 5l7 7-7 7" />
-          </svg>
-        </a>
+        <h2 className="font-calSans text-3xl font-semibold tracking-tight text-foreground md:text-[34px]">
+          The names you already trust
+        </h2>
+        <p className="mt-2 max-w-xl text-sm text-foreground/55">
+          Verified dealers and developers who've chosen Dealo Hub as a
+          listing channel — because our buyers are pre-qualified.
+        </p>
       </div>
 
-      <div>
-        <div className="mb-4 flex items-center gap-3">
-          <span className="h-px flex-1 bg-foreground/10" />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/50">Market Pulse</span>
-          <span className="h-px flex-1 bg-foreground/10" />
+      {/* 4-col partner grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {PARTNERS.map((p) => (
+          <article
+            key={p.name}
+            className="group relative overflow-hidden rounded-xl border border-foreground/10 bg-foreground/[0.02] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-foreground/[0.04] hover:shadow-lg hover:shadow-foreground/5"
+          >
+            <span aria-hidden className="absolute left-0 top-0 h-full w-[2px] opacity-50" style={{ background: p.tint }} />
+
+            <div className="flex items-center gap-3">
+              <div
+                className="flex size-11 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold tracking-tight"
+                style={{ background: `${p.tint}1a`, color: p.tint }}
+              >
+                {p.logo}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  <p className="truncate text-[13px] font-semibold text-foreground">{p.name}</p>
+                  <svg width="12" height="12" viewBox="0 0 24 24" className="shrink-0">
+                    <path d="M12 2l2.4 2.4 3.3-.4.6 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.6 3.3-3.3-.4L12 22l-2.4-2.4-3.3.4-.6-3.3-3-1.5 1.5-3-1.5-3 3-1.5.6-3.3 3.3.4L12 2z" fill="#3B82F6" />
+                    <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <p className="text-[10px] uppercase tracking-wider text-foreground/40">{p.kind}</p>
+              </div>
+            </div>
+
+            <p className="mt-3 text-[12px] leading-relaxed text-foreground/55 line-clamp-2 min-h-[2.4em]">
+              {p.tagline}
+            </p>
+
+            <div className="mt-4 flex items-center gap-3 border-t border-foreground/5 pt-3 text-[10px]">
+              <div>
+                <div className="font-semibold tabular-nums text-foreground/90">{p.stats.listings}</div>
+                <div className="text-foreground/40">listings</div>
+              </div>
+              <div className="h-7 w-px bg-foreground/10" />
+              <div>
+                <div className="font-semibold tabular-nums text-foreground/90">{p.stats.years}</div>
+                <div className="text-foreground/40">active</div>
+              </div>
+              <div className="h-7 w-px bg-foreground/10" />
+              <div>
+                <div className="inline-flex items-center gap-0.5 font-semibold tabular-nums text-foreground/90">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="#F59E0B">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  {p.stats.rating}
+                </div>
+                <div className="text-foreground/40">rating</div>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {/* Browse-all CTA */}
+      <a
+        href="#"
+        className="mx-auto mt-8 flex w-fit items-center gap-1.5 rounded-full border border-foreground/10 bg-foreground/[0.03] px-5 py-2.5 text-[12px] font-medium text-foreground/70 transition hover:border-foreground/25 hover:bg-foreground/[0.06] hover:text-foreground"
+      >
+        Browse all 240+ partners
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
+          <path d="M5 12h14M13 5l7 7-7 7" />
+        </svg>
+      </a>
+
+      {/* Market pulse — slim strip */}
+      <div className="mx-auto mt-12 grid max-w-3xl grid-cols-3 divide-x divide-foreground/10 rounded-2xl border border-foreground/10 bg-foreground/[0.02] text-center rtl:divide-x-reverse">
+        <div className="px-6 py-5">
+          <div className="text-[22px] font-semibold tabular-nums text-foreground">247</div>
+          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">Total partners</div>
         </div>
-        <div className="space-y-2.5">
-          <div className="flex items-baseline justify-between text-[11px]">
-            <span className="text-foreground/50">Total partners</span>
-            <span className="font-semibold tabular-nums text-foreground">247</span>
+        <div className="px-6 py-5">
+          <div className="text-[22px] font-semibold tabular-nums text-foreground">12,847</div>
+          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">Premium listings</div>
+        </div>
+        <div className="px-6 py-5">
+          <div className="inline-flex items-baseline gap-1 text-[22px] font-semibold tabular-nums text-emerald-400">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+            +12%
           </div>
-          <div className="flex items-baseline justify-between text-[11px]">
-            <span className="text-foreground/50">Premium listings</span>
-            <span className="font-semibold tabular-nums text-foreground">12,847</span>
-          </div>
-          <div className="flex items-baseline justify-between text-[11px]">
-            <span className="text-foreground/50">Partner growth</span>
-            <span className="inline-flex items-center gap-0.5 font-semibold tabular-nums text-emerald-400">
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <path d="M12 19V5M5 12l7-7 7 7" />
-              </svg>
-              +12%
-            </span>
-          </div>
+          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">Partner growth</div>
         </div>
       </div>
     </div>
-  );
-};
+  </section>
+);
