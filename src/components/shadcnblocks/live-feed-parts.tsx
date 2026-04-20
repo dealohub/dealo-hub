@@ -131,30 +131,28 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
   );
 };
 
-// ─── Feed header ─────────────────────────────────────────────
+// ─── Feed header — centered ──────────────────────────────────
 export const FeedHeader = () => (
-  <div className="mb-5 flex items-end justify-between gap-4">
-    <div>
-      <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-400">
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-        </span>
-        Verified partners · Live
-      </div>
-      <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-[38px]">
-        Fresh from our partners
-      </h2>
-      <p className="mt-1.5 max-w-xl text-sm text-foreground/50">
-        A curated snapshot of the latest premium listings from verified dealers and developers across the UAE.
-      </p>
+  <div className="mb-8 flex flex-col items-center text-center">
+    <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-400">
+      <span className="relative flex h-1.5 w-1.5">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+      </span>
+      Verified partners · Live
     </div>
+    <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-[38px]">
+      Fresh from our partners
+    </h2>
+    <p className="mt-2 max-w-xl text-sm text-foreground/50">
+      A curated snapshot of the latest premium listings from verified dealers and developers across the UAE.
+    </p>
     <a
       href="#"
-      className="hidden shrink-0 items-center gap-1.5 text-xs font-medium text-foreground/60 transition hover:text-foreground md:inline-flex"
+      className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-foreground/60 transition hover:text-foreground"
     >
       View full live feed
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
         <path d="M5 12h14M13 5l7 7-7 7" />
       </svg>
     </a>
