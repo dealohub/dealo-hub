@@ -18,7 +18,10 @@ import { useTranslations } from 'next-intl';
 export const RidesFinanceBanner = () => {
   const t = useTranslations('marketplace.rides.finance');
   const sectionRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(sectionRef, { once: true, margin: '-80px' });
+  // Retrigger entry animations each time the banner scrolls back into
+  // view — previously `once: true` meant the counter played once and
+  // then the banner looked totally static on every subsequent visit.
+  const inView = useInView(sectionRef, { margin: '-120px', amount: 0.25 });
 
   return (
     <section ref={sectionRef} className="relative w-full bg-background">
@@ -39,42 +42,46 @@ export const RidesFinanceBanner = () => {
             }}
           />
 
-          {/* Layer 2: shimmer sweep */}
+          {/* Layer 2: shimmer sweep — much brighter + faster so it's
+              actually noticeable on a dark green background. */}
           <motion.div
             aria-hidden
             className="pointer-events-none absolute inset-y-0 -inset-x-full"
             style={{
               background:
-                'linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%)',
+                'linear-gradient(100deg, transparent 35%, rgba(255,255,255,0.22) 50%, transparent 65%)',
             }}
             initial={{ x: '-100%' }}
             animate={{ x: '200%' }}
             transition={{
-              duration: 3.5,
+              duration: 2.4,
               repeat: Infinity,
               ease: 'linear',
-              repeatDelay: 2,
+              repeatDelay: 0.8,
             }}
           />
 
-          {/* Layer 3: floating orbs */}
+          {/* Layer 3: floating orbs — boosted opacity and amplitude so
+              the card visibly breathes. */}
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-emerald-400/10 blur-3xl"
+            className="pointer-events-none absolute -right-16 -top-16 size-80 rounded-full bg-emerald-400/25 blur-3xl"
             animate={{
-              x: [0, 20, -10, 0],
-              y: [0, -15, 10, 0],
+              x: [0, 40, -20, 0],
+              y: [0, -30, 20, 0],
+              scale: [1, 1.08, 0.95, 1],
             }}
-            transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute -bottom-16 -left-16 size-72 rounded-full bg-yellow-400/10 blur-3xl"
+            className="pointer-events-none absolute -bottom-16 -left-16 size-96 rounded-full bg-yellow-400/25 blur-3xl"
             animate={{
-              x: [0, -15, 10, 0],
-              y: [0, 15, -10, 0],
+              x: [0, -30, 20, 0],
+              y: [0, 30, -20, 0],
+              scale: [1, 1.1, 0.92, 1],
             }}
-            transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
           />
 
           <div className="relative grid gap-8 p-6 md:grid-cols-[1fr_1.2fr] md:gap-12 md:p-10">
@@ -85,31 +92,48 @@ export const RidesFinanceBanner = () => {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="flex flex-col justify-center"
             >
-              <div className="mb-3 inline-flex w-fit items-center gap-1 rounded-full border border-emerald-300/30 bg-emerald-300/10 px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-emerald-200 backdrop-blur-sm">
+              <motion.div
+                className="mb-3 inline-flex w-fit items-center gap-1 rounded-full border border-emerald-300/30 bg-emerald-300/10 px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-emerald-200 backdrop-blur-sm"
+                animate={{ rotate: [0, -1.5, 1.5, -1.5, 0] }}
+                transition={{ duration: 0.7, repeat: Infinity, repeatDelay: 4, ease: 'easeInOut' }}
+              >
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-300" />
                 </span>
                 {t('sponsored')}
-              </div>
+              </motion.div>
 
-              {/* Animated pulsing 0% */}
-              <div className="font-calSans flex items-baseline gap-2 font-extrabold leading-none tracking-tight text-white">
+              {/* Animated pulsing 0% — scale + glow clearly visible */}
+              <div className="font-calSans relative flex items-baseline gap-2 font-extrabold leading-none tracking-tight text-white">
                 <motion.span
                   className="inline-block text-[64px] md:text-[88px]"
                   animate={{
-                    scale: [1, 1.03, 1],
+                    scale: [1, 1.08, 1],
                     textShadow: [
                       '0 0 0px rgba(250,204,21,0)',
-                      '0 0 24px rgba(250,204,21,0.45)',
+                      '0 0 36px rgba(250,204,21,0.9)',
                       '0 0 0px rgba(250,204,21,0)',
                     ],
                   }}
-                  transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                 >
                   0
                 </motion.span>
-                <span className="text-[#facc15] text-[56px] md:text-[72px]">%</span>
+                <motion.span
+                  className="text-[#facc15] text-[56px] md:text-[72px]"
+                  animate={{
+                    scale: [1, 1.12, 1],
+                    textShadow: [
+                      '0 0 0px rgba(250,204,21,0)',
+                      '0 0 28px rgba(250,204,21,0.8)',
+                      '0 0 0px rgba(250,204,21,0)',
+                    ],
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+                >
+                  %
+                </motion.span>
                 <span className="ms-2 text-[22px] font-semibold text-white/80 md:text-[26px]">
                   APR
                 </span>
@@ -177,16 +201,24 @@ export const RidesFinanceBanner = () => {
                     <AnimatedAED from={0} to={1600} inView={inView} />
                   </div>
                 </div>
-                <a
+                <motion.a
                   href="#"
-                  className="group/btn inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-white px-4 text-[12px] font-semibold text-emerald-950 transition hover:bg-white/90"
+                  className="group/btn relative inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-white px-4 text-[12px] font-semibold text-emerald-950 transition hover:bg-white/90"
+                  animate={{
+                    boxShadow: [
+                      '0 0 0px 0px rgba(255,255,255,0)',
+                      '0 0 0px 6px rgba(255,255,255,0.18)',
+                      '0 0 0px 0px rgba(255,255,255,0)',
+                    ],
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                 >
                   {t('cta')}
                   <ArrowRight
                     size={12}
                     className="transition-transform duration-300 group-hover/btn:translate-x-0.5 rtl:rotate-180 rtl:group-hover/btn:-translate-x-0.5"
                   />
-                </a>
+                </motion.a>
               </div>
               <p className="mt-3 text-[9.5px] text-white/40">
                 {t('disclosure')} <span className="font-medium text-white/60">NBK Finance</span> ·{' '}
