@@ -17,7 +17,8 @@ import {
 //   - Original (handoff):  `ListingCard` from './live-feed-parts'
 //   - Option A editorial:  `ListingCardEditorial` from './listing-card-editorial'
 //   - Option B compact:    `ListingCardCompact`   from './listing-card-compact'
-import { ListingCardCompact as ListingCard } from './listing-card-compact';
+//   - Option C polished:   `ListingCardPolished`  from './listing-card-polished'
+import { ListingCardPolished as ListingCard } from './listing-card-polished';
 import { SEED_LISTINGS, SEED_PRICE_DROPS, ACTIVITY_SIGNALS } from './listings-data';
 
 /* LiveFeed — real-time marketplace activity feed */
@@ -89,8 +90,8 @@ const LiveFeed = () => {
             <FeedHeader />
             <FilterPills value={filter} onChange={setFilter} />
 
-            {/* Compact list: tight vertical stack for fast scanning. */}
-            <div className="mt-6 space-y-2">
+            {/* Polished side-by-side: roomy vertical stack. */}
+            <div className="mt-6 space-y-3">
               <AnimatePresence initial={false}>
                 {visible.map((item) => {
                   if (item.kind === 'signal')
