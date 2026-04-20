@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -5,6 +6,41 @@ import { Bricolage_Grotesque, Cairo } from 'next/font/google';
 import { GeistSans } from 'geist/font/sans';
 import { ThemeProvider } from 'next-themes';
 import { routing, type Locale } from '@/i18n/routing';
+
+/**
+ * Per-locale metadata — overrides the root title/description with
+ * language-appropriate copy and sets og:locale correctly. Anything
+ * not set here falls through to app/layout.tsx defaults.
+ */
+export async function generateMetadata({
+  params: { locale },
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  if (locale === 'ar') {
+    return {
+      title: {
+        default: 'ديلو هَب — سوق الخليج الموثوق',
+        template: '%s · ديلو هَب',
+      },
+      description:
+        'بائعون حقيقيون. إعلانات موثّقة. كل إعلان على ديلو هَب يتحقّق منه الذكاء الاصطناعي ومراجعون بشريون — بِع واشترِ في الخليج بثقة.',
+      openGraph: {
+        locale: 'ar_KW',
+        alternateLocale: ['en_US'],
+        title: 'ديلو هَب — سوق الخليج الموثوق',
+        description:
+          'بائعون حقيقيون. إعلانات موثّقة. كل إعلان على ديلو هَب يتحقّق منه الذكاء الاصطناعي ومراجعون بشريون.',
+      },
+      twitter: {
+        title: 'ديلو هَب — سوق الخليج الموثوق',
+        description: 'بائعون حقيقيون. إعلانات موثّقة.',
+      },
+    };
+  }
+  // English stays on the root defaults (set in app/layout.tsx).
+  return {};
+}
 
 const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
