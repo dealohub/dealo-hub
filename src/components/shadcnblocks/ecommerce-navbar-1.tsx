@@ -594,14 +594,18 @@ const IconButton = ({ children, title, onClick }: { children: ReactNode; title: 
 
 const CountrySelector = ({ className = '' }: { className?: string }) => {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('AUS');
+  // Kuwait is the launch country; the rest of the GCC follows in order
+  // of market size. No non-Gulf placeholders — this marketplace is regional.
+  const [value, setValue] = useState('KW');
   const ref = useRef<HTMLDivElement | null>(null);
 
   const opts = [
-    { value: 'AUS', label: 'Australia (AUD $)' },
-    { value: 'CAN', label: 'Canada (CAN $)' },
-    { value: 'FR',  label: 'France (EUR €)' },
-    { value: 'US',  label: 'United States (USD $)' },
+    { value: 'KW', label: 'Kuwait (KWD)' },
+    { value: 'AE', label: 'UAE (AED)' },
+    { value: 'SA', label: 'Saudi Arabia (SAR)' },
+    { value: 'QA', label: 'Qatar (QAR)' },
+    { value: 'BH', label: 'Bahrain (BHD)' },
+    { value: 'OM', label: 'Oman (OMR)' },
   ];
 
   useEffect(() => {
