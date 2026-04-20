@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Heart, GitCompare, ArrowRight, Camera } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { VEHICLE_COLORS, type RideListing } from './rides-data';
 
 /**
@@ -46,6 +47,13 @@ export const ListingCardRides = ({ item, premium = false }: Props) => {
           : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04] hover:shadow-foreground/5')
       }
     >
+      {/* Full-card click target — sits under interactive elements */}
+      <Link
+        href={`/rides/${item.id}` as never}
+        aria-label={item.title}
+        className="absolute inset-0 z-0"
+      />
+
       {/* Image */}
       <div className="relative aspect-[16/10] w-full overflow-hidden">
         <img
@@ -94,8 +102,8 @@ export const ListingCardRides = ({ item, premium = false }: Props) => {
           )}
         </div>
 
-        {/* Top-end: quick actions */}
-        <div className="absolute end-3 top-3 flex items-center gap-1.5">
+        {/* Top-end: quick actions — z-20 to stay clickable above the card link */}
+        <div className="absolute end-3 top-3 z-20 flex items-center gap-1.5">
           <IconButton label={t('actionSave')}>
             <Heart size={14} strokeWidth={2} />
           </IconButton>
