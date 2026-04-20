@@ -62,16 +62,24 @@ export const ListingCardCircular = ({ item, priceDrop = false }: Props) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
       className={
-        'group relative flex items-center gap-4 rounded-[2rem] border pl-3 pr-5 py-3 transition-all duration-300 ' +
+        'group relative flex items-center gap-5 rounded-[2rem] border pl-3 pr-5 py-3.5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ' +
         (priceDrop
-          ? 'border-[#e30613]/25 bg-gradient-to-r from-[#e30613]/[0.06] via-transparent to-transparent hover:border-[#e30613]/40'
-          : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04]')
+          ? 'border-[#e30613]/25 bg-gradient-to-r from-[#e30613]/[0.06] via-transparent to-transparent hover:border-[#e30613]/40 hover:shadow-[#e30613]/10'
+          : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04] hover:shadow-foreground/5')
       }
     >
-      {/* Circular image with ring in category color */}
+      {/* Circular image with gradient ring in category color + hover glow */}
       <div
-        className="relative size-28 shrink-0 rounded-full p-[2px]"
-        style={{ background: priceDrop ? '#e30613' : catColor, opacity: priceDrop ? 1 : 0.9 }}
+        className="relative size-28 shrink-0 rounded-full p-[2px] transition-shadow duration-500 group-hover:shadow-[0_0_0_4px_var(--ring-glow)]"
+        style={
+          {
+            background: priceDrop
+              ? 'linear-gradient(135deg, #e30613, #ff6b6b)'
+              : `linear-gradient(135deg, ${catColor}, ${catColor}88)`,
+            // CSS custom property consumed by the hover glow shadow above
+            '--ring-glow': priceDrop ? '#e3061322' : `${catColor}22`,
+          } as React.CSSProperties
+        }
       >
         <div className="relative size-full overflow-hidden rounded-full bg-foreground/5 ring-2 ring-background">
           <img
@@ -109,8 +117,8 @@ export const ListingCardCircular = ({ item, priceDrop = false }: Props) => {
         )}
       </div>
 
-      {/* Content */}
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+      {/* Content — vertically centered against the circular image */}
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2">
         {/* Meta header — CATEGORY · loc · time · Hot */}
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] uppercase tracking-wider text-foreground/50">
           <span className="inline-flex items-center gap-1.5 font-semibold text-foreground/75">
@@ -138,12 +146,14 @@ export const ListingCardCircular = ({ item, priceDrop = false }: Props) => {
           {item.title}
         </h3>
 
-        {/* Chips inline */}
+        {/* Chips — bordered pill chips for clearer structure */}
         {chips.length > 0 && (
-          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] text-foreground/55">
+          <div className="flex flex-wrap items-center gap-1.5">
             {chips.map((c, i) => (
-              <span key={i} className="inline-flex items-center">
-                {i > 0 && <span className="mr-1.5 text-foreground/20">·</span>}
+              <span
+                key={i}
+                className="inline-flex items-center rounded-full border border-foreground/10 bg-foreground/[0.04] px-2 py-0.5 text-[10px] font-medium text-foreground/65"
+              >
                 {c}
               </span>
             ))}
@@ -173,49 +183,62 @@ export const ListingCardCircular = ({ item, priceDrop = false }: Props) => {
         </div>
       </div>
 
-      {/* Right cluster: price + dealer + actions */}
-      <div className="flex shrink-0 flex-col items-end gap-1.5 self-center ps-3">
-        {priceDrop && item.oldPrice && (
-          <div className="inline-flex items-baseline gap-1.5 text-[10px]">
-            <span className="text-foreground/35 line-through tabular-nums">{item.oldPrice}</span>
-            <span className="font-semibold text-[#ff6b6b] tabular-nums">{item.drop}%</span>
-          </div>
-        )}
-        <div className="text-[20px] font-semibold leading-none tracking-tight text-foreground tabular-nums">
-          {item.price}
-        </div>
-        <div className="inline-flex items-center gap-1 text-[11px] text-foreground/55">
-          <span className="max-w-[140px] truncate">{item.dealer}</span>
-          {item.verified && (
-            <svg width="11" height="11" viewBox="0 0 24 24" className="shrink-0">
-              <path
-                d="M12 2l2.4 2.4 3.3-.4.6 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.6 3.3-3.3-.4L12 22l-2.4-2.4-3.3.4-.6-3.3-3-1.5 1.5-3-1.5-3 3-1.5.6-3.3 3.3.4L12 2z"
-                fill="#3B82F6"
-              />
-              <path
-                d="M9 12l2 2 4-4"
-                stroke="white"
-                strokeWidth="2"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+      {/* Right cluster: price column anchored by a subtle vertical divider */}
+      <div className="flex shrink-0 items-stretch gap-3 self-stretch border-s border-foreground/10 ps-5">
+        <div className="flex flex-col items-end justify-center gap-1.5">
+          {priceDrop && item.oldPrice && (
+            <div className="inline-flex items-baseline gap-1.5 text-[10px]">
+              <span className="text-foreground/35 line-through tabular-nums">{item.oldPrice}</span>
+              <span className="font-semibold text-[#ff6b6b] tabular-nums">{item.drop}%</span>
+            </div>
           )}
+          <div className="text-[22px] font-semibold leading-none tracking-tight text-foreground tabular-nums">
+            {item.price}
+          </div>
+          <div className="inline-flex items-center gap-1 text-[11px] text-foreground/55">
+            <span className="max-w-[160px] truncate">{item.dealer}</span>
+            {item.verified && (
+              <svg width="11" height="11" viewBox="0 0 24 24" className="shrink-0">
+                <path
+                  d="M12 2l2.4 2.4 3.3-.4.6 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.6 3.3-3.3-.4L12 22l-2.4-2.4-3.3.4-.6-3.3-3-1.5 1.5-3-1.5-3 3-1.5.6-3.3 3.3.4L12 2z"
+                  fill="#3B82F6"
+                />
+                <path
+                  d="M9 12l2 2 4-4"
+                  stroke="white"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </div>
+
+          {/* Action pill — revealed on hover, expands width smoothly */}
+          <div className="mt-1 flex items-center gap-1 rounded-full border border-foreground/10 bg-foreground/[0.02] p-0.5 opacity-0 transition-all duration-300 group-hover:opacity-100 focus-within:opacity-100">
+            <IconActionButton label="Save">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </IconActionButton>
+            <IconActionButton label="Compare">
+              <path d="M3 6h18M3 12h18M3 18h12" />
+            </IconActionButton>
+            <IconActionButton label="View">
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </IconActionButton>
+          </div>
         </div>
 
-        {/* Action pill — round cluster, hover-revealed */}
-        <div className="mt-1 flex items-center gap-1 rounded-full border border-foreground/10 bg-foreground/[0.02] p-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-within:opacity-100">
-          <IconActionButton label="Save">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </IconActionButton>
-          <IconActionButton label="Compare">
-            <path d="M3 6h18M3 12h18M3 18h12" />
-          </IconActionButton>
-          <IconActionButton label="View">
-            <path d="M5 12h14M13 5l7 7-7 7" />
-          </IconActionButton>
-        </div>
+        {/* Persistent affordance — a chevron that hints the card is clickable */}
+        <button
+          type="button"
+          aria-label="Open listing"
+          className="flex shrink-0 items-center justify-center self-center rounded-full border border-foreground/10 bg-foreground/[0.02] p-2 text-foreground/50 transition-all duration-300 group-hover:border-foreground/30 group-hover:bg-foreground/10 group-hover:text-foreground group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
       </div>
     </motion.article>
   );
