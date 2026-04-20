@@ -33,7 +33,7 @@ export const RidesBestOf2026 = () => {
 
   return (
     <section className="relative w-full bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-14">
+      <div className="mx-auto max-w-7xl px-6 pt-14 pb-6">
         <div className="overflow-hidden rounded-3xl border border-foreground/10 bg-gradient-to-br from-foreground/[0.03] to-foreground/[0.01] shadow-sm">
           <div className="grid gap-10 p-8 md:grid-cols-[1fr_1.4fr] md:p-12">
             {/* Left: editorial */}

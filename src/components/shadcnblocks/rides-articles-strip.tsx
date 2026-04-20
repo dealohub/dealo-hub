@@ -41,7 +41,7 @@ export const RidesArticlesStrip = () => {
 
   return (
     <section className="relative w-full border-t border-foreground/10 bg-foreground/[0.02]">
-      <div className="mx-auto max-w-7xl px-6 py-14">
+      <div className="mx-auto max-w-7xl px-6 pt-12 pb-8">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/50">

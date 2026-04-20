@@ -22,8 +22,8 @@ export const RidesDealerSpotlight = () => {
 
   return (
     <section className="relative w-full bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-14">
-        <div className="mb-10 flex flex-col items-center text-center">
+      <div className="mx-auto max-w-7xl px-6 pt-8 pb-14">
+        <div className="mb-8 flex flex-col items-center text-center">
           <p className="mb-2 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/50">
             <span className="h-px w-6 bg-foreground/20" />
             {t('eyebrow')}

@@ -63,7 +63,7 @@ export const RidesMainGrid = () => {
 
   return (
     <section className="relative w-full bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mx-auto max-w-7xl px-6 pb-12 pt-6">
         {/* Header */}
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
