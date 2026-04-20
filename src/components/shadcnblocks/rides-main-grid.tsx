@@ -71,7 +71,7 @@ export const RidesMainGrid = () => {
               {t('title')}
             </h2>
             <p className="mt-1 text-[13px] text-foreground/55">
-              {t('count', { total: filtered.length })}
+              {t('showingOf', { shown: visible.length, total: filtered.length })}
             </p>
           </div>
 
@@ -124,21 +124,48 @@ export const RidesMainGrid = () => {
               </AnimatePresence>
             </div>
 
-            {/* Load more */}
-            {visibleCount < filtered.length && (
-              <div className="mt-10 flex justify-center">
+            {/* Pagination footer: progress bar + load-more */}
+            <div className="mt-12 flex flex-col items-center gap-4">
+              {/* Progress bar */}
+              <div className="flex w-full max-w-md flex-col items-center gap-2">
+                <div className="flex w-full items-center justify-between text-[11px] text-foreground/50">
+                  <span>
+                    {t('showingOf', { shown: visible.length, total: filtered.length })}
+                  </span>
+                  <span className="tabular-nums">
+                    {Math.round((visible.length / Math.max(filtered.length, 1)) * 100)}%
+                  </span>
+                </div>
+                <div className="h-1 w-full overflow-hidden rounded-full bg-foreground/10">
+                  <motion.div
+                    className="h-full rounded-full bg-foreground/70"
+                    initial={{ width: 0 }}
+                    animate={{
+                      width: `${(visible.length / Math.max(filtered.length, 1)) * 100}%`,
+                    }}
+                    transition={{ duration: 0.5, ease: [0.22, 0.61, 0.36, 1] }}
+                  />
+                </div>
+              </div>
+
+              {visibleCount < filtered.length ? (
                 <button
                   type="button"
-                  onClick={() => setVisibleCount((c) => c + PAGE)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-foreground/10 bg-foreground/[0.03] px-5 py-2.5 text-[12px] font-semibold text-foreground/80 transition hover:border-foreground/25 hover:bg-foreground/[0.06] hover:text-foreground"
+                  onClick={() =>
+                    setVisibleCount((c) => Math.min(c + PAGE, filtered.length))
+                  }
+                  className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-5 py-2.5 text-[12px] font-semibold text-background transition hover:bg-foreground/90"
                 >
-                  {t('loadMore')}
-                  <span className="text-foreground/40 tabular-nums">
-                    ({filtered.length - visibleCount})
-                  </span>
+                  {t('loadMoreCount', {
+                    count: Math.min(PAGE, filtered.length - visibleCount),
+                  })}
                 </button>
-              </div>
-            )}
+              ) : (
+                <p className="text-[11px] font-medium text-foreground/50">
+                  {t('allLoaded')}
+                </p>
+              )}
+            </div>
           </>
         )}
       </div>

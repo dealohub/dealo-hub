@@ -134,7 +134,10 @@
       "Bash(node scripts/update-rides-messages.mjs)",
       "Bash(rm scripts/update-rides-messages.mjs)",
       "Bash(node scripts/add-rides-extras.mjs)",
-      "Bash(rm scripts/add-rides-extras.mjs)"
+      "Bash(rm scripts/add-rides-extras.mjs)",
+      "Bash(node scripts/update-rides-winners.mjs)",
+      "Bash(node scripts/add-pagination-keys.mjs)",
+      "Bash(rm scripts/add-pagination-keys.mjs)"
     ]
   },
   "enableAllProjectMcpServers": true,

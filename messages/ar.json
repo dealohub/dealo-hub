@@ -921,10 +921,10 @@
         "winners": {
           "suvCategory": "أفضل SUV عائلية",
           "suvTitle": "تويوتا لاند كروزر VX-R",
-          "sedanCategory": "أفضل سيدان فاخرة",
-          "sedanTitle": "BMW الفئة الخامسة M Sport",
-          "evCategory": "أفضل كهربائية",
-          "evTitle": "تسلا موديل S Plaid"
+          "boatCategory": "أفضل يخت فاخر",
+          "boatTitle": "برنسس Y72 موتور يخت",
+          "bikeCategory": "أفضل درّاجة رياضية",
+          "bikeTitle": "دوكاتي بانيغالي V4 S"
         }
       },
       "featured": {
@@ -946,7 +946,10 @@
           "priceDesc": "السعر: من الأعلى للأقل",
           "newest": "الأحدث أولاً",
           "popular": "الأكثر رواجاً"
-        }
+        },
+        "showingOf": "يعرض {shown} من أصل {total} مركبة",
+        "loadMoreCount": "اعرض الـ {count} التالية",
+        "allLoaded": "وصلت إلى نهاية القائمة."
       },
       "types": {
         "cars": "سيارات",

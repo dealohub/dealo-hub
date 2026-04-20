@@ -921,10 +921,10 @@
         "winners": {
           "suvCategory": "Best Family SUV",
           "suvTitle": "Toyota Land Cruiser VX-R",
-          "sedanCategory": "Best Premium Sedan",
-          "sedanTitle": "BMW 5-Series M Sport",
-          "evCategory": "Best Electric",
-          "evTitle": "Tesla Model S Plaid"
+          "boatCategory": "Best Luxury Yacht",
+          "boatTitle": "Princess Y72 Motor Yacht",
+          "bikeCategory": "Best Sport Bike",
+          "bikeTitle": "Ducati Panigale V4 S"
         }
       },
       "featured": {
@@ -946,7 +946,10 @@
           "priceDesc": "Price: high to low",
           "newest": "Newest first",
           "popular": "Most popular"
-        }
+        },
+        "showingOf": "Showing {shown} of {total} vehicles",
+        "loadMoreCount": "Show next {count}",
+        "allLoaded": "You have reached the end of the list."
       },
       "types": {
         "cars": "Cars",

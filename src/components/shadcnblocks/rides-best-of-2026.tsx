@@ -11,22 +11,20 @@ import { useTranslations } from 'next-intl';
  * editorial block but scaled for a richer marketplace.
  */
 
-// Verified Unsplash URLs — reliable resolutions.
+// Winners intentionally span different vehicle categories so this block
+// communicates "we cover all of Rides", not just cars.
 const WINNERS = [
   {
     key: 'suv',
-    image:
-      'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&auto=format&fit=crop',
   },
   {
-    key: 'sedan',
-    image:
-      'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&auto=format&fit=crop',
+    key: 'boat',
+    image: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&auto=format&fit=crop',
   },
   {
-    key: 'ev',
-    image:
-      'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&auto=format&fit=crop',
+    key: 'bike',
+    image: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?w=800&auto=format&fit=crop',
   },
 ];
 
