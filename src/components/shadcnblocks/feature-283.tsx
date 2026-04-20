@@ -12,7 +12,7 @@ interface Feature283Props {
 const Feature283 = ({ className = '' }: Feature283Props) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [activeCat, setActiveCat] = useState('All');
-  const categories = ['All', 'Motors', 'Jobs', 'Classifieds', 'Property', 'New Projects', 'Community'];
+  const categories = ['All', 'Rides', 'Careers', 'Market', 'Spaces', 'New Projects', 'Community'];
 
   const DealoSearchInline = () => (
     <div className="relative z-10 mt-10 w-full max-w-lg">
@@ -78,12 +78,11 @@ const Feature283 = ({ className = '' }: Feature283Props) => {
       <div className="container mx-auto flex h-full w-full max-w-7xl flex-col items-center justify-center px-4">
         <div className="relative flex w-full max-w-lg flex-col items-center justify-center">
           <h2 className="relative py-2 text-center font-sans text-4xl font-semibold tracking-tighter md:text-5xl">
-            Built by and for Developers
+            Real sellers. Real verified listings.
           </h2>
-          <p className="mx-auto mt-2 max-w-xl px-5 text-center text-sm text-muted-foreground/50 md:text-base">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem
-            suscipit dolor blanditiis voluptatum minus est labore amet
-            necessitatibus quod distinctio! ipsum dolor sit
+          <p className="mx-auto mt-2 max-w-xl px-5 text-center text-sm text-muted-foreground/70 md:text-base">
+            Every listing verified by AI and humans. Sell with trust, buy with
+            confidence — across the Gulf.
           </p>
           <DealoSearchInline />
 

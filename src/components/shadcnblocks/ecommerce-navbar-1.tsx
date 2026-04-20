@@ -106,7 +106,7 @@ const SOCIAL_MEDIA_LINKS: SocialLink[] = [
 
 const MENU: MenuItem[] = [
   {
-    id: 'motors', label: 'Motors', href: '#',
+    id: 'motors', label: 'Rides', href: '#',
     megaMenu: {
       sections: [
         {
@@ -172,7 +172,7 @@ const MENU: MenuItem[] = [
     },
   },
   {
-    id: 'property', label: 'Property', href: '#',
+    id: 'property', label: 'Spaces', href: '#',
     megaMenu: {
       sections: [
         {
@@ -211,7 +211,7 @@ const MENU: MenuItem[] = [
     },
   },
   {
-    id: 'jobs', label: 'Jobs', href: '#',
+    id: 'jobs', label: 'Careers', href: '#',
     megaMenu: {
       sections: [
         {
@@ -236,7 +236,7 @@ const MENU: MenuItem[] = [
     },
   },
   {
-    id: 'classifieds', label: 'Classifieds', href: '#',
+    id: 'classifieds', label: 'Market', href: '#',
     megaMenu: {
       sections: [
         {
@@ -282,7 +282,7 @@ const MENU: MenuItem[] = [
     },
   },
   {
-    id: 'furniture', label: 'Furniture & Garden', href: '#',
+    id: 'furniture', label: 'Living', href: '#',
     megaMenu: {
       sections: [
         {
@@ -311,7 +311,7 @@ const MENU: MenuItem[] = [
     },
   },
   {
-    id: 'mobiles', label: 'Mobiles & Tablets', href: '#',
+    id: 'mobiles', label: 'Devices', href: '#',
     megaMenu: {
       sections: [
         {

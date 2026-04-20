@@ -117,7 +117,9 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/en)",
       "Bash(curl -s -o /dev/null -w \"/ → %{http_code} \\(redirect=%{redirect_url}\\)\\\\n\" http://localhost:3000/)",
       "Bash(curl -s -o /dev/null -w \"/en → %{http_code}\\\\n\" http://localhost:3000/en)",
-      "Bash(curl -s -o /dev/null -w \"/ar → %{http_code}\\\\n\" http://localhost:3000/ar)"
+      "Bash(curl -s -o /dev/null -w \"/ar → %{http_code}\\\\n\" http://localhost:3000/ar)",
+      "Bash(netstat -ano)",
+      "Bash(curl -s -o /dev/null -w \"/ → %{http_code}\\\\n\" http://localhost:3000/)"
     ]
   },
   "enableAllProjectMcpServers": true,
