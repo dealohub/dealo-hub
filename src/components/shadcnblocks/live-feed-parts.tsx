@@ -89,7 +89,11 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
     .join(' ');
 
   return (
-    <div className="sticky top-0 z-30 w-full border-b border-foreground/5 bg-background/80 backdrop-blur-xl">
+    // Intentionally NOT sticky: sticking the bar caused its translucent
+    // backdrop-blur to muddy every card it scrolled over, which read as
+    // "empty" card thumbnails. The bar still looks identical — it just
+    // scrolls with the section now.
+    <div className="relative z-10 w-full border-b border-foreground/10 bg-background">
       <div className="mx-auto flex max-w-7xl items-center gap-8 px-6 py-3">
         <div className="flex items-center gap-2.5">
           <span className="relative flex h-2 w-2">
