@@ -93,8 +93,8 @@ export const ListingCardPolished = ({ item, priceDrop = false }: Props) => {
       />
 
       <div className="flex items-stretch gap-5 p-3 pl-4">
-        {/* IMAGE — larger, fixed 4:3 */}
-        <div className="relative aspect-[4/3] w-60 shrink-0 overflow-hidden rounded-lg bg-foreground/5">
+        {/* IMAGE — sized to sit closer to content height (3:2 instead of 4:3) */}
+        <div className="relative aspect-[3/2] w-60 shrink-0 self-stretch overflow-hidden rounded-lg bg-foreground/5">
           <img
             src={item.image}
             alt={item.title}
@@ -152,8 +152,9 @@ export const ListingCardPolished = ({ item, priceDrop = false }: Props) => {
           </div>
         </div>
 
-        {/* CONTENT */}
-        <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 py-1">
+        {/* CONTENT — footer pinned to bottom via mt-auto; title block
+            + signals stack tightly at the top so there's no dead gap. */}
+        <div className="flex min-w-0 flex-1 flex-col py-1">
           {/* Title + location */}
           <div className="min-w-0">
             <div className="mb-1 text-[11px] text-foreground/50">
@@ -176,8 +177,8 @@ export const ListingCardPolished = ({ item, priceDrop = false }: Props) => {
             )}
           </div>
 
-          {/* Signals — one line, bullet-separated */}
-          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-foreground/55">
+          {/* Signals — one line, bullet-separated — sits right under title */}
+          <div className="mt-2.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-foreground/55">
             <span className="inline-flex items-center gap-1">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -206,8 +207,8 @@ export const ListingCardPolished = ({ item, priceDrop = false }: Props) => {
             )}
           </div>
 
-          {/* Price + dealer + actions */}
-          <div className="flex items-end justify-between gap-3 border-t border-foreground/10 pt-3">
+          {/* Price + dealer + actions — pinned to bottom */}
+          <div className="mt-auto flex items-end justify-between gap-3 border-t border-foreground/10 pt-3">
             <div className="min-w-0">
               {priceDrop && item.oldPrice && (
                 <div className="mb-0.5 inline-flex items-baseline gap-1.5 text-[11px]">
