@@ -42,32 +42,44 @@ const LiveFeed = () => {
   });
 
   useEffect(() => {
+    // Extract the seed id from a feed item id. Feed items carry ids
+    // like "101-169…" (seed 101, timestamped); pure seeds stay as "101".
+    const seedIdOf = (id: string | number) => String(id).split('-')[0];
+
     const tick = () => {
-      const roll = Math.random();
-      const now = Date.now();
-      let newItem: FeedItem;
+      setFeed((prev) => {
+        const roll = Math.random();
+        const now = Date.now();
+        const recentSeeds = new Set(prev.map((it) => seedIdOf(it.id)));
+        let newItem: FeedItem;
 
-      if (roll < 0.15) {
-        newItem = {
-          kind: 'signal',
-          id: `s-${now}`,
-          text: ACTIVITY_SIGNALS[Math.floor(Math.random() * ACTIVITY_SIGNALS.length)],
-          ts: now,
-        };
-      } else if (roll < 0.3) {
-        const base = SEED_PRICE_DROPS[Math.floor(Math.random() * SEED_PRICE_DROPS.length)];
-        newItem = { ...base, id: `${base.id}-${now}`, kind: 'pricedrop', ts: now };
-      } else {
-        const base = SEED_LISTINGS[Math.floor(Math.random() * SEED_LISTINGS.length)];
-        newItem = { ...base, id: `${base.id}-${now}`, kind: 'listing', ts: now };
-      }
+        if (roll < 0.15) {
+          newItem = {
+            kind: 'signal',
+            id: `s-${now}`,
+            text: ACTIVITY_SIGNALS[Math.floor(Math.random() * ACTIVITY_SIGNALS.length)],
+            ts: now,
+          };
+        } else if (roll < 0.3) {
+          // Pick a price-drop seed that isn't already in the feed.
+          const pool = SEED_PRICE_DROPS.filter((s) => !recentSeeds.has(String(s.id)));
+          const candidates = pool.length > 0 ? pool : SEED_PRICE_DROPS;
+          const base = candidates[Math.floor(Math.random() * candidates.length)];
+          newItem = { ...base, id: `${base.id}-${now}`, kind: 'pricedrop', ts: now };
+        } else {
+          // Pick a listing seed that isn't already in the feed.
+          const pool = SEED_LISTINGS.filter((s) => !recentSeeds.has(String(s.id)));
+          const candidates = pool.length > 0 ? pool : SEED_LISTINGS;
+          const base = candidates[Math.floor(Math.random() * candidates.length)];
+          newItem = { ...base, id: `${base.id}-${now}`, kind: 'listing', ts: now };
+        }
 
-      setFeed((prev) => [newItem, ...prev].slice(0, 8));
+        return [newItem, ...prev].slice(0, 8);
+      });
     };
 
     const id = setInterval(tick, 8000);
     return () => clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const visible = feed.filter((it) => {
