@@ -1,0 +1,325 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import {
+  ChevronRight,
+  Eye,
+  MapPin,
+  Calendar,
+  ShieldCheck,
+  Flame,
+  Camera,
+  MessageSquare,
+} from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
+import { VEHICLE_COLORS, type RideListing } from './rides-data';
+
+/**
+ * RideDetailHeader — page header for /rides/[id].
+ *
+ * Layout (top to bottom, single narrative column):
+ *   1. Breadcrumb (doubles as the back-link — no redundant "back" button)
+ *   2. Title block — badges row · H1 title · spec line · action icons
+ *   3. Dealer strip — avatar + name on one side, stats on the other
+ *
+ * Action buttons are now compact circular icons aligned to the title's
+ * end instead of a separate right-column stack, which was visually
+ * fragmenting the layout.
+ */
+
+interface Props {
+  listing: RideListing;
+}
+
+const hashSignals = (id: number) => {
+  let h = 0;
+  const s = String(id);
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return {
+    watching: 3 + (h % 52),
+    saves: 8 + ((h >>> 3) % 240),
+    inquiries: 1 + ((h >>> 7) % 28),
+  };
+};
+
+export const RideDetailHeader = ({ listing }: Props) => {
+  const t = useTranslations('marketplace.rides.detail');
+  const tTypes = useTranslations('marketplace.rides.types');
+  const sig = hashSignals(listing.id);
+  const catColor = VEHICLE_COLORS[listing.type];
+
+  return (
+    <section className="relative w-full overflow-hidden border-b border-foreground/10 bg-background">
+      {/* ── Ambient layers ─────────────────────────────── */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          background: `radial-gradient(700px 280px at 85% 0%, ${catColor}1a, transparent 55%), radial-gradient(500px 220px at 10% 100%, ${catColor}12, transparent 60%)`,
+        }}
+      />
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 -inset-x-full"
+        style={{
+          background:
+            'linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%)',
+        }}
+        initial={{ x: '-100%' }}
+        animate={{ x: '200%' }}
+        transition={{
+          duration: 3.8,
+          repeat: Infinity,
+          ease: 'linear',
+          repeatDelay: 2,
+        }}
+      />
+
+      <div className="relative mx-auto max-w-7xl px-6 pb-6 pt-5 md:pb-8 md:pt-6">
+        {/* ── 1. Breadcrumb — centered to match hero ──────── */}
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-6 flex min-w-0 flex-wrap items-center justify-center gap-1.5 text-[11.5px] text-foreground/55"
+        >
+          <Link href="/" className="transition hover:text-foreground">
+            {t('crumbHome')}
+          </Link>
+          <ChevronRight
+            size={12}
+            className="shrink-0 text-foreground/30 rtl:rotate-180"
+          />
+          <Link href="/rides" className="transition hover:text-foreground">
+            {t('crumbRides')}
+          </Link>
+          <ChevronRight
+            size={12}
+            className="shrink-0 text-foreground/30 rtl:rotate-180"
+          />
+          <span
+            className="inline-flex items-center gap-1.5 font-medium"
+            style={{ color: catColor }}
+          >
+            <span
+              className="inline-block size-1.5 rounded-full"
+              style={{ background: catColor }}
+            />
+            {tTypes(listing.type)}
+          </span>
+          <ChevronRight
+            size={12}
+            className="shrink-0 text-foreground/30 rtl:rotate-180"
+          />
+          <span className="truncate font-medium text-foreground/80">
+            {listing.title}
+          </span>
+        </nav>
+
+        {/* ── 2. Title block — centered hero ──────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 0.61, 0.36, 1] }}
+          className="mx-auto flex max-w-3xl flex-col items-center text-center"
+        >
+          {/* Badges row */}
+          <div className="mb-4 flex flex-wrap items-center justify-center gap-1.5">
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em]"
+              style={{
+                background: `${catColor}1a`,
+                color: catColor,
+                border: `1px solid ${catColor}44`,
+              }}
+            >
+              <span
+                className="inline-block size-1.5 rounded-full"
+                style={{ background: catColor }}
+              />
+              {tTypes(listing.type)}
+            </span>
+
+            {listing.verifiedListing && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/30 bg-blue-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-400">
+                <ShieldCheck size={10} strokeWidth={2.4} />
+                {t('badgeVerified')}
+              </span>
+            )}
+
+            {listing.featured && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-[#C9A86A]/40 bg-[#C9A86A]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#C9A86A]">
+                ◆ {t('badgeFeatured')}
+              </span>
+            )}
+
+            {listing.hot && (
+              <motion.span
+                className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-500"
+                animate={{ scale: [1, 1.04, 1] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <Flame size={10} strokeWidth={2.4} />
+                {t('badgeHot')}
+              </motion.span>
+            )}
+
+            {listing.dropPct !== undefined && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#e30613] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-md shadow-[#e30613]/25">
+                {listing.dropPct}% {t('badgePriceDrop')}
+              </span>
+            )}
+          </div>
+
+          {/* Title */}
+          <h1 className="font-calSans text-[28px] font-extrabold leading-[1.1] tracking-tight text-foreground md:text-[36px] lg:text-[44px]">
+            {listing.title}
+          </h1>
+
+          {/* Spec line — immediately under title, centered */}
+          <p className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[13px] text-foreground/65 md:text-[14px]">
+            <span className="inline-flex items-center gap-1.5">
+              <Calendar
+                size={13}
+                strokeWidth={2.2}
+                className="text-foreground/40"
+              />
+              <span className="font-semibold tabular-nums text-foreground/85">
+                {listing.year}
+              </span>
+            </span>
+            <Dot />
+            <span>{listing.specA}</span>
+            <Dot />
+            <span>{listing.specB}</span>
+            <Dot />
+            <span className="inline-flex items-center gap-1.5">
+              <MapPin
+                size={13}
+                strokeWidth={2.2}
+                className="text-foreground/40"
+              />
+              {listing.location}
+            </span>
+          </p>
+        </motion.div>
+
+        {/* ── 3. Dealer + stats strip ─────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 0.61, 0.36, 1] }}
+          className="mt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-foreground/10 pt-4"
+        >
+          {/* Dealer */}
+          <div className="flex items-center gap-3">
+            <div
+              className="grid size-10 place-items-center rounded-xl text-[11px] font-extrabold tracking-tight"
+              style={{ background: `${catColor}18`, color: catColor }}
+            >
+              {listing.dealer
+                .split(' ')
+                .slice(0, 2)
+                .map((w) => w[0])
+                .join('')}
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="truncate text-[13px] font-semibold text-foreground">
+                  {listing.dealer}
+                </span>
+                {listing.dealerVerified && (
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    className="shrink-0"
+                  >
+                    <path
+                      d="M12 2l2.4 2.4 3.3-.4.6 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.6 3.3-3.3-.4L12 22l-2.4-2.4-3.3.4-.6-3.3-3-1.5 1.5-3-1.5-3 3-1.5.6-3.3 3.3.4L12 2z"
+                      fill="#3B82F6"
+                    />
+                    <path
+                      d="M9 12l2 2 4-4"
+                      stroke="white"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </div>
+              <p className="text-[10px] uppercase tracking-wider text-foreground/45">
+                {t('authorizedDealer')}
+              </p>
+            </div>
+          </div>
+
+          {/* Stats (incl. live watching) */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11.5px]">
+            {/* Live watching */}
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              </span>
+              <span className="text-foreground/70">
+                <span className="font-bold tabular-nums text-foreground">
+                  {sig.watching}
+                </span>{' '}
+                {t('watchingNow')}
+              </span>
+            </span>
+
+            <Stat
+              icon={<Eye size={12} strokeWidth={2.2} />}
+              value={sig.saves}
+              label={t('statSaves')}
+            />
+            <Stat
+              icon={<MessageSquare size={12} strokeWidth={2.2} />}
+              value={sig.inquiries}
+              label={t('statInquiries')}
+            />
+            <Stat
+              icon={<Camera size={12} strokeWidth={2.2} />}
+              value={listing.photoCount}
+              label={t('statPhotos') ?? 'photos'}
+            />
+            <Stat value={`#${listing.id}`} label={t('statListingId')} mono />
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+// ─── Small pieces ─────────────────────────────────────
+const Dot = () => <span className="text-foreground/20">·</span>;
+
+const Stat = ({
+  icon,
+  value,
+  label,
+  mono,
+}: {
+  icon?: React.ReactNode;
+  value: string | number;
+  label: string;
+  mono?: boolean;
+}) => (
+  <span className="inline-flex items-center gap-1.5 text-foreground/55">
+    {icon && <span className="text-foreground/40">{icon}</span>}
+    <span
+      className={
+        'font-semibold text-foreground/85 ' +
+        (mono ? 'font-mono text-[11px]' : 'tabular-nums')
+      }
+    >
+      {value}
+    </span>
+    <span className="text-foreground/45">{label}</span>
+  </span>
+);
+
+export default RideDetailHeader;
