@@ -1,16 +1,22 @@
 # Phase 3 — Supabase Wiring Plan
 
-> Locked decision: **Data model for vehicles = Option 2** — a new
-> `ride_specs` table with a 1-to-1 FK to `listings`. `listings` keeps the
-> generic fields that apply to every vertical (title, price, condition,
-> location, lifecycle, AI telemetry). `ride_specs` holds only
-> vehicle-specific fields.
+> **Locked decision (v1.1 — supersedes v1.0):** Data model for
+> vehicle-specific fields = **Option 1 (JSONB on listings)** per
+> `planning/TAXONOMY-V2.md` §Schema Implications (locked 2026-04-18).
+> No new `ride_specs` table. The `listings` table gains a single
+> `category_fields JSONB` column validated at the app layer via Zod
+> schemas, indexed via GIN for nested-key filtering.
+>
+> The same column serves every vertical (automotive, real-estate,
+> jobs, services, …) — each vertical's Zod schema defines its own
+> required keys. This is the locked cross-vertical strategy from
+> TAXONOMY-V2.
 >
 > This document is pure planning — no migrations, no code, no schema
 > changes are executed here. Execution happens in Phase 3a onward
 > under separate tasks.
 >
-> **Author:** Claude Code · **Date:** 2026-04-20
+> **Author:** Claude Code · **Date:** 2026-04-20 (v1.1)
 
 ---
 
@@ -114,151 +120,77 @@ These are curated by the Dealo team and change on a weekly/monthly cadence at mo
 
 ---
 
-## 3. Data model — `ride_specs`
+## 3. Data model — `listings.category_fields` (JSONB)
 
-> Correction to the task's proposed schema: `listings.id` is
-> `BIGSERIAL`, not UUID. So `ride_specs.listing_id` must be `BIGINT`,
-> not UUID. All FKs to `listings` across the codebase (e.g.
-> `listing_images.listing_id`) use BIGINT.
+Locked strategy from `planning/TAXONOMY-V2.md` §Schema Implications:
+**one `JSONB` column on `listings`**, validated per category by the
+application layer via Zod schemas. No per-vertical tables.
 
-### 3.1 Proposed schema
+### 3.1 Schema change
 
 ```sql
--- New enums (scoped to vehicles)
-CREATE TYPE vehicle_fuel_type AS ENUM (
-  'petrol',
-  'diesel',
-  'hybrid',
-  'plug_in_hybrid',
-  'electric'
-);
+ALTER TABLE listings
+  ADD COLUMN category_fields JSONB NOT NULL DEFAULT '{}'::jsonb;
 
-CREATE TYPE vehicle_transmission AS ENUM (
-  'automatic',
-  'manual',
-  'cvt',
-  'dct'          -- dual-clutch
-);
+CREATE INDEX listings_category_fields_gin_idx
+  ON listings USING gin (category_fields);
 
-CREATE TYPE vehicle_body_style AS ENUM (
-  'sedan',
-  'suv',
-  'coupe',
-  'hatchback',
-  'pickup',
-  'convertible',
-  'wagon',
-  'van',
-  'minivan',
-  'bike',
-  'scooter',
-  'boat',
-  'camper',
-  'bicycle',
-  'truck',
-  'other'
-);
-
-CREATE TYPE vehicle_service_history AS ENUM (
-  'full',        -- full dealer history
-  'partial',     -- some records
-  'none',        -- no records
-  'unknown'
-);
-
-CREATE TYPE vehicle_accident_history AS ENUM (
-  'none',
-  'minor',
-  'major',
-  'unknown'
-);
-
-CREATE TABLE ride_specs (
-  id                    BIGSERIAL    PRIMARY KEY,
-  listing_id            BIGINT       NOT NULL UNIQUE
-                                     REFERENCES listings(id) ON DELETE CASCADE,
-
-  -- Identification
-  -- NOTE: listings already carries `brand` + `model` + `color` TEXT fields.
-  -- For vehicles those are treated as make + model + exterior color.
-  -- We DO NOT duplicate them here; we read from listings directly.
-  year                  SMALLINT     NOT NULL CHECK (year BETWEEN 1900 AND 2100),
-  trim_level            TEXT,                                -- e.g., "M Competition", "Sport"
-
-  -- Usage
-  mileage_km            INTEGER      CHECK (mileage_km >= 0),
-
-  -- Powertrain
-  engine_cc             INTEGER      CHECK (engine_cc BETWEEN 0 AND 10000),
-  cylinders             SMALLINT     CHECK (cylinders BETWEEN 0 AND 16),
-  horsepower            INTEGER      CHECK (horsepower BETWEEN 0 AND 2000),
-  torque_nm             INTEGER      CHECK (torque_nm BETWEEN 0 AND 2500),
-  fuel_type             vehicle_fuel_type         NOT NULL,
-  transmission          vehicle_transmission      NOT NULL,
-  drivetrain            TEXT         CHECK (drivetrain IS NULL OR drivetrain IN
-                                       ('awd','fwd','rwd','4wd')),
-
-  -- Body
-  body_style            vehicle_body_style        NOT NULL,
-  doors                 SMALLINT     CHECK (doors BETWEEN 0 AND 6),
-  seats                 SMALLINT     CHECK (seats BETWEEN 1 AND 60),
-  interior_color        TEXT,
-
-  -- Identification docs
-  vin                   TEXT         UNIQUE CHECK (vin IS NULL OR LENGTH(vin) = 17),
-  registration_ref      TEXT,                                -- "estimara" / plate ref
-
-  -- History
-  service_history       vehicle_service_history   NOT NULL DEFAULT 'unknown',
-  accident_history      vehicle_accident_history  NOT NULL DEFAULT 'unknown',
-
-  -- Market / provenance
-  region_spec           TEXT         CHECK (region_spec IS NULL OR region_spec IN
-                                       ('gcc','american','european','japanese','other')),
-  warranty_active       BOOLEAN      NOT NULL DEFAULT false,
-  warranty_remaining_months SMALLINT CHECK (warranty_remaining_months BETWEEN 0 AND 240),
-
-  -- Timestamps
-  created_at            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-  updated_at            TIMESTAMPTZ  NOT NULL DEFAULT NOW()
-);
-
--- Indexes (tuned for /rides hub filters + detail-page joins)
-CREATE INDEX idx_ride_specs_listing       ON ride_specs (listing_id);
-CREATE INDEX idx_ride_specs_year          ON ride_specs (year DESC);
-CREATE INDEX idx_ride_specs_mileage       ON ride_specs (mileage_km);
-CREATE INDEX idx_ride_specs_fuel          ON ride_specs (fuel_type);
-CREATE INDEX idx_ride_specs_transmission  ON ride_specs (transmission);
-CREATE INDEX idx_ride_specs_body_style    ON ride_specs (body_style);
--- Composite for /rides hub main filter combos
-CREATE INDEX idx_ride_specs_type_year     ON ride_specs (body_style, year DESC);
+COMMENT ON COLUMN listings.category_fields IS
+  'Category-specific structured fields. Validated per category via
+   app-layer Zod schemas. See planning/TAXONOMY-V2.md §Schema.';
 ```
 
-### 3.2 Decisions log
+That is the entire schema change. No enums, no extra table, no FK,
+no RLS updates (inherits all listings RLS automatically). The GIN
+index enables nested-key filtering (`category_fields @> '{"year":2024}'`
+and `category_fields->>'fuel_type' = 'electric'` both fast).
+
+### 3.2 JSONB shape per category (app-layer contract)
+
+Shapes are **not** enforced by Postgres. They are Zod schemas in
+`src/lib/listings/validators.ts` keyed by category slug. Per
+TAXONOMY-V2 §Schema:
+
+```ts
+// automotive/used-cars
+{
+  make: string,              // "BMW"
+  model: string,             // "M5"
+  year: number,              // 2024
+  mileage_km: number,
+  transmission: 'automatic' | 'manual' | 'cvt' | 'dct',
+  fuel_type: 'petrol' | 'diesel' | 'hybrid' | 'plug_in_hybrid' | 'electric',
+  vin?: string,              // 17 chars, optional
+  accident_history: 'none' | 'minor' | 'major' | 'unknown',
+  engine_cc?: number,
+  horsepower?: number,
+  body_style?: 'sedan' | 'suv' | 'coupe' | 'hatchback' | 'pickup' | 'convertible' | 'wagon' | 'van' | 'other',
+  exterior_color?: string,
+  interior_color?: string,
+  service_history_status?: 'full' | 'partial' | 'none' | 'unknown',
+  trim_level?: string,
+  drivetrain?: 'awd' | 'fwd' | 'rwd' | '4wd',
+}
+
+// real-estate/property-for-rent (for context — not Phase 3a scope)
+{ property_type, bedrooms, bathrooms, area_sqm, furnished, utilities_included }
+
+// watercraft
+{ type, length_ft, engine_hp, hull_material, year }
+
+// jobs/vacancies
+{ salary_range, contract_type, industry, experience_level }
+```
+
+### 3.3 Decisions log
 
 | Choice | Rationale |
 |--------|-----------|
-| `listing_id BIGINT` (not UUID) | Matches existing `listings.id BIGSERIAL`. Avoids a pk-type mismatch across the codebase. |
-| 1-to-1 via `UNIQUE (listing_id)` | A listing is either a vehicle or not — can't be partially one. Enforced at DB level. |
-| `ON DELETE CASCADE` | If a listing is hard-deleted, its spec row goes too. Soft-deletion is handled at the listings level (`soft_deleted_at`). |
-| Don't duplicate `brand`/`model`/`color` | They already exist on `listings`. For vehicles, `listings.brand = make`, `listings.model = model`, `listings.color = exterior color`. Saves storage + joins. |
-| Enums over TEXT for `fuel_type`, `transmission`, `body_style`, `service_history`, `accident_history` | These are finite, design-controlled, and directly drive UI filter chips. Enums give Postgres-level validation + better query planning. |
-| TEXT+CHECK for `drivetrain`, `region_spec` | Small sets but may expand per-region (Japanese/GCC/etc.). CHECK constraint is cheaper to modify than an enum. |
-| `vin` UNIQUE | Same VIN shouldn't appear twice in active inventory — fraud signal. `NULL`able to allow listings without VIN (private sellers often skip). |
-| Indexes on `year`, `mileage_km`, `fuel_type`, `transmission`, `body_style` | These are the main filter dimensions on `/rides`. |
-| Composite `(body_style, year DESC)` | Most common combination: "show me SUVs newest first". |
-| `SMALLINT` for year/doors/seats/cylinders/warranty_months | Range-bounded; avoids INT bloat. |
-| `INTEGER` for mileage/hp/torque/engine_cc | Can exceed SMALLINT range (mileage > 32k km). |
-
-### 3.3 RLS policies (to be detailed in the migration)
-
-- **SELECT:** public on rows joined to `listings.status = 'live'`. Authenticated sellers can see their own draft/held rows.
-- **INSERT / UPDATE:** only the listing's `seller_id` (matched via join) or `service_role`.
-- **DELETE:** cascade from `listings` only — no direct delete allowed by clients.
-
-Implementation pattern: all RLS policies on `ride_specs` join to
-`listings` and reuse `listings.seller_id = auth.uid()` / `status =
-'live'` checks. This keeps the rules DRY with the rest of the schema.
+| JSONB on listings, not `ride_specs` FK table | Locked in TAXONOMY-V2 §Schema (2026-04-18). Same column serves 21 verticals; per-category Zod schemas give type safety without migration churn when a vertical's fields evolve. |
+| App-layer validation via Zod | Postgres enforcement would require a CHECK per category or a trigger. Zod keeps the validation rules version-controlled with the code that reads/writes them. |
+| Single GIN index on the whole JSONB column | Enables both containment queries (`@>`) and key-existence lookups across all categories with one index. Phase 3c can add targeted expression indexes (e.g. `((category_fields->>'year')::int)`) if a filter becomes hot. |
+| `NOT NULL DEFAULT '{}'::jsonb` | Every listing has a JSONB (possibly empty for `general` category). Easier to query than NULL handling everywhere. |
+| `listings.brand` / `listings.model` / `listings.color` already exist | For automotive listings, these are populated alongside `category_fields.make` / `.model` / `.exterior_color`. The seed & publish action write both so simple list-card queries don't need JSONB extraction. Duplicate-but-consistent is acceptable when one is cheap to derive from the other at write time. |
 
 ---
 
@@ -266,52 +198,62 @@ Implementation pattern: all RLS policies on `ride_specs` join to
 
 Numbering continues from the existing series (last is `0014_listing_drafts.sql`).
 
-### 4.1 `0015_ride_specs.sql` — core schema
-- 5 new enums (fuel_type, transmission, body_style, service_history, accident_history)
-- `ride_specs` table with FK + UNIQUE + CHECKs
-- 7 indexes (simple + one composite)
-- Trigger to auto-touch `updated_at` on row change
-- RLS policies (SELECT public via join, INSERT/UPDATE via seller_id via join, DELETE via cascade)
+### 4.1 `0015_listings_category_fields.sql` — JSONB column + GIN index
+- `ALTER TABLE listings ADD COLUMN category_fields JSONB NOT NULL DEFAULT '{}'::jsonb`
+- `CREATE INDEX listings_category_fields_gin_idx ON listings USING gin (category_fields)`
+- Column comment referencing TAXONOMY-V2 §Schema
 
-### 4.2 `0016_ride_seeds.sql` — test fixtures
-- 5–10 demo rides (drafted from real public data)
-- Inserts a matching `profiles` + `listings` + `listing_images` + `ride_specs` row per demo
-- Wrapped in a single transaction so it can be reverted cleanly
-- Guarded with `ON CONFLICT DO NOTHING` for idempotency
+### 4.2 `0016_profile_dealer_fields.sql` — dealer flag on profiles
+- `ALTER TABLE profiles ADD COLUMN is_dealer BOOLEAN NOT NULL DEFAULT false`
+- `ALTER TABLE profiles ADD COLUMN dealer_name TEXT`
+- `ALTER TABLE profiles ADD COLUMN dealer_verified_at TIMESTAMPTZ`
+- `CHECK (is_dealer = false OR dealer_name IS NOT NULL)`
+- Partial index `WHERE is_dealer = true`
 
-### 4.3 `0017_dealer_flag.sql` — optional, **open question**
-If we decide dealers are a distinct entity type, this adds:
-- `profiles.is_dealer BOOLEAN`
-- `profiles.dealer_name TEXT`
-- `profiles.dealer_verified_at TIMESTAMPTZ`
-- Index on `is_dealer`
+### 4.3 `0017_listings_slug.sql` — SEO-friendly URL column
+- `ALTER TABLE listings ADD COLUMN slug TEXT`
+- Backfill: `UPDATE listings SET slug = 'listing-' || id WHERE slug IS NULL`
+- Then `ALTER COLUMN slug SET NOT NULL` + `UNIQUE` + `CHECK (slug ~ '^[a-z0-9-]+$' AND length BETWEEN 3 AND 120)`
+- Unique index on slug
 
-Not building a separate `dealers` table — a dealer is a kind of profile
-(has a user account, can post listings). Flag is enough for V1.
+### 4.4 `0018_add_automotive_category.sql` — taxonomy seed
+Per TAXONOMY-V2.md §1 — `automotive` parent + **15 sub-categories** (exact slugs):
+used-cars, new-cars, classic-cars, junk-cars, wanted-cars, motorcycles, watercraft, cmvs, auto-spare-parts, auto-accessories, auto-services, dealerships, car-garages, car-rental-business, food-trucks.
 
-**See Section 7 open questions — DO NOT apply this migration until the
-dealer modelling question is answered.**
+All seeded active; phase exposure is controlled at the UI layer, not via `is_active`.
+
+### 4.5 `0019_seed_cars.sql` — 5 used-cars for `/rides/[id]`
+- Reuses the single existing `profiles` row as `seller_id` (no new auth users)
+- `category_id` = `(SELECT id FROM categories WHERE slug = 'used-cars')`
+- `brand`/`model`/`color` populated on `listings` in addition to `category_fields` (see §3.3 last row)
+- `status = 'live'`, `published_at = NOW()`, `expires_at = NOW() + INTERVAL '30 days'`, `fraud_status = 'clean'`
+- Slug: `<brand>-<model>-<year>-<id>` (lowercase, hyphens)
+- `listing_images` row per car, 1600×1066 from a stable CDN
+- Wrapped in a single transaction, idempotent via `ON CONFLICT DO NOTHING` on the slug unique constraint
 
 ---
 
 ## 5. Server actions + queries
 
 All new code lives under `src/lib/rides/`. Pattern matches the
-existing `src/lib/listings/` structure.
+existing `src/lib/listings/` structure. No `ride_specs` joins —
+everything reads the JSONB via `listings.category_fields`.
 
 ### 5.1 `src/lib/rides/queries.ts`
 
 ```ts
-// Detail page
-export async function getRideById(id: string | number): Promise<RideDetail | null>
-// RideDetail = listings row + ride_specs row + images[] + seller profile
+// Detail page — fetches listing + images + seller profile
+// Vehicle-specific fields come from listings.category_fields.
+export async function getRideById(idOrSlug: string | number): Promise<RideDetail | null>
+// RideDetail = listings row (including category_fields) + images[] + seller profile
 
 // Hub — featured (paid premium row)
 export async function getFeaturedRides(limit = 4): Promise<RideCard[]>
 
 // Hub — main grid with filters
 export async function getRidesForGrid(params: {
-  type?: VehicleType;              // body_style filter
+  subCategorySlug?: string;        // "used-cars", "motorcycles", ...
+  bodyStyle?: string;              // category_fields->>'body_style'
   sortBy?: 'newest' | 'priceAsc' | 'priceDesc' | 'popular';
   limit: number;
   offset: number;
@@ -322,22 +264,25 @@ export async function getSimilarRides(
   listingId: number,
   limit = 4
 ): Promise<RideCard[]>
-// Logic: same body_style; ORDER BY abs(price - current_price) LIMIT 4
+// Logic: same sub-category_id; ORDER BY abs(price - current_price) LIMIT 4
 
 // /rides shop-by-style counts
+// COUNT(*) grouped by category_fields->>'body_style' for listings
+// under automotive.
 export async function getRideTypeCounts():
-  Promise<Record<VehicleType, number>>
+  Promise<Record<string, number>>
 ```
 
-Types `RideDetail`, `RideCard` will be defined alongside and exported
-for client-component prop typing. `RideCard` is a shallow shape (cover
+Types `RideDetail`, `RideCard` defined alongside and exported for
+client-component prop typing. `RideCard` is a shallow shape (cover
 image + headline + price + year + location) — enough to render a grid
-card without over-fetching.
+card without full JSONB extraction.
 
 ### 5.2 `src/lib/rides/actions.ts`
 
 ```ts
-// Publish flow — transactional: listings INSERT + ride_specs INSERT
+// Publish flow — single INSERT to listings with category_fields populated.
+// No cross-table transaction needed (JSONB lives on the same row).
 export async function publishRide(formData: FormData): Promise<
   { ok: true; listingId: number } | { ok: false; error: string }
 >
@@ -397,17 +342,17 @@ typecheck and a working page.
 
 - Write `src/lib/rides/queries.ts` with `getRideById` + `getSimilarRides`
 - Replace `RIDE_LISTINGS.find(...)` in `app/[locale]/rides/[id]/page.tsx` with `getRideById()`
-- Adapt the 8 `ride-detail-*` components to the real shape (most fields still come from the joined `ride_specs`; the hash-based synth gets replaced where the DB has real data, kept where it doesn't — e.g., `watching` counts stay client-deterministic in V1)
-- Retire `build-ride-specs.ts` for fields that now come from DB; keep it only for truly ephemeral signals (live watching count)
+- Adapt the 8 `ride-detail-*` components to read from `listings.category_fields` JSONB instead of `buildRideSpecs()`. Hash-based synth stays only for truly ephemeral signals (live watching count — Q4 recommends dropping this entirely in favour of `view_count`).
+- Retire `build-ride-specs.ts` for fields that now come from DB
 
 **Deliverables:**
-- `/rides/[id]/1001` (or whichever seed id) renders from real DB
+- `/rides/[id]/<slug-or-id>` renders from real DB
 - Related rides pulled via real query
 - TS clean
 
 **Success criteria:**
 - Opening a seed ride's URL works end-to-end from DB
-- Editing `ride_specs` row in Supabase → page reflects after rebuild
+- Editing `category_fields` in Supabase → page reflects after rebuild
 
 ### Phase 3c — `/rides` hub wiring · 2 commits
 
@@ -422,8 +367,8 @@ typecheck and a working page.
 - Filter chips + sort work against real data
 
 **Success criteria:**
-- Publishing a new seed row in `listings`+`ride_specs` appears on the grid
-- Counts per body style update
+- Publishing a new seed row in `listings` (with automotive category + `category_fields` populated) appears on the grid
+- Counts per `body_style` (pulled via `category_fields->>'body_style'`) update
 
 ### Phase 3d — Landing LiveFeed wiring · 2 commits
 
@@ -540,7 +485,7 @@ Current `/rides/[id]/page.tsx` has `generateStaticParams()` returning every seed
 - [ ] Landing `LiveFeed` and `Feature283` pull from DB
 - [ ] `rides-data.ts`, `build-ride-specs.ts`, `build-ride-gallery.ts`, `listings-data.ts` deleted from the tree
 - [ ] `tsc --noEmit` = 0 errors (including the previously-known `browse/queries.ts` issue)
-- [ ] End-to-end test: create a new `listings` + `ride_specs` pair via SQL, confirm it appears on `/rides` grid and its detail URL works
+- [ ] End-to-end test: create a new `listings` row (automotive category + `category_fields` populated) via SQL, confirm it appears on `/rides` grid and its detail URL works
 - [ ] End-to-end test: create an anonymous test session, confirm draft listings are not visible (RLS check)
 - [ ] `docs/RIDES-DETAIL.md` §3 updated to describe the real data model
 - [ ] `docs/STATUS.md` marks rides vertical as DB-backed
@@ -550,6 +495,7 @@ Current `/rides/[id]/page.tsx` has `generateStaticParams()` returning every seed
 
 ## 10. Change log
 
-| Date | Change | Author |
-|------|--------|--------|
-| 2026-04-20 | Initial plan. Locked Option 2 (ride_specs with BIGINT FK). Inventoried 30 components across 3 pages. Proposed schema with 5 enums + 10 indexes + 5 RLS policies. Drafted 3 migrations, 7 server functions, 6 phased sub-tasks. Surfaced 6 open questions with recommendations. | Claude Code |
+| Date | Version | Change | Author |
+|------|---------|--------|--------|
+| 2026-04-20 | v1.0 | Initial plan. Locked Option 2 (ride_specs with BIGINT FK). Inventoried 30 components across 3 pages. Proposed schema with 5 enums + 10 indexes + 5 RLS policies. Drafted 3 migrations, 7 server functions, 6 phased sub-tasks. Surfaced 6 open questions with recommendations. | Claude Code |
+| 2026-04-20 | v1.1 | Correction after review of `planning/TAXONOMY-V2.md`. v1.0 proposed a `ride_specs` FK table with 6 invented sub-cats. The correct approach is `listings.category_fields` **JSONB** + an `automotive` parent category with **15** sub-categories as defined in TAXONOMY-V2 §1. The locked source for both decisions is TAXONOMY-V2.md §Schema Implications (2026-04-18). §3 rewritten (JSONB + app-layer Zod shapes), §4 reorganized (5 migrations in the 0015→0019 range: category_fields, dealer fields, slug, automotive taxonomy seed, cars seed), §5 updated to drop `ride_specs` joins in favour of JSONB reads, §6 references updated. | Claude Code |
