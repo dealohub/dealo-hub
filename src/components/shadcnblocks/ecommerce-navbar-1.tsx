@@ -107,7 +107,7 @@ const SOCIAL_MEDIA_LINKS: SocialLink[] = [
 
 const MENU: MenuItem[] = [
   {
-    id: 'motors', label: 'Rides', href: '#',
+    id: 'motors', label: 'Rides', href: '/rides',
     megaMenu: {
       sections: [
         {

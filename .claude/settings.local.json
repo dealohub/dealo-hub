@@ -125,7 +125,12 @@
       "Bash(node -e \"const m=require\\('./messages/en.json'\\); console.log\\(Object.keys\\(m\\).join\\(', '\\)\\)\")",
       "Bash(node scripts/add-marketplace-messages.mjs)",
       "Bash(rm scripts/add-marketplace-messages.mjs)",
-      "Bash(node -e \"const m=require\\('./messages/ar.json'\\); console.log\\('ar.marketplace keys:', Object.keys\\(m.marketplace\\).join\\(', '\\)\\)\")"
+      "Bash(node -e \"const m=require\\('./messages/ar.json'\\); console.log\\('ar.marketplace keys:', Object.keys\\(m.marketplace\\).join\\(', '\\)\\)\")",
+      "WebSearch",
+      "Bash(node scripts/add-rides-messages.mjs)",
+      "Bash(curl -s -o /dev/null -w \"/en/rides → %{http_code}\\\\n\" http://localhost:3000/en/rides)",
+      "Bash(curl -s -o /dev/null -w \"/ar/rides → %{http_code}\\\\n\" http://localhost:3000/ar/rides)",
+      "Bash(curl -s http://localhost:3000/ar/rides)"
     ]
   },
   "enableAllProjectMcpServers": true,

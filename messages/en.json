@@ -853,6 +853,42 @@
         "accessibility": "Accessibility"
       },
       "copyright": "All rights reserved."
+    },
+    "rides": {
+      "header": {
+        "breadcrumbHome": "Home",
+        "breadcrumbCurrent": "Rides",
+        "title": "Rides",
+        "subtitle": "Every wheel, hull and handlebar worth owning — verified by AI + humans. From family cars to signature yachts, across the Gulf."
+      },
+      "search": {
+        "modeClassic": "Classic",
+        "modeAI": "AI",
+        "placeholderClassic": "Search by make, model, year…",
+        "placeholderAI": "Try \"family car under 80k\" or \"fishing boat under 10k\"",
+        "voice": "Voice search",
+        "submit": "Search",
+        "typeAll": "All",
+        "filterPrice": "Price",
+        "filterYear": "Year",
+        "filterLocation": "Location",
+        "filterSellerType": "Seller type",
+        "filterAdvanced": "Advanced filters"
+      },
+      "types": {
+        "cars": "Cars",
+        "bikes": "Bikes",
+        "boats": "Boats",
+        "trucks": "Trucks",
+        "campers": "Campers",
+        "bicycles": "Bicycles"
+      },
+      "loadMore": "Load more",
+      "resultsCount": "Showing {shown} of {total} listings",
+      "empty": {
+        "title": "No rides match your filters yet",
+        "subtitle": "Try widening the price range, clearing a filter, or switching sub-type above."
+      }
     }
   }
 }
