@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
+import { SEED_LISTINGS, HERO_LISTING_INDICES } from './listings-data';
 
 interface Feature283Props {
   className?: string;
@@ -54,40 +55,23 @@ const Feature283 = ({ className = '' }: Feature283Props) => {
     </div>
   );
 
-  // Marketplace-themed professional imagery — one per major vertical:
-  // Motors · Watches · Property · Tech · Fashion · Architecture.
-  const images = [
-    {
-      // Luxury car (Motors)
-      src: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?q=80&w=800&auto=format&fit=crop',
-      wrap: 'w-40 h-52 absolute -left-10 top-1/2 -translate-x-full -translate-y-1/2',
-    },
-    {
-      // Luxury watch (Classifieds)
-      src: 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?q=80&w=800&auto=format&fit=crop',
-      wrap: 'size-28 absolute -top-3 left-10 -translate-x-full -translate-y-full',
-    },
-    {
-      // Modern apartment interior (Property)
-      src: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=800&auto=format&fit=crop',
-      wrap: 'size-32 absolute -bottom-3 left-10 -translate-x-full translate-y-full',
-    },
-    {
-      // Premium smartphone (Mobiles & Tablets)
-      src: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=800&auto=format&fit=crop',
-      wrap: 'w-44 h-52 absolute -right-10 top-1/2 -translate-y-1/2 translate-x-full',
-    },
-    {
-      // Designer handbag (Fashion / Classifieds)
-      src: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop',
-      wrap: 'size-28 absolute -top-3 right-10 -translate-y-full translate-x-full',
-    },
-    {
-      // Signature villa (New Projects)
-      src: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop',
-      wrap: 'size-32 absolute -bottom-3 right-10 translate-x-full translate-y-full',
-    },
+  // Hero scatters — the 6 slots are fixed positions; the images come
+  // from the shared SEED_LISTINGS so the hero stays in sync with the
+  // live feed below. Swap listings ⇒ swap hero imagery automatically.
+  const wraps = [
+    'w-40 h-52 absolute -left-10 top-1/2 -translate-x-full -translate-y-1/2',
+    'size-28 absolute -top-3 left-10 -translate-x-full -translate-y-full',
+    'size-32 absolute -bottom-3 left-10 -translate-x-full translate-y-full',
+    'w-44 h-52 absolute -right-10 top-1/2 -translate-y-1/2 translate-x-full',
+    'size-28 absolute -top-3 right-10 -translate-y-full translate-x-full',
+    'size-32 absolute -bottom-3 right-10 translate-x-full translate-y-full',
   ];
+
+  const images = HERO_LISTING_INDICES.map((idx, i) => ({
+    src: SEED_LISTINGS[idx].image,
+    alt: SEED_LISTINGS[idx].title,
+    wrap: wraps[i],
+  }));
 
   return (
     <section className={'flex min-h-[calc(100vh-3.5rem)] items-center overflow-hidden py-16 ' + className}>
@@ -129,7 +113,7 @@ const Feature283 = ({ className = '' }: Feature283Props) => {
               >
                 <img
                   src={image.src}
-                  alt=""
+                  alt={image.alt}
                   className="pointer-events-none size-full object-cover"
                 />
               </motion.div>
