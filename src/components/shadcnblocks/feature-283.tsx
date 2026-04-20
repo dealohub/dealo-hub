@@ -12,7 +12,10 @@ interface Feature283Props {
 const Feature283 = ({ className = '' }: Feature283Props) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [activeCat, setActiveCat] = useState('All');
-  const categories = ['All', 'Rides', 'Careers', 'Market', 'Spaces', 'New Projects', 'Community'];
+  // Order matches the navbar categories so the scope pills line up
+  // visually with the main nav taxonomy. Community is a forum, not a
+  // listings vertical, so it's omitted from the search scope.
+  const categories = ['All', 'Rides', 'Spaces', 'Careers', 'Market', 'Living', 'Devices'];
 
   const DealoSearchInline = () => (
     <div className="relative z-10 mt-10 w-full max-w-lg">

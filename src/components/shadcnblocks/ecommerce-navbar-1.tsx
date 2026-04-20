@@ -9,7 +9,7 @@ import {
   ChevronDown,
   Search,
   CircleUserRound,
-  ShoppingBag,
+  Plus,
   Phone,
   Send,
   type LucideIcon,
@@ -348,7 +348,42 @@ const MENU: MenuItem[] = [
       ],
     },
   },
-  { label: 'Community', href: '#' },
+  {
+    id: 'community', label: 'Community', href: '#',
+    megaMenu: {
+      sections: [
+        {
+          label: 'Discussions', href: '#', id: 'discussions',
+          imageSrc: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&auto=format&fit=crop',
+          items: [
+            { label: 'General', href: '#' },
+            { label: 'Tips & Tricks', href: '#' },
+            { label: 'Success Stories', href: '#' },
+            { label: 'Feedback', href: '#' },
+          ],
+        },
+        {
+          label: 'Guides', href: '#', id: 'guides',
+          imageSrc: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&auto=format&fit=crop',
+          items: [
+            { label: 'Buying guide', href: '#' },
+            { label: 'Selling guide', href: '#' },
+            { label: 'Price index', href: '#' },
+            { label: 'Safety & scams', href: '#' },
+          ],
+        },
+        {
+          label: 'Support', href: '#', id: 'support',
+          imageSrc: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&auto=format&fit=crop',
+          items: [
+            { label: 'Ask the community', href: '#' },
+            { label: 'Report a listing', href: '#' },
+            { label: 'Help Center', href: '#' },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 const HOME: HomeInfo = {
@@ -560,18 +595,20 @@ const MenuFeaturedLink = ({ href, imageSrc, label }: FeaturedItem) => (
 
 const SecondaryNav = () => {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-2">
+      {/* Primary action for a C2C marketplace: post a listing. Replaces
+          the shopping-bag + cart badge that shipped with the handoff
+          (which makes no sense without a checkout). */}
+      <a
+        href="#"
+        className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#e30613] px-3.5 text-[12px] font-semibold text-white shadow transition hover:bg-[#c80510]"
+      >
+        <Plus size={14} strokeWidth={2.5} />
+        Sell now
+      </a>
       <IconButton title="Account">
         <CircleUserRound size={18} />
       </IconButton>
-      <div className="relative">
-        <IconButton title="Cart">
-          <ShoppingBag size={18} />
-        </IconButton>
-        <span className="absolute -top-1 left-1/2 grid h-4 min-w-4 -translate-x-1/2 place-items-center rounded-full bg-primary px-1 text-[0.5rem] font-semibold text-primary-foreground">
-          0
-        </span>
-      </div>
       <IconButton title="Search">
         <Search size={18} />
       </IconButton>
