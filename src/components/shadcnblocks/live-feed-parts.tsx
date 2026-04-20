@@ -200,9 +200,11 @@ const hashSignals = (id: string | number) => {
   const s = String(id);
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  // Use unsigned right shift so bits past 31 don't flip the sign
+  // and produce negative counts.
   const watching = 3 + (h % 52);
-  const saves = 8 + ((h >> 3) % 240);
-  const inquiries = 1 + ((h >> 7) % 28);
+  const saves = 8 + ((h >>> 3) % 240);
+  const inquiries = 1 + ((h >>> 7) % 28);
   const hot = watching >= 20 || inquiries >= 15;
   return { watching, saves, inquiries, hot };
 };
