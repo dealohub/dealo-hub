@@ -119,7 +119,13 @@
       "Bash(curl -s -o /dev/null -w \"/en → %{http_code}\\\\n\" http://localhost:3000/en)",
       "Bash(curl -s -o /dev/null -w \"/ar → %{http_code}\\\\n\" http://localhost:3000/ar)",
       "Bash(netstat -ano)",
-      "Bash(curl -s -o /dev/null -w \"/ → %{http_code}\\\\n\" http://localhost:3000/)"
+      "Bash(curl -s -o /dev/null -w \"/ → %{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(node -e \"const m=require\\('./messages/ar.json'\\); console.log\\(Object.keys\\(m\\).join\\(', '\\)\\)\")",
+      "Bash(node -e \"const m=require\\('./messages/ar.json'\\); console.log\\(JSON.stringify\\(m.landing, null, 2\\)\\)\")",
+      "Bash(node -e \"const m=require\\('./messages/en.json'\\); console.log\\(Object.keys\\(m\\).join\\(', '\\)\\)\")",
+      "Bash(node scripts/add-marketplace-messages.mjs)",
+      "Bash(rm scripts/add-marketplace-messages.mjs)",
+      "Bash(node -e \"const m=require\\('./messages/ar.json'\\); console.log\\('ar.marketplace keys:', Object.keys\\(m.marketplace\\).join\\(', '\\)\\)\")"
     ]
   },
   "enableAllProjectMcpServers": true,

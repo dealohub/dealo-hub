@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Menu,
   X,
@@ -505,7 +506,28 @@ const DesktopNav = ({ menu, home }: { menu: MenuItem[]; home: HomeInfo }) => {
   );
 };
 
+// Map a top-level menu id to its translated label. Falls back to the
+// raw English label shipped with the MENU constant when a translation
+// key is missing — keeps the nav usable even if messages are stale.
+const useLocalizedCategoryLabel = () => {
+  const t = useTranslations('marketplace.categories');
+  return (item: MenuItem) => {
+    switch (item.id) {
+      case 'motors':      return t('rides');
+      case 'property':    return t('spaces');
+      case 'jobs':        return t('careers');
+      case 'classifieds': return t('market');
+      case 'furniture':   return t('living');
+      case 'mobiles':     return t('devices');
+      case 'community':   return t('community');
+      default:            return item.label;
+    }
+  };
+};
+
 const DesktopMenuItem = ({ item, isOpen, onEnter }: { item: MenuItem; isOpen: boolean; onEnter: () => void }) => {
+  const getLabel = useLocalizedCategoryLabel();
+  const label = getLabel(item);
   const style = { color: item.accentColor };
   const base =
     'inline-flex h-9 items-center whitespace-nowrap rounded-md px-3 text-xs font-semibold uppercase tracking-wide transition hover:bg-muted focus:outline-none';
@@ -519,7 +541,7 @@ const DesktopMenuItem = ({ item, isOpen, onEnter }: { item: MenuItem; isOpen: bo
   if (!item.megaMenu) {
     return (
       <a href={item.href} style={style} className={base} onMouseEnter={onEnter}>
-        {item.label}
+        {label}
         {badge}
       </a>
     );
@@ -531,7 +553,7 @@ const DesktopMenuItem = ({ item, isOpen, onEnter }: { item: MenuItem; isOpen: bo
       onMouseEnter={onEnter}
       className={`${base} gap-1 ${isOpen ? 'bg-muted' : ''}`}
     >
-      {item.label}
+      {label}
       {badge}
       <ChevronDown size={12} className={`transition ${isOpen ? 'rotate-180' : ''}`} />
     </button>
@@ -594,22 +616,21 @@ const MenuFeaturedLink = ({ href, imageSrc, label }: FeaturedItem) => (
 /* ---------- Secondary nav (shared desktop + mobile) ---------- */
 
 const SecondaryNav = () => {
+  const t = useTranslations('marketplace.navbar');
   return (
     <div className="flex items-center gap-2">
-      {/* Primary action for a C2C marketplace: post a listing. Replaces
-          the shopping-bag + cart badge that shipped with the handoff
-          (which makes no sense without a checkout). */}
+      {/* Primary action for a C2C marketplace: post a listing. */}
       <a
         href="#"
         className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#e30613] px-3.5 text-[12px] font-semibold text-white shadow transition hover:bg-[#c80510]"
       >
         <Plus size={14} strokeWidth={2.5} />
-        Sell now
+        {t('sellNow')}
       </a>
-      <IconButton title="Account">
+      <IconButton title={t('account')}>
         <CircleUserRound size={18} />
       </IconButton>
-      <IconButton title="Search">
+      <IconButton title={t('search')}>
         <Search size={18} />
       </IconButton>
     </div>

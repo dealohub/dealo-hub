@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useReducer, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 /* LiveFeedParts — sub-components for LiveFeed */
 
@@ -60,6 +61,9 @@ export const CAT_COLORS: Record<CategoryKey, string> = {
   tech: '#a855f7',
   jobs: '#10b981',
 };
+
+// Default English labels — kept for any consumer that isn't using
+// the localized hook (e.g. listing seed data).
 export const CAT_LABEL: Record<CategoryKey, string> = {
   cars: 'Cars',
   property: 'Property',
@@ -67,8 +71,20 @@ export const CAT_LABEL: Record<CategoryKey, string> = {
   jobs: 'Jobs',
 };
 
+// Live-localized category labels for rendering inside React trees.
+export const useCatLabels = (): Record<CategoryKey, string> => {
+  const t = useTranslations('marketplace.feed.filters');
+  return {
+    cars: t('cars'),
+    property: t('property'),
+    tech: t('tech'),
+    jobs: t('all'),
+  };
+};
+
 // ─── Live status bar ─────────────────────────────────────────
 export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
+  const t = useTranslations('marketplace.liveBar');
   const spark = useMemo(() => {
     const pts = Array.from({ length: 30 }, (_, i) => {
       const base = 18 + Math.sin(i / 3) * 4 + (i / 30) * 6;
@@ -100,17 +116,17 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e30613] opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-[#e30613]" />
           </span>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/90">Live</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/90">{t('live')}</span>
         </div>
 
         <div className="flex items-center gap-8 text-xs">
           <div className="flex items-baseline gap-1.5">
             <span className="font-semibold tabular-nums text-foreground">12,847</span>
-            <span className="text-foreground/40">active</span>
+            <span className="text-foreground/40">{t('active')}</span>
           </div>
           <div className="hidden items-baseline gap-1.5 md:flex">
             <span className="font-semibold tabular-nums text-foreground">324</span>
-            <span className="text-foreground/40">new today</span>
+            <span className="text-foreground/40">{t('newToday')}</span>
           </div>
           <div className="hidden items-baseline gap-1.5 md:flex">
             <span className="inline-flex items-center gap-0.5 font-semibold text-emerald-400">
@@ -119,12 +135,12 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
               </svg>
               18%
             </span>
-            <span className="text-foreground/40">vs yesterday</span>
+            <span className="text-foreground/40">{t('vsYesterday')}</span>
           </div>
         </div>
 
-        <div className="ml-auto hidden items-center gap-3 md:flex">
-          <span className="text-[10px] uppercase tracking-wider text-foreground/40">Last 60 min</span>
+        <div className="ms-auto hidden items-center gap-3 md:flex">
+          <span className="text-[10px] uppercase tracking-wider text-foreground/40">{t('last60')}</span>
           <svg width="120" height="24" viewBox="0 0 100 100" preserveAspectRatio="none" className="overflow-visible">
             <path d={path} fill="none" stroke="#e30613" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
             <circle cx="100" cy={100 - ((spark[spark.length - 1] - min) / (max - min || 1)) * 100} r="3" fill="#e30613" />
@@ -136,42 +152,46 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
 };
 
 // ─── Feed header — centered ──────────────────────────────────
-export const FeedHeader = () => (
-  <div className="mb-8 flex flex-col items-center text-center">
-    <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-400">
-      <span className="relative flex h-1.5 w-1.5">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-      </span>
-      Verified partners · Live
+export const FeedHeader = () => {
+  const t = useTranslations('marketplace.feed');
+  return (
+    <div className="mb-8 flex flex-col items-center text-center">
+      <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-emerald-400">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+        </span>
+        {t('eyebrow')}
+      </div>
+      <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-[38px]">
+        {t('headline')}
+      </h2>
+      <p className="mt-2 max-w-xl text-sm text-foreground/50">
+        {t('subline')}
+      </p>
+      <a
+        href="#"
+        className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-foreground/60 transition hover:text-foreground"
+      >
+        {t('viewFull')}
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
+          <path d="M5 12h14M13 5l7 7-7 7" />
+        </svg>
+      </a>
     </div>
-    <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-[38px]">
-      Fresh from our partners
-    </h2>
-    <p className="mt-2 max-w-xl text-sm text-foreground/50">
-      A curated snapshot of the latest premium listings from verified dealers and developers across the Gulf.
-    </p>
-    <a
-      href="#"
-      className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-foreground/60 transition hover:text-foreground"
-    >
-      View full live feed
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
-        <path d="M5 12h14M13 5l7 7-7 7" />
-      </svg>
-    </a>
-  </div>
-);
+  );
+};
 
 // ─── Filter pills ────────────────────────────────────────────
 export const FilterPills = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => {
+  const t = useTranslations('marketplace.feed.filters');
   const pills: { id: string; label: string; dot?: string }[] = [
-    { id: 'all', label: 'All' },
-    { id: 'cars', label: 'Cars', dot: CAT_COLORS.cars },
-    { id: 'property', label: 'Property', dot: CAT_COLORS.property },
-    { id: 'tech', label: 'Tech', dot: CAT_COLORS.tech },
-    { id: 'featured', label: 'Featured' },
-    { id: 'pricedrop', label: 'Price drops' },
+    { id: 'all', label: t('all') },
+    { id: 'cars', label: t('cars'), dot: CAT_COLORS.cars },
+    { id: 'property', label: t('property'), dot: CAT_COLORS.property },
+    { id: 'tech', label: t('tech'), dot: CAT_COLORS.tech },
+    { id: 'featured', label: t('featured') },
+    { id: 'pricedrop', label: t('priceDrops') },
   ];
 
   return (
@@ -440,24 +460,25 @@ const PARTNERS = [
   { name: 'Gargash Motors',    kind: 'Automotive',  tagline: 'Official Mercedes-Benz dealer',                  logo: 'GM', tint: '#ef4444', stats: { listings: '446',   years: '61 yrs', rating: '4.9' } },
 ];
 
-export const FeaturedPartnersSection = () => (
-  <section className="relative w-full bg-background">
-    <div className="mx-auto max-w-7xl px-6 py-16">
-      {/* Centered header */}
-      <div className="mb-10 flex flex-col items-center text-center">
-        <div className="mb-3 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/50">
-          <span className="h-px w-6 bg-foreground/20" />
-          Featured partners
-          <span className="h-px w-6 bg-foreground/20" />
+export const FeaturedPartnersSection = () => {
+  const t = useTranslations('marketplace.partners');
+  return (
+    <section className="relative w-full bg-background">
+      <div className="mx-auto max-w-7xl px-6 py-16">
+        {/* Centered header */}
+        <div className="mb-10 flex flex-col items-center text-center">
+          <div className="mb-3 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/50">
+            <span className="h-px w-6 bg-foreground/20" />
+            {t('eyebrow')}
+            <span className="h-px w-6 bg-foreground/20" />
+          </div>
+          <h2 className="font-calSans text-3xl font-semibold tracking-tight text-foreground md:text-[34px]">
+            {t('headline')}
+          </h2>
+          <p className="mt-2 max-w-xl text-sm text-foreground/55">
+            {t('subline')}
+          </p>
         </div>
-        <h2 className="font-calSans text-3xl font-semibold tracking-tight text-foreground md:text-[34px]">
-          The names you already trust
-        </h2>
-        <p className="mt-2 max-w-xl text-sm text-foreground/55">
-          Verified dealers and developers who've chosen Dealo Hub as a
-          listing channel — because our buyers are pre-qualified.
-        </p>
-      </div>
 
       {/* 4-col partner grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -494,12 +515,12 @@ export const FeaturedPartnersSection = () => (
             <div className="mt-4 flex items-center gap-3 border-t border-foreground/5 pt-3 text-[10px]">
               <div>
                 <div className="font-semibold tabular-nums text-foreground/90">{p.stats.listings}</div>
-                <div className="text-foreground/40">listings</div>
+                <div className="text-foreground/40">{t('stats.listings')}</div>
               </div>
               <div className="h-7 w-px bg-foreground/10" />
               <div>
                 <div className="font-semibold tabular-nums text-foreground/90">{p.stats.years}</div>
-                <div className="text-foreground/40">active</div>
+                <div className="text-foreground/40">{t('stats.active')}</div>
               </div>
               <div className="h-7 w-px bg-foreground/10" />
               <div>
@@ -509,7 +530,7 @@ export const FeaturedPartnersSection = () => (
                   </svg>
                   {p.stats.rating}
                 </div>
-                <div className="text-foreground/40">rating</div>
+                <div className="text-foreground/40">{t('stats.rating')}</div>
               </div>
             </div>
           </article>
@@ -521,7 +542,7 @@ export const FeaturedPartnersSection = () => (
         href="#"
         className="mx-auto mt-8 flex w-fit items-center gap-1.5 rounded-full border border-foreground/10 bg-foreground/[0.03] px-5 py-2.5 text-[12px] font-medium text-foreground/70 transition hover:border-foreground/25 hover:bg-foreground/[0.06] hover:text-foreground"
       >
-        Browse all 240+ partners
+        {t('browseAll')}
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
           <path d="M5 12h14M13 5l7 7-7 7" />
         </svg>
@@ -531,11 +552,11 @@ export const FeaturedPartnersSection = () => (
       <div className="mx-auto mt-12 grid max-w-3xl grid-cols-3 divide-x divide-foreground/10 rounded-2xl border border-foreground/10 bg-foreground/[0.02] text-center rtl:divide-x-reverse">
         <div className="px-6 py-5">
           <div className="text-[22px] font-semibold tabular-nums text-foreground">247</div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">Total partners</div>
+          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">{t('marketPulse.total')}</div>
         </div>
         <div className="px-6 py-5">
           <div className="text-[22px] font-semibold tabular-nums text-foreground">12,847</div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">Premium listings</div>
+          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">{t('marketPulse.premium')}</div>
         </div>
         <div className="px-6 py-5">
           <div className="inline-flex items-baseline gap-1 text-[22px] font-semibold tabular-nums text-emerald-400">
@@ -544,9 +565,10 @@ export const FeaturedPartnersSection = () => (
             </svg>
             +12%
           </div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">Partner growth</div>
+          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">{t('marketPulse.growth')}</div>
         </div>
       </div>
     </div>
   </section>
-);
+  );
+};

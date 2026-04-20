@@ -706,5 +706,153 @@
     "emptyTitle": "Nothing saved yet",
     "emptyDescription": "Tap the heart on any listing to save it here.",
     "browseAction": "Browse categories"
+  },
+  "marketplace": {
+    "navbar": {
+      "sellNow": "Sell now",
+      "account": "Account",
+      "search": "Search",
+      "menu": "Menu",
+      "login": "Login",
+      "helpfulLinks": {
+        "helpSupport": "Help & Support",
+        "safetyTips": "Safety Tips",
+        "terms": "Terms & conditions"
+      }
+    },
+    "categories": {
+      "rides": "Rides",
+      "spaces": "Spaces",
+      "careers": "Careers",
+      "market": "Market",
+      "living": "Living",
+      "devices": "Devices",
+      "community": "Community"
+    },
+    "hero": {
+      "headline": "Real sellers. Real verified listings.",
+      "subline": "Every listing verified by AI and humans. Sell with trust, buy with confidence — across the Gulf.",
+      "searchingIn": "Searching in",
+      "all": "All",
+      "searchPlaceholder": "Search for anything",
+      "searchButton": "Search"
+    },
+    "brands": {
+      "eyebrow": "Trusted by leading brands",
+      "browseAll": "Browse all dealers"
+    },
+    "ai": {
+      "eyebrow": "AI + Human protection",
+      "headline": "Every deal, verified.",
+      "subline": "A four-layer safety net runs on every listing and every chat — so you spend time picking what to buy, not checking if it is real.",
+      "learnMore": "Learn more",
+      "reassurance": "AI outputs reviewed by humans · Human reviewers trained monthly · Protection runs on every request, not on launch day",
+      "features": {
+        "verification": {
+          "title": "Listing verification",
+          "desc": "Every ad passes an AI first-line review, then a human spot-check before it goes live. No bots, no duplicates."
+        },
+        "image": {
+          "title": "Image intelligence",
+          "desc": "Reverse-matched against stolen-photo databases. Blurred plates, staged shots and reused stock get flagged."
+        },
+        "scam": {
+          "title": "Scam shield",
+          "desc": "Off-platform payment asks, phishing patterns and price anomalies trigger real-time warnings in chat."
+        },
+        "semantic": {
+          "title": "Semantic search",
+          "desc": "Type like you speak — \"reliable family car under 80k\" — our embeddings understand intent, not just keywords."
+        }
+      }
+    },
+    "liveBar": {
+      "live": "Live",
+      "active": "active",
+      "newToday": "new today",
+      "vsYesterday": "vs yesterday",
+      "last60": "Last 60 min"
+    },
+    "feed": {
+      "eyebrow": "Verified partners · Live",
+      "headline": "Fresh from our partners",
+      "subline": "A curated snapshot of the latest premium listings from verified dealers and developers across the Gulf.",
+      "viewFull": "View full live feed",
+      "filters": {
+        "all": "All",
+        "cars": "Cars",
+        "property": "Property",
+        "tech": "Tech",
+        "featured": "Featured",
+        "priceDrops": "Price drops"
+      },
+      "card": {
+        "watching": "watching",
+        "saves": "saves",
+        "inquiries": "inquiries",
+        "inquiriesToday": "inquiries today",
+        "hot": "Hot",
+        "featured": "Featured",
+        "justNow": "Just now",
+        "off": "off",
+        "actionSave": "Save",
+        "actionCompare": "Compare",
+        "actionView": "View",
+        "actionOpen": "Open listing"
+      }
+    },
+    "partners": {
+      "eyebrow": "Featured partners",
+      "headline": "The names you already trust",
+      "subline": "Verified dealers and developers who have chosen Dealo Hub as a listing channel — because our buyers are pre-qualified.",
+      "browseAll": "Browse all 240+ partners",
+      "stats": {
+        "listings": "listings",
+        "active": "active",
+        "rating": "rating"
+      },
+      "marketPulse": {
+        "total": "Total partners",
+        "premium": "Premium listings",
+        "growth": "Partner growth"
+      }
+    },
+    "footerSite": {
+      "tagline": "Premium C2C marketplace for the Gulf. Every listing verified by AI + humans — sell with trust, buy with confidence.",
+      "trustChip": "AI + Human verified marketplace",
+      "emailPlaceholder": "your@email.com",
+      "subscribe": "Subscribe",
+      "newsletterNote": "Weekly pulse on pricing, drops, and new verified listings. No spam.",
+      "columns": {
+        "browse": "Browse",
+        "company": "Company",
+        "trust": "Trust & Safety",
+        "help": "Help"
+      },
+      "links": {
+        "aboutDealo": "About Dealo Hub",
+        "press": "Press",
+        "careersAtDealo": "Careers at Dealo",
+        "partnerships": "Partnerships",
+        "contactUs": "Contact us",
+        "howVerificationWorks": "How verification works",
+        "safetyTips": "Safety tips",
+        "reportListing": "Report a listing",
+        "scamPrevention": "Scam prevention",
+        "communityGuidelines": "Community guidelines",
+        "helpCenter": "Help center",
+        "buyerFaq": "Buyer FAQ",
+        "sellerFaq": "Seller FAQ",
+        "contactSupport": "Contact support",
+        "status": "Status"
+      },
+      "legal": {
+        "terms": "Terms of service",
+        "privacy": "Privacy policy",
+        "cookies": "Cookie settings",
+        "accessibility": "Accessibility"
+      },
+      "copyright": "All rights reserved."
+    }
   }
 }

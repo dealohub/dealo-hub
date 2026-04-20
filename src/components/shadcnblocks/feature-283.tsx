@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { SEED_LISTINGS, HERO_LISTING_INDICES } from './listings-data';
 
 interface Feature283Props {
@@ -10,24 +11,26 @@ interface Feature283Props {
 }
 
 const Feature283 = ({ className = '' }: Feature283Props) => {
+  const t = useTranslations('marketplace');
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [activeCat, setActiveCat] = useState('All');
   // Order matches the navbar categories so the scope pills line up
   // visually with the main nav taxonomy. Community is a forum, not a
   // listings vertical, so it's omitted from the search scope.
-  const categories = ['All', 'Rides', 'Spaces', 'Careers', 'Market', 'Living', 'Devices'];
+  const categoryKeys = ['all', 'rides', 'spaces', 'careers', 'market', 'living', 'devices'] as const;
+  const [activeCat, setActiveCat] = useState<typeof categoryKeys[number]>('all');
 
   const DealoSearchInline = () => (
     <div className="relative z-10 mt-10 w-full max-w-lg">
       {/* Row 1 — category pills */}
       <div className="flex flex-nowrap items-center gap-x-3 overflow-x-auto whitespace-nowrap text-[11px] font-medium [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <span className="font-semibold text-foreground">Searching in</span>
-        {categories.map((cat) => {
-          const isActive = activeCat === cat;
+        <span className="font-semibold text-foreground">{t('hero.searchingIn')}</span>
+        {categoryKeys.map((key) => {
+          const isActive = activeCat === key;
+          const label = key === 'all' ? t('hero.all') : t(`categories.${key}`);
           return (
             <button
-              key={cat}
-              onClick={() => setActiveCat(cat)}
+              key={key}
+              onClick={() => setActiveCat(key)}
               className={
                 'whitespace-nowrap rounded-full transition ' +
                 (isActive
@@ -35,7 +38,7 @@ const Feature283 = ({ className = '' }: Feature283Props) => {
                   : 'px-1 py-0.5 text-foreground/80 hover:text-foreground')
               }
             >
-              {cat}
+              {label}
             </button>
           );
         })}
@@ -46,13 +49,13 @@ const Feature283 = ({ className = '' }: Feature283Props) => {
         <div className="relative flex h-9 flex-1 items-center rounded-md bg-white px-3 shadow">
           <input
             type="text"
-            placeholder="Search for anything"
-            className="h-full w-full border-0 bg-transparent pr-7 text-xs text-neutral-900 placeholder:text-neutral-500 outline-none focus:outline-none"
+            placeholder={t('hero.searchPlaceholder')}
+            className="h-full w-full border-0 bg-transparent pe-7 text-xs text-neutral-900 placeholder:text-neutral-500 outline-none focus:outline-none"
           />
-          <Search size={14} className="absolute right-3 text-neutral-500" />
+          <Search size={14} className="absolute end-3 text-neutral-500" />
         </div>
         <button className="inline-flex h-9 items-center justify-center rounded-md bg-[#e30613] px-4 text-xs font-semibold text-white shadow transition hover:bg-[#c80510]">
-          Search
+          {t('hero.searchButton')}
         </button>
       </div>
     </div>
@@ -81,11 +84,10 @@ const Feature283 = ({ className = '' }: Feature283Props) => {
       <div className="container mx-auto flex h-full w-full max-w-7xl flex-col items-center justify-center px-4">
         <div className="relative flex w-full max-w-lg flex-col items-center justify-center">
           <h2 className="relative py-2 text-center font-sans text-4xl font-semibold tracking-tighter md:text-5xl">
-            Real sellers. Real verified listings.
+            {t('hero.headline')}
           </h2>
           <p className="mx-auto mt-2 max-w-xl px-5 text-center text-sm text-muted-foreground/70 md:text-base">
-            Every listing verified by AI and humans. Sell with trust, buy with
-            confidence — across the Gulf.
+            {t('hero.subline')}
           </p>
           <DealoSearchInline />
 

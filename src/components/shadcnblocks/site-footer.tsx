@@ -1,55 +1,12 @@
 'use client';
 
 import { Facebook, Instagram, Linkedin, Send, Twitter, ShieldCheck } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 /**
  * SiteFooter — landing-page footer with four link columns, social,
  * legal bottom bar, and a trust reminder.
  */
-
-const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
-  {
-    title: 'Browse',
-    links: [
-      { label: 'Rides', href: '#' },
-      { label: 'Spaces', href: '#' },
-      { label: 'Careers', href: '#' },
-      { label: 'Market', href: '#' },
-      { label: 'Living', href: '#' },
-      { label: 'Devices', href: '#' },
-    ],
-  },
-  {
-    title: 'Company',
-    links: [
-      { label: 'About Dealo Hub', href: '#' },
-      { label: 'Press', href: '#' },
-      { label: 'Careers at Dealo', href: '#' },
-      { label: 'Partnerships', href: '#' },
-      { label: 'Contact us', href: '#' },
-    ],
-  },
-  {
-    title: 'Trust & Safety',
-    links: [
-      { label: 'How verification works', href: '#' },
-      { label: 'Safety tips', href: '#' },
-      { label: 'Report a listing', href: '#' },
-      { label: 'Scam prevention', href: '#' },
-      { label: 'Community guidelines', href: '#' },
-    ],
-  },
-  {
-    title: 'Help',
-    links: [
-      { label: 'Help center', href: '#' },
-      { label: 'Buyer FAQ', href: '#' },
-      { label: 'Seller FAQ', href: '#' },
-      { label: 'Contact support', href: '#' },
-      { label: 'Status', href: '#' },
-    ],
-  },
-];
 
 const SOCIALS = [
   { label: 'Instagram', href: '#', Icon: Instagram },
@@ -59,6 +16,51 @@ const SOCIALS = [
 ];
 
 export const SiteFooter = () => {
+  const t = useTranslations('marketplace');
+  const tFs = useTranslations('marketplace.footerSite');
+  const COLUMNS = [
+    {
+      title: tFs('columns.browse'),
+      links: [
+        { label: t('categories.rides'), href: '#' },
+        { label: t('categories.spaces'), href: '#' },
+        { label: t('categories.careers'), href: '#' },
+        { label: t('categories.market'), href: '#' },
+        { label: t('categories.living'), href: '#' },
+        { label: t('categories.devices'), href: '#' },
+      ],
+    },
+    {
+      title: tFs('columns.company'),
+      links: [
+        { label: tFs('links.aboutDealo'), href: '#' },
+        { label: tFs('links.press'), href: '#' },
+        { label: tFs('links.careersAtDealo'), href: '#' },
+        { label: tFs('links.partnerships'), href: '#' },
+        { label: tFs('links.contactUs'), href: '#' },
+      ],
+    },
+    {
+      title: tFs('columns.trust'),
+      links: [
+        { label: tFs('links.howVerificationWorks'), href: '#' },
+        { label: tFs('links.safetyTips'), href: '#' },
+        { label: tFs('links.reportListing'), href: '#' },
+        { label: tFs('links.scamPrevention'), href: '#' },
+        { label: tFs('links.communityGuidelines'), href: '#' },
+      ],
+    },
+    {
+      title: tFs('columns.help'),
+      links: [
+        { label: tFs('links.helpCenter'), href: '#' },
+        { label: tFs('links.buyerFaq'), href: '#' },
+        { label: tFs('links.sellerFaq'), href: '#' },
+        { label: tFs('links.contactSupport'), href: '#' },
+        { label: tFs('links.status'), href: '#' },
+      ],
+    },
+  ];
   return (
     <footer className="relative w-full border-t border-foreground/10 bg-background">
       <div className="mx-auto max-w-7xl px-6 pt-16 pb-10">
@@ -79,14 +81,13 @@ export const SiteFooter = () => {
               </span>
             </div>
             <p className="max-w-sm text-[13px] leading-relaxed text-foreground/60">
-              Premium C2C marketplace for the Gulf. Every listing verified by AI
-              + humans — sell with trust, buy with confidence.
+              {tFs('tagline')}
             </p>
 
             {/* Trust row */}
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1.5 text-[11px] font-medium text-emerald-400">
               <ShieldCheck size={13} strokeWidth={2} />
-              AI + Human verified marketplace
+              {tFs('trustChip')}
             </div>
 
             {/* Newsletter */}
@@ -100,20 +101,20 @@ export const SiteFooter = () => {
               <input
                 id="footer-email"
                 type="email"
-                placeholder="your@email.com"
+                placeholder={tFs('emailPlaceholder')}
                 className="h-10 flex-1 rounded-full border border-foreground/15 bg-foreground/[0.03] px-4 text-[13px] text-foreground placeholder:text-foreground/40 outline-none transition focus:border-foreground/40"
               />
               <button
                 type="submit"
-                aria-label="Subscribe"
+                aria-label={tFs('subscribe')}
                 className="inline-flex h-10 items-center gap-1.5 rounded-full bg-foreground px-4 text-[12px] font-semibold text-background transition hover:bg-foreground/90"
               >
-                Subscribe
+                {tFs('subscribe')}
                 <Send size={12} className="rtl:-scale-x-100" />
               </button>
             </form>
             <p className="text-[10.5px] text-foreground/40">
-              Weekly pulse on pricing, drops, and new verified listings. No spam.
+              {tFs('newsletterNote')}
             </p>
           </div>
 
@@ -147,14 +148,14 @@ export const SiteFooter = () => {
         {/* Bottom bar */}
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
           <p className="text-[11.5px] text-foreground/50">
-            © {new Date().getFullYear()} Dealo Hub. All rights reserved.
+            © {new Date().getFullYear()} Dealo Hub. {tFs('copyright')}
           </p>
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[11.5px] text-foreground/55">
-            <a href="#" className="transition hover:text-foreground">Terms of service</a>
-            <a href="#" className="transition hover:text-foreground">Privacy policy</a>
-            <a href="#" className="transition hover:text-foreground">Cookie settings</a>
-            <a href="#" className="transition hover:text-foreground">Accessibility</a>
+            <a href="#" className="transition hover:text-foreground">{tFs('legal.terms')}</a>
+            <a href="#" className="transition hover:text-foreground">{tFs('legal.privacy')}</a>
+            <a href="#" className="transition hover:text-foreground">{tFs('legal.cookies')}</a>
+            <a href="#" className="transition hover:text-foreground">{tFs('legal.accessibility')}</a>
           </div>
 
           <ul className="flex items-center gap-2">
