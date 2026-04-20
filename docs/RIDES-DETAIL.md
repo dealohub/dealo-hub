@@ -1,0 +1,308 @@
+# Rides Detail Page — `/[locale]/rides/[id]`
+
+> The first **vertical** detail page in Dealo Hub. A premium, dedicated
+> experience for vehicle listings (cars, bikes, boats, trucks, campers,
+> bicycles) — modelled on Carwow + Dubizzle, tuned for Kuwait / GCC.
+>
+> This document captures everything built for this page across multiple
+> sessions so future development (including other verticals) can reuse
+> the patterns without re-inventing them.
+
+---
+
+## 1. Status at a glance
+
+| Item | State |
+|------|-------|
+| Route | `app/[locale]/rides/[id]/page.tsx` ✅ |
+| Data source | `RIDE_LISTINGS` seed (in `rides-data.ts`) — **not yet wired to Supabase** |
+| Static generation | `generateStaticParams` → pre-renders all seed listings |
+| TypeScript | Clean (`tsc --noEmit` passes, excl. the pre-existing `browse/queries.ts` issue) |
+| i18n | Fully bilingual (AR default · EN toggle) under `marketplace.rides.detail.*` |
+| RTL | Logical properties throughout (`ms-`, `me-`, `start-`, `end-`, `ps-`, `pe-`) |
+| Responsive | Mobile-first. Sticky bottom action bar appears on `<lg` |
+| Framer Motion | Entry + scroll-in animations, price count-up, sticky reveal |
+
+---
+
+## 2. Final page composition (as of this doc)
+
+```
+<RideDetailPage>
+├─ <EcommerceNavbar1 />              ← shared site chrome
+├─ <RideDetailHeader />              ← centered hero (badges · title · specs · dealer strip)
+│
+├─ <section max-w-7xl>               ← two-column grid
+│   ├─ Main column (flex-1)
+│   │   ├─ <RideDetailGallery />      ← hero image + parallax + lightbox
+│   │   ├─ <RideDetailKeyInfo />      ← spec grid (identity / mechanical / documents)
+│   │   ├─ <RideDetailFeatures />     ← included equipment list
+│   │   ├─ <RideDetailDescription />  ← seller's bilingual blurb
+│   │   └─ <RideDetailSimilar />      ← 4 similar vehicles carousel
+│   │
+│   └─ Sidebar (400px, sticky lg+)
+│       └─ <RideDetailPurchasePanel /> ← price, CTAs, finance calc, dealer, trust
+│
+├─ <RideDetailMobileActionBar />      ← appears only on mobile (sticky bottom)
+├─ <SiteFooter />
+├─ <ThemeToggle />
+└─ <LocaleToggle />
+```
+
+---
+
+## 3. Data model
+
+### 3.1 Seed listings — `RIDE_LISTINGS`
+- Location: `src/components/shadcnblocks/rides-data.ts`
+- Shape: `RideListing[]` — id, type, title, price, year, location, dealer, image, photoCount, featured, hot, verifiedListing, bentoSize
+- Types: `cars · bikes · boats · trucks · campers · bicycles` (the rides vertical covers all six)
+- Per-type accent: `VEHICLE_COLORS` map drives badges, chips, ambient glow
+- Coverage: ~20 listings, spread across all types
+
+### 3.2 Spec synthesis — `buildRideSpecs(listing)`
+- Location: `src/components/shadcnblocks/build-ride-specs.ts`
+- Purpose: seed data is lean (title + price + specA/specB) — the detail page needs **50+ fields**. This function fills them out deterministically.
+- Pattern: `hash(listing.id)` + bit-shifts → stable pseudo-random → realistic specs
+- Returns: `RideSpecs` (mileage, body type, colors, engine, transmission, drivetrain, fuel, warranty, VIN, market context, performance, features Set)
+- **Idempotent**: same listing ID → same specs, every render, every refresh. Enables visual regression testing.
+
+**Why this matters:** every other vertical (properties, tech, jobs) will need the same pattern — lean seed + a `buildXSpecs` synthesis engine.
+
+---
+
+## 4. Component catalogue
+
+Each component lives in `src/components/shadcnblocks/ride-detail-*.tsx` and is a
+client component (`'use client'`) with `{ listing: RideListing }` as its only
+prop.
+
+### 4.1 `RideDetailHeader`
+- **Role:** centered editorial hero — the visual anchor of the page.
+- **Contents:** centered breadcrumb · centered badges row · H1 title · spec line · dealer strip (avatar + stats).
+- **Design notes:**
+  - Title scale: `text-[28px] md:text-[36px] lg:text-[44px]` (balanced, not overwhelming)
+  - Breadcrumb doubles as back-navigation — no separate back button
+  - Dealer strip is split: dealer left, stats right (including live watching, saves, inquiries, photos, ID)
+  - Live watching pill pulses via `animate-ping`
+  - Ambient radial gradient tinted to vehicle-type colour
+  - Subtle diagonal sheen (`linear-gradient` + motion `x` loop)
+
+### 4.2 `RideDetailGallery`
+- **Role:** 2026-trend gallery — parallax hero with crossfade + lightbox.
+- **Key features:** photo counter chip, category labels (all/exterior/interior/engine/wheels), fullscreen lightbox with keyboard nav, scroll parallax on hero.
+- **Note:** was originally a `<section>` with its own `max-w-7xl` — refactored to a plain `<div>` so the page's grid defines its width.
+
+### 4.3 `RideDetailKeyInfo`
+- **Role:** the "what is this car" spec sheet.
+- **Contents:** compact 2-column grid, grouped into Identity (year, body, color, spec region), Mechanical (engine, transmission, drivetrain, fuel), Documents (VIN with masking + copy, warranty, registration).
+- **Design notes:**
+  - Color swatches for exterior/interior (hex → tinted squares)
+  - VIN shows masked until click → copies to clipboard
+  - Mileage vs market context bar
+  - Hero stats strip was removed (too cluttery) — info consolidated into the grid
+
+### 4.4 `RideDetailFeatures`
+- **Role:** buyer-facing equipment checklist.
+- **Contents:** flat 3-column grid of included features with category-tinted icons; "show more" toggle for overflow past 12.
+- **Design history:** originally had tabs + search + "show missing" toggle — those were removed because they belong in the **seller dashboard** (when editing a listing), not the public detail page. Buyers just want a clean list of what's included.
+
+### 4.5 `RideDetailDescription`
+- **Role:** "كلام البائع" — the seller's own blurb about the vehicle.
+- **Contents:** bilingual (AR / EN) synthesized description, highlight chips for key selling points, "Read more" toggle.
+- **Design notes:**
+  - Uses `useLocale()` to default language to the page locale
+  - Word-boundary truncation (no mid-word cuts)
+  - Gold highlight chips for key facts (year, low mileage, warranty remaining)
+  - Language toggle is inline, not hidden in a menu
+
+### 4.6 `RideDetailSimilar`
+- **Role:** "you may also like" carousel — keeps the buyer exploring inside Dealo.
+- **Logic:** same vehicle type, sorted by price proximity, top 4.
+- **Design:** horizontal scroll on mobile · 4-col grid on desktop · hover lift + image zoom · year / featured / photo-count chips on each card.
+- **Deliberately neutral:** no price comparisons, no "better than this one" badges (we don't want to undermine the current listing in front of its own seller).
+
+### 4.7 `RideDetailPurchasePanel` (sidebar)
+- **Role:** the sticky "buy-side" card — where intent converts.
+- **Contents (top to bottom):**
+  - AI verdict banner (Great deal / Fair / Competitive / At market) — tone-based, no hostile "above market" label
+  - Action icon row (♥ Save · ⇄ Compare · ↗ Share) — with toggle state on Save
+  - Price block with strike-through + drop %
+  - Animated price count-up on mount
+  - Monthly installment preview → opens full finance calculator (down%, APR, term, live monthly)
+  - Primary CTAs: phone reveal (masked → reveals + copies), WhatsApp deep-link with pre-filled message, Send inquiry
+  - Dealer mini-card (avatar + verified tick + online-now pulse + rating + years)
+  - Trust strip (Inspected · Warranty · Free delivery)
+  - Social-proof footer (posted N days ago · X viewed today)
+- **Sticky behaviour:** `lg:sticky lg:top-6 self-start` on an `<aside>`, and the parent grid uses `items-start` so the sticky doesn't stretch.
+- **Critical fix from past debugging:** do NOT gate visibility behind `useInView` — it breaks full-page screenshots and can leave the panel invisible below the fold.
+
+### 4.8 `RideDetailMobileActionBar`
+- **Role:** fixed bottom bar on mobile — replaces the sticky sidebar on narrow screens.
+- **Visibility:** only `<lg`. Hidden on desktop.
+- **Contents:** mini price + condensed CTAs (Save · WhatsApp · Call).
+
+---
+
+## 5. Design decisions we removed (and why)
+
+These are intentional "simplifications that came from real feedback." Future verticals should follow the same restraint.
+
+| Removed component / feature | Reason |
+|------|--------|
+| `RideDetailAccordions` (service history / factory packages / included items / documents) | Synthetic, unverifiable data — doesn't belong on a public buyer-facing page. File deleted 2026-04-20 (pre-Supabase cleanup). When a seller dashboard service-history view is needed later, rebuild against real data. |
+| `RideDetailPerformance` (HP / torque / 0-100 / top speed / efficiency / CO₂ cards) | The average Kuwaiti buyer doesn't decide from 0-100 numbers — they decide from price + condition + year + dealer. File deleted 2026-04-20 (pre-Supabase cleanup). Can be re-introduced as an "enthusiast mode" once real vehicle specs are in the database. |
+| AI Insights section (price verdict + AI Q&A) | **Fatal for sellers** — publicly labelling a listing "12% above market" drives sellers to competitors. Price intelligence belongs in the **seller's dashboard** (private), not the public listing. AI Q&A was trimmed because the "what's resale value in 3 years" question can kill a purchase decision. |
+| Brand partners strip on landing | Unsplash placeholder images broke repeatedly → replaced with typography-based brand names. |
+| Scaffold placeholder for "Steps 7–9" | Was a dashed-border card listing future steps. Removed once those steps were either built or consciously deprioritised. |
+| Icon actions (Heart / Compare / Share) in the header | Disconnected visually from the title. Moved into the purchase panel at the top-right of the card (closer to the price, where action makes sense). |
+| Ad slot banner in header | Tried as a sponsored placement next to title. Rejected — visually unbalanced and the experimental partner lockup was pulling focus from the car itself. Revenue patterns can come back later in a dedicated placement that won't compete with the hero. |
+
+---
+
+## 6. i18n key structure
+
+Namespace root: `marketplace.rides.detail.*`
+
+```
+marketplace.rides.detail
+├─ header          (crumbHome, crumbRides, badges, actions, stats, dealer strip)
+├─ gallery         (photo counter, categories, lightbox controls)
+├─ purchase        (price, finance calc, CTAs, verdict, trust, social proof)
+├─ keyInfo         (group titles, labels, VIN mask, color names)
+├─ description     (toggle labels, seller persona, CTAs, highlight pills)
+├─ features        (eyebrow, titleSimple, countSimple, showMore, list.* per feature key)
+└─ similar         (eyebrow, title, viewAll, featured/hot labels, photos)
+```
+
+**Non-namespace contracts:**
+- `marketplace.rides.types.{cars|bikes|boats|trucks|campers|bicycles}` — vehicle-type labels (reused across listing, card, header)
+- All keys exist in BOTH `messages/ar.json` and `messages/en.json` with identical shape.
+
+---
+
+## 7. Patterns established for future verticals
+
+When we build `/properties/[id]`, `/jobs/[id]`, `/tech/[id]`, copy these patterns verbatim:
+
+### 7.1 Deterministic spec synthesis
+- Lean seed data (`X_LISTINGS`) carries only the fields needed by the grid cards
+- A `buildXSpecs(listing)` engine (hash + shifts) fills the rest
+- Same ID → same specs every render → testable demos
+
+### 7.2 Component naming
+- `x-detail-*` file-per-block
+- Each accepts `{ listing: XListing }` and nothing else
+- Each is `'use client'`
+- Each gets a one-paragraph JSDoc at the top (what + why)
+
+### 7.3 Vertical accent colors
+- A `{VERTICAL}_COLORS: Record<SubType, string>` map
+- Use it for: badge backgrounds, chip dots, ambient glows, active-state borders
+- Never hardcode colours inside a component that varies by sub-type
+
+### 7.4 Page shell
+- Header full-width
+- Grid 2-column: main (`flex-1 min-w-0`) + sidebar (`[1fr_400px]`)
+- `items-start` on the grid (sticky sidebar requires it)
+- Mobile: sidebar collapses, mobile action bar replaces it
+
+### 7.5 Neutral public surface
+- No price shaming — keep the detail page friendly to both buyer **and** seller
+- All "judging" data (price vs market, resale forecasts, above/below average) → **seller dashboard only**
+
+### 7.6 Sticky survival
+- `aside.self-start.lg:sticky.lg:top-6` + parent `grid.items-start`
+- Never gate the sidebar behind `useInView` — it breaks below-the-fold rendering
+
+### 7.7 Bilingual seller blurbs
+- Synthesize AR and EN variants from structured data (year, brand tokens, condition, warranty)
+- Default to the current locale via `useLocale()`
+- Expose a lightweight inline language toggle
+
+### 7.8 i18n discipline
+- All user-visible strings under `marketplace.{vertical}.detail.*`
+- Keys mirror the component file structure
+- Western digits (`numberingSystem: 'latn'`) even in Arabic UI (per `planning/DECISIONS.md`)
+
+### 7.9 RTL
+- Only logical properties (`ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`, `text-start`, `text-end`)
+- Direction-sensitive icons (arrows, chevrons) flip with `rtl:rotate-180` or an `isAr ? ArrowLeft : ArrowRight` ternary
+
+### 7.10 Motion budget
+- Entry: `initial / animate / transition` with `ease: [0.22, 0.61, 0.36, 1]` and ~0.35–0.5s duration
+- Scroll-in: `whileInView` with `viewport={{ once: true, margin: '-50px' }}`
+- Stagger: `delay: i * 0.04` for lists, never more than 0.1 per step
+- No infinite looping except the live-watching pulse and the hero sheen
+
+---
+
+## 8. Known files vs active page
+
+All files under `src/components/shadcnblocks/ride-detail-*.tsx` are active
+and rendered in `/rides/[id]`. No deactivated leftovers remain after the
+2026-04-20 cleanup.
+
+| File | Status |
+|------|--------|
+| `ride-detail-header.tsx` | ✅ active |
+| `ride-detail-gallery.tsx` | ✅ active |
+| `ride-detail-purchase-panel.tsx` | ✅ active |
+| `ride-detail-key-info.tsx` | ✅ active |
+| `ride-detail-description.tsx` | ✅ active |
+| `ride-detail-features.tsx` | ✅ active |
+| `ride-detail-similar.tsx` | ✅ active |
+| `ride-detail-mobile-actionbar.tsx` | ✅ active |
+
+**Historical (deleted 2026-04-20):** `ride-detail-performance.tsx`,
+`ride-detail-accordions.tsx`. See §5 for rationale.
+
+---
+
+## 9. Wiring to Supabase — the pending step
+
+Everything above consumes `RIDE_LISTINGS` (seed). The documented backend already
+supports real listings:
+
+- `src/lib/listings/queries.ts` → `getListingById(id)`
+- Supabase tables: `listings`, `listing_images`, `listing_videos`, `profiles`
+- Buckets: `listing-images`, `listing-videos`, `avatars`
+
+**To go live:**
+1. Extend `listings` schema (or a joined table) with the vehicle-specific fields currently in `RideSpecs` — or compute them in `buildRideSpecs` from the stored JSONB `extras` column.
+2. Swap `const listing = RIDE_LISTINGS.find(...)` for `const listing = await getListingById(params.id)`.
+3. Replace `listing.image` / `images` with public URLs from `listing_images` (ordered by `position`).
+4. Wire `Save`, `Compare`, `Share` buttons to:
+   - `toggleFavorite(listingId)` (already exists in `src/lib/favorites/actions.ts`)
+   - Compare bar (planned — see §10)
+   - Web Share API with clipboard fallback (already implemented client-side)
+
+---
+
+## 10. Open work
+
+| Track | Priority | Notes |
+|-------|----------|-------|
+| Compare bar + `/rides/compare` page | 🟠 Mid | Up to 4 vehicles side-by-side |
+| Seller dashboard — vehicle-specific panel | 🟠 Mid | Host the Price AI + Performance views that don't fit on the public page |
+| Supabase wiring (§9) | 🔴 High, after seller dashboard schema lands | |
+| Image hashes for vehicle photos | 🟡 Low | Reuse the `image_hashes` fraud pipeline |
+| Semantic search for rides vertical | 🟡 Low | `listing_embeddings` already exists |
+| `/rides/new` (or reuse generic `/sell` flow) | ⚪ Future | Decide once `/sell` wizard ships |
+
+---
+
+## 11. Workflow / context
+
+- **Claude Design** built the landing page at `/[locale]/`.
+- **Claude Code** (this author, across several sessions) built everything else on the rides vertical end-to-end — header, gallery, purchase panel, key info, features, description, similar, mobile action bar, and the iterations that trimmed out the accordions / performance / AI sections.
+- The planning docs (`planning/BUILD-STATE.md`, `planning/MASTER-PLAN.md`, `planning/DECISIONS.md`, `DESIGN.md`) predate the rides vertical and still assume a single generic `/listings/[id]` path. This doc is the authoritative record for the rides vertical specifically and should be updated alongside any structural change to `/rides/[id]`.
+
+---
+
+## 12. Change log
+
+| Date | Change |
+|------|--------|
+| 2026-04-20 | Initial comprehensive doc — captures every decision across the rides-detail build sessions to date (header through similar carousel, action relocation, removed sections, bilingual description, purchase panel sticky, ad-slot experiment and rollback, centered hero pivot). |
+| 2026-04-20 | Pre-Supabase cleanup: deleted `ride-detail-performance.tsx` and `ride-detail-accordions.tsx` (deactivated, no imports). §5 and §8 updated. |
