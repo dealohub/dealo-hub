@@ -54,29 +54,37 @@ const Feature283 = ({ className = '' }: Feature283Props) => {
     </div>
   );
 
+  // Marketplace-themed professional imagery — one per major vertical:
+  // Motors · Watches · Property · Tech · Fashion · Architecture.
   const images = [
     {
-      src: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=800&auto=format&fit=crop',
+      // Luxury car (Motors)
+      src: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?q=80&w=800&auto=format&fit=crop',
       wrap: 'w-40 h-52 absolute -left-10 top-1/2 -translate-x-full -translate-y-1/2',
     },
     {
-      src: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop',
+      // Luxury watch (Classifieds)
+      src: 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?q=80&w=800&auto=format&fit=crop',
       wrap: 'size-28 absolute -top-3 left-10 -translate-x-full -translate-y-full',
     },
     {
-      src: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop',
+      // Modern apartment interior (Property)
+      src: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=800&auto=format&fit=crop',
       wrap: 'size-32 absolute -bottom-3 left-10 -translate-x-full translate-y-full',
     },
     {
-      src: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800&auto=format&fit=crop',
+      // Premium smartphone (Mobiles & Tablets)
+      src: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=800&auto=format&fit=crop',
       wrap: 'w-44 h-52 absolute -right-10 top-1/2 -translate-y-1/2 translate-x-full',
     },
     {
-      src: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=800&auto=format&fit=crop',
+      // Designer handbag (Fashion / Classifieds)
+      src: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop',
       wrap: 'size-28 absolute -top-3 right-10 -translate-y-full translate-x-full',
     },
     {
-      src: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?q=80&w=800&auto=format&fit=crop',
+      // Signature villa (New Projects)
+      src: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800&auto=format&fit=crop',
       wrap: 'size-32 absolute -bottom-3 right-10 translate-x-full translate-y-full',
     },
   ];
