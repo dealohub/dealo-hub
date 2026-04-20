@@ -44,4 +44,17 @@
   body {
     -webkit-font-smoothing: antialiased;
   }
+
+  /* Arabic typography — Cairo is applied through the whole RTL tree.
+     Font utilities (font-sans, font-calSans) still work because we
+     rebind their CSS variables here so Tailwind picks Cairo up. */
+  html[dir='rtl'],
+  html[dir='rtl'] body {
+    font-family: var(--font-cairo), 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+  }
+
+  html[dir='rtl'] {
+    --font-geist-sans: var(--font-cairo);
+    --font-bricolage: var(--font-cairo);
+  }
 }
