@@ -149,7 +149,7 @@ export const FeedHeader = () => (
       Fresh from our partners
     </h2>
     <p className="mt-2 max-w-xl text-sm text-foreground/50">
-      A curated snapshot of the latest premium listings from verified dealers and developers across the UAE.
+      A curated snapshot of the latest premium listings from verified dealers and developers across the Gulf.
     </p>
     <a
       href="#"
