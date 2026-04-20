@@ -857,23 +857,96 @@
     "rides": {
       "header": {
         "breadcrumbHome": "Home",
-        "breadcrumbCurrent": "Rides",
-        "title": "Rides",
-        "subtitle": "Every wheel, hull and handlebar worth owning — verified by AI + humans. From family cars to signature yachts, across the Gulf."
+        "breadcrumbCurrent": "Rides"
       },
-      "search": {
+      "hero": {
+        "title": "Rides for every road — and every harbor.",
+        "subtitle": "Cars, bikes, boats, trucks, campers and more — every listing verified by AI and humans, across the Gulf.",
         "modeClassic": "Classic",
         "modeAI": "AI",
         "placeholderClassic": "Search by make, model, year…",
         "placeholderAI": "Try \"family car under 80k\" or \"fishing boat under 10k\"",
         "voice": "Voice search",
         "submit": "Search",
-        "typeAll": "All",
-        "filterPrice": "Price",
-        "filterYear": "Year",
-        "filterLocation": "Location",
-        "filterSellerType": "Seller type",
-        "filterAdvanced": "Advanced filters"
+        "anyMake": "Any make",
+        "anyModel": "Any model",
+        "anyYear": "Any year",
+        "anyLocation": "Any location",
+        "advancedHint": "Need precision?",
+        "advancedLink": "Open advanced filters",
+        "sponsored": "Sponsored",
+        "sponsorTag": "Deal of the week",
+        "sponsorEyebrow": "Editor's pick · 2026",
+        "sponsorTitle": "Mercedes G63 AMG — 0 km, 3-year warranty",
+        "sponsorDealer": "Automotive · Verified",
+        "sponsorCta": "View offer"
+      },
+      "style": {
+        "eyebrow": "Browse by style",
+        "title": "Pick your shape",
+        "viewAll": "View all styles",
+        "tiles": {
+          "sedan": "Sedan",
+          "suv": "SUV",
+          "pickup": "Pickup",
+          "coupe": "Coupe",
+          "hatchback": "Hatchback",
+          "bike": "Bike",
+          "boat": "Boat",
+          "camper": "Camper"
+        }
+      },
+      "ad": {
+        "sponsored": "Sponsored · Dealo Pro",
+        "title": "Sell your ride 3× faster with Dealo Pro.",
+        "subtitle": "Boosted placement, AI-optimized copy, verified badge from day one, and direct buyer chat — all in one plan for serious sellers.",
+        "cta": "See how it works",
+        "secondaryCta": "Compare plans",
+        "disclosure": "Paid placement by",
+        "statEyebrow": "Average seller results",
+        "statLabel": "Faster time to first offer",
+        "bullet1": "Priority placement in search",
+        "bullet2": "AI-optimized listing copy",
+        "bullet3": "Dedicated support line"
+      },
+      "best": {
+        "eyebrow": "Best of 2026 · Dealo Awards",
+        "title": "The year's best rides, chosen by us.",
+        "description": "Our editors tested, drove, and shortlisted more than 100 new vehicles this year. Six took the trophy — three are below.",
+        "ctaPrimary": "See all winners",
+        "ctaSecondary": "Shop the Best of 2026",
+        "stat1Label": "Winners",
+        "stat2Label": "Tested",
+        "stat3Label": "Model year",
+        "winners": {
+          "suvCategory": "Best Family SUV",
+          "suvTitle": "Toyota Land Cruiser VX-R",
+          "sedanCategory": "Best Premium Sedan",
+          "sedanTitle": "BMW 5-Series M Sport",
+          "evCategory": "Best Electric",
+          "evTitle": "Tesla Model S Plaid"
+        }
+      },
+      "featured": {
+        "eyebrow": "Featured · Premium",
+        "title": "Hand-picked listings from top partners",
+        "subtitle": "Paid placements from verified dealers. Every unit still passes our AI + human review — no exceptions.",
+        "viewAll": "View all featured",
+        "disclosure": "Listings in this row are paid placements by verified Dealo Pro partners. Our verification standards apply equally."
+      },
+      "main": {
+        "title": "All rides",
+        "count": "{total} listings",
+        "loadMore": "Load more",
+        "sortAllTypes": "All",
+        "sort": {
+          "prefix": "Sort",
+          "relevance": "Best match",
+          "priceAsc": "Price: low to high",
+          "priceDesc": "Price: high to low",
+          "newest": "Newest first",
+          "popular": "Most popular"
+        }
       },
       "types": {
         "cars": "Cars",
@@ -883,8 +956,70 @@
         "campers": "Campers",
         "bicycles": "Bicycles"
       },
-      "loadMore": "Load more",
-      "resultsCount": "Showing {shown} of {total} listings",
+      "articles": {
+        "eyebrow": "Latest from our experts",
+        "title": "Know before you buy.",
+        "viewAll": "All articles",
+        "readTime": "{minutes} min read",
+        "categories": {
+          "guide": "Guide",
+          "buying": "Buying",
+          "review": "Review",
+          "market": "Market"
+        },
+        "items": {
+          "ev-guide": {
+            "title": "The EV buyer's guide for Gulf summers",
+            "excerpt": "Range, charging, heat management. What actually matters when you drive electric in 50°C weather."
+          },
+          "used-suv": {
+            "title": "Used SUVs under AED 120k that still feel premium",
+            "excerpt": "We rank the best pre-owned seven-seaters worth your money this quarter."
+          },
+          "boat-first": {
+            "title": "Your first boat: a 10-minute decision framework",
+            "excerpt": "Buying a fishing rig is not buying a yacht. We break down what to ask at every price tier."
+          },
+          "prices": {
+            "title": "Q2 2026: where Gulf car prices are heading",
+            "excerpt": "Supply, FX, and EV incentives are pulling the market in three directions. Here's our read."
+          }
+        }
+      },
+      "dealers": {
+        "eyebrow": "Top verified dealers",
+        "title": "The names you already trust",
+        "subtitle": "Authorized, multi-year Gulf dealers with thousands of verified listings on Dealo Hub.",
+        "viewInventory": "View inventory",
+        "browseAll": "Browse all dealers",
+        "stats": {
+          "listings": "listings",
+          "active": "active",
+          "rating": "rating"
+        },
+        "items": {
+          "alFuttaim": {
+            "name": "Al-Futtaim Motors",
+            "specialty": "Automotive",
+            "tagline": "Official Toyota, Lexus, Honda distributor across the Gulf."
+          },
+          "gargash": {
+            "name": "Gargash Motors",
+            "specialty": "Automotive",
+            "tagline": "Official Mercedes-Benz dealer in the UAE since 1964."
+          },
+          "alTayer": {
+            "name": "Al Tayer Motors",
+            "specialty": "Luxury",
+            "tagline": "Ferrari, Maserati, Land Rover and Jaguar partner."
+          },
+          "audiDubai": {
+            "name": "Audi Dubai",
+            "specialty": "Premium",
+            "tagline": "Authorized Audi dealer with complete RS / e-tron lineup."
+          }
+        }
+      },
       "empty": {
         "title": "No rides match your filters yet",
         "subtitle": "Try widening the price range, clearing a filter, or switching sub-type above."

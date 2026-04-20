@@ -3,19 +3,18 @@
 import { motion } from 'framer-motion';
 import { Heart, GitCompare, ArrowRight, Camera } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { VEHICLE_COLORS, type BentoSize, type RideListing } from './rides-data';
+import { VEHICLE_COLORS, type RideListing } from './rides-data';
 
 /**
- * ListingCardRides — image-forward card for the /rides Bento grid.
- * Supports three size variants that span different grid cells:
- *   standard   → 1×1 (image 16:9)
- *   wide       → 2×1 (image 16:9 but wider, shows more meta)
- *   spotlight  → 2×2 (image 4:3 hero, extra badges, bigger price)
+ * ListingCardRides — uniform image-forward card for the /rides grid.
+ * One size only; premium / featured / sponsored variants live in
+ * separate components (rides-featured-premium, etc.) so their visual
+ * weight is explicit and paid placements can't sneak past users.
  */
 
 interface Props {
   item: RideListing;
-  size?: BentoSize;
+  premium?: boolean;
 }
 
 const hashSignals = (id: number) => {
@@ -28,23 +27,10 @@ const hashSignals = (id: number) => {
   };
 };
 
-export const ListingCardRides = ({ item, size = 'standard' }: Props) => {
-  const finalSize = item.bentoSize ?? size;
+export const ListingCardRides = ({ item, premium = false }: Props) => {
   const catColor = VEHICLE_COLORS[item.type];
   const sig = hashSignals(item.id);
   const t = useTranslations('marketplace.feed.card');
-
-  // Span classes that opt each variant into its grid slot
-  const spanClass =
-    finalSize === 'spotlight'
-      ? 'md:col-span-2 md:row-span-2'
-      : finalSize === 'wide'
-        ? 'md:col-span-2'
-        : '';
-
-  // Different aspect for spotlight vs standard/wide
-  const aspectClass =
-    finalSize === 'spotlight' ? 'aspect-[4/3]' : 'aspect-[16/10]';
 
   return (
     <motion.article
@@ -54,24 +40,26 @@ export const ListingCardRides = ({ item, size = 'standard' }: Props) => {
       transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }}
       whileHover={{ y: -3 }}
       className={
-        'group relative flex flex-col overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.02] shadow-sm transition-all duration-300 hover:border-foreground/20 hover:bg-foreground/[0.04] hover:shadow-lg hover:shadow-foreground/5 ' +
-        spanClass
+        'group relative flex flex-col overflow-hidden rounded-2xl border shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ' +
+        (premium
+          ? 'border-[#C9A86A]/35 bg-[#C9A86A]/[0.03] hover:border-[#C9A86A]/60 hover:shadow-[#C9A86A]/10'
+          : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04] hover:shadow-foreground/5')
       }
     >
-      {/* IMAGE */}
-      <div className={'relative w-full overflow-hidden ' + aspectClass}>
+      {/* Image */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden">
         <img
           src={item.image}
           alt={item.title}
           className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
           loading="lazy"
         />
-
-        {/* Top gradient fade for badge legibility */}
+        {/* Subtle top + bottom gradients for chip legibility */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/40 to-transparent" />
 
-        {/* Top-start: trust + state badges */}
-        <div className="absolute start-3 top-3 flex items-center gap-1.5">
+        {/* Top-start: state badges */}
+        <div className="absolute start-3 top-3 flex flex-wrap items-center gap-1.5">
           {item.verifiedListing && (
             <span className="inline-flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
               <svg width="10" height="10" viewBox="0 0 24 24" className="shrink-0">
@@ -99,11 +87,6 @@ export const ListingCardRides = ({ item, size = 'standard' }: Props) => {
               {t('hot')}
             </span>
           )}
-          {item.featured && !item.dropPct && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-[#C9A86A]/40 bg-[#C9A86A]/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#E8C98D] backdrop-blur-md">
-              ◆ {t('featured')}
-            </span>
-          )}
           {item.dropPct !== undefined && (
             <span className="inline-flex items-center gap-1 rounded-full bg-[#e30613] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-lg shadow-[#e30613]/30">
               {item.dropPct}%
@@ -111,7 +94,7 @@ export const ListingCardRides = ({ item, size = 'standard' }: Props) => {
           )}
         </div>
 
-        {/* Top-end: actions */}
+        {/* Top-end: quick actions */}
         <div className="absolute end-3 top-3 flex items-center gap-1.5">
           <IconButton label={t('actionSave')}>
             <Heart size={14} strokeWidth={2} />
@@ -121,67 +104,46 @@ export const ListingCardRides = ({ item, size = 'standard' }: Props) => {
           </IconButton>
         </div>
 
-        {/* Bottom-start: photo count + vehicle-type accent */}
+        {/* Bottom-start: photo count + type tag */}
         <div className="absolute bottom-3 start-3 flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-md">
             <Camera size={10} strokeWidth={2.2} />
             {item.photoCount}
           </span>
-          <span
-            className="inline-flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white backdrop-blur-md"
-          >
-            <span
-              className="inline-block size-1.5 rounded-full"
-              style={{ background: catColor }}
-            />
+          <span className="inline-flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
+            <span className="inline-block size-1.5 rounded-full" style={{ background: catColor }} />
             {item.type}
           </span>
         </div>
       </div>
 
-      {/* Vertical accent rail */}
+      {/* Category accent rail */}
       <span
         aria-hidden
         className="absolute start-0 top-0 h-full w-[2px] opacity-40"
-        style={{ background: catColor }}
+        style={{ background: premium ? '#C9A86A' : catColor }}
       />
 
-      {/* CONTENT */}
-      <div
-        className={
-          'flex flex-1 flex-col gap-2 p-4 ' +
-          (finalSize === 'spotlight' ? 'md:p-6 md:gap-3' : '')
-        }
-      >
-        {/* Price + drop strike */}
+      {/* Content */}
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        {/* Price + strike */}
         <div className="flex items-baseline gap-2">
           {item.oldPrice && (
             <span className="text-[11px] text-foreground/35 line-through tabular-nums">
               {item.oldPrice}
             </span>
           )}
-          <div
-            className={
-              'font-semibold tabular-nums tracking-tight text-foreground ' +
-              (finalSize === 'spotlight' ? 'text-[28px] md:text-[32px]' : 'text-[20px]')
-            }
-          >
+          <div className="text-[20px] font-semibold tabular-nums tracking-tight text-foreground">
             {item.price}
           </div>
         </div>
 
         {/* Title */}
-        <h3
-          className={
-            'font-semibold leading-snug tracking-tight text-foreground ' +
-            (finalSize === 'spotlight' ? 'text-[18px] md:text-[20px]' : 'text-[15px]') +
-            ' line-clamp-2'
-          }
-        >
+        <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug tracking-tight text-foreground">
           {item.title}
         </h3>
 
-        {/* Meta line */}
+        {/* Spec line */}
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-foreground/55">
           <span className="font-medium tabular-nums">{item.year}</span>
           <span className="text-foreground/25">·</span>
@@ -190,7 +152,8 @@ export const ListingCardRides = ({ item, size = 'standard' }: Props) => {
           <span>{item.specB}</span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-foreground/55">
+        {/* Location line */}
+        <div className="text-[12px] text-foreground/55">
           <span className="truncate">{item.location}</span>
         </div>
 
