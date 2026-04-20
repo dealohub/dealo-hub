@@ -37,20 +37,19 @@ export const CategoryCoasters = () => {
   return (
     <section className="relative w-full bg-background">
       <div className="mx-auto max-w-7xl px-6 py-14">
-        {/* Heading */}
-        <div className="mb-8 flex items-end justify-between gap-6">
-          <div>
-            <div className="mb-2 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/50">
-              <span className="h-px w-6 bg-foreground/20" />
-              Browse by category
-            </div>
-            <h2 className="font-calSans text-3xl font-semibold tracking-tight text-foreground md:text-[34px]">
-              Every vertical, one tap away
-            </h2>
+        {/* Heading — centered */}
+        <div className="mb-10 flex flex-col items-center text-center">
+          <div className="mb-3 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/50">
+            <span className="h-px w-6 bg-foreground/20" />
+            Browse by category
+            <span className="h-px w-6 bg-foreground/20" />
           </div>
+          <h2 className="font-calSans text-3xl font-semibold tracking-tight text-foreground md:text-[34px]">
+            Every vertical, one tap away
+          </h2>
           <a
             href="#"
-            className="hidden shrink-0 items-center gap-1.5 text-xs font-medium text-foreground/60 transition hover:text-foreground md:inline-flex"
+            className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-foreground/60 transition hover:text-foreground"
           >
             All categories
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
