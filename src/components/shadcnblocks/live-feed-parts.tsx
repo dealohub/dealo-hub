@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useReducer, type ReactNode } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
+import { motion, useInView, animate } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 /* LiveFeedParts — sub-components for LiveFeed */
@@ -82,16 +82,36 @@ export const useCatLabels = (): Record<CategoryKey, string> => {
   };
 };
 
+// ─── Count-up number ─────────────────────────────────────────
+const CountUp = ({ to, inView, duration = 1.6 }: { to: number; inView: boolean; duration?: number }) => {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    if (!inView) return;
+    const controls = animate(0, to, {
+      duration,
+      ease: [0.22, 0.61, 0.36, 1],
+      onUpdate: (x) => setV(x),
+    });
+    return () => controls.stop();
+  }, [to, inView, duration]);
+  return <span className="tabular-nums">{Math.round(v).toLocaleString('en-US')}</span>;
+};
+
 // ─── Live status bar ─────────────────────────────────────────
+// Professional animated strip — matches the NBK finance banner treatment:
+// radial wash + shimmer sweep + count-up metrics + animated spark line +
+// pulsing LIVE pill. Re-triggers on every scroll into view.
 export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
   const t = useTranslations('marketplace.liveBar');
+  const barRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(barRef, { margin: '-40px', amount: 0.4 });
+
   const spark = useMemo(() => {
-    const pts = Array.from({ length: 30 }, (_, i) => {
+    return Array.from({ length: 30 }, (_, i) => {
       const base = 18 + Math.sin(i / 3) * 4 + (i / 30) * 6;
       const noise = ((i * 13) % 7) * 0.8;
       return base + noise;
     });
-    return pts;
   }, []);
 
   const max = Math.max(...spark);
@@ -103,47 +123,139 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
       return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(' ');
+  const areaPath = `${path} L100,100 L0,100 Z`;
+  const lastY = 100 - ((spark[spark.length - 1] - min) / (max - min || 1)) * 100;
 
   return (
-    // Intentionally NOT sticky: sticking the bar caused its translucent
-    // backdrop-blur to muddy every card it scrolled over, which read as
-    // "empty" card thumbnails. The bar still looks identical — it just
-    // scrolls with the section now.
-    <div className="relative z-10 w-full border-b border-foreground/10 bg-background">
-      <div className="mx-auto flex max-w-7xl items-center gap-8 px-6 py-3">
-        <div className="flex items-center gap-2.5">
+    <div
+      ref={barRef}
+      className="relative z-10 w-full overflow-hidden border-y border-foreground/10 bg-foreground/[0.02]"
+    >
+      {/* Layer 1 — radial wash */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          background:
+            'radial-gradient(500px 140px at 85% 50%, rgba(227,6,19,0.10), transparent 60%), radial-gradient(400px 120px at 10% 50%, rgba(16,185,129,0.08), transparent 60%)',
+        }}
+      />
+
+      {/* Layer 2 — shimmer sweep */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 -inset-x-full"
+        style={{
+          background:
+            'linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.10) 50%, transparent 60%)',
+        }}
+        initial={{ x: '-100%' }}
+        animate={{ x: '200%' }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: 'linear', repeatDelay: 1.2 }}
+      />
+
+      <div className="relative mx-auto flex max-w-7xl items-center gap-6 px-6 py-3 md:gap-8">
+        {/* LIVE pill with wiggle */}
+        <motion.div
+          className="flex items-center gap-2 rounded-full border border-[#e30613]/25 bg-[#e30613]/[0.08] px-2.5 py-0.5"
+          animate={{ rotate: [0, -1.2, 1.2, -1.2, 0] }}
+          transition={{ duration: 0.7, repeat: Infinity, repeatDelay: 5, ease: 'easeInOut' }}
+        >
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e30613] opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-[#e30613]" />
           </span>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/90">{t('live')}</span>
-        </div>
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#e30613]">
+            {t('live')}
+          </span>
+        </motion.div>
 
-        <div className="flex items-center gap-8 text-xs">
+        {/* Metrics — count up on view */}
+        <div className="flex items-center gap-6 text-xs md:gap-8">
           <div className="flex items-baseline gap-1.5">
-            <span className="font-semibold tabular-nums text-foreground">12,847</span>
-            <span className="text-foreground/40">{t('active')}</span>
+            <motion.span
+              className="font-semibold tabular-nums text-foreground"
+              animate={{
+                textShadow: [
+                  '0 0 0px rgba(227,6,19,0)',
+                  '0 0 14px rgba(227,6,19,0.45)',
+                  '0 0 0px rgba(227,6,19,0)',
+                ],
+              }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <CountUp to={12847} inView={inView} />
+            </motion.span>
+            <span className="text-foreground/45">{t('active')}</span>
           </div>
+
           <div className="hidden items-baseline gap-1.5 md:flex">
-            <span className="font-semibold tabular-nums text-foreground">324</span>
-            <span className="text-foreground/40">{t('newToday')}</span>
+            <span className="font-semibold tabular-nums text-foreground">
+              <CountUp to={324} inView={inView} duration={1.2} />
+            </span>
+            <span className="text-foreground/45">{t('newToday')}</span>
           </div>
+
           <div className="hidden items-baseline gap-1.5 md:flex">
-            <span className="inline-flex items-center gap-0.5 font-semibold text-emerald-400">
+            <motion.span
+              className="inline-flex items-center gap-0.5 font-semibold text-emerald-500"
+              animate={{ y: [0, -1.5, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            >
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                 <path d="M12 19V5M5 12l7-7 7 7" />
               </svg>
-              18%
-            </span>
-            <span className="text-foreground/40">{t('vsYesterday')}</span>
+              <CountUp to={18} inView={inView} duration={1} />%
+            </motion.span>
+            <span className="text-foreground/45">{t('vsYesterday')}</span>
           </div>
         </div>
 
+        {/* Spark chart — animated draw-in + traveling dot */}
         <div className="ms-auto hidden items-center gap-3 md:flex">
-          <span className="text-[10px] uppercase tracking-wider text-foreground/40">{t('last60')}</span>
-          <svg width="120" height="24" viewBox="0 0 100 100" preserveAspectRatio="none" className="overflow-visible">
-            <path d={path} fill="none" stroke="#e30613" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx="100" cy={100 - ((spark[spark.length - 1] - min) / (max - min || 1)) * 100} r="3" fill="#e30613" />
+          <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-foreground/45">
+            {t('last60')}
+          </span>
+          <svg
+            width="140"
+            height="28"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            className="overflow-visible"
+          >
+            <defs>
+              <linearGradient id="sparkFill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stopColor="#e30613" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#e30613" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <motion.path
+              d={areaPath}
+              fill="url(#sparkFill)"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            />
+            <motion.path
+              d={path}
+              fill="none"
+              stroke="#e30613"
+              strokeWidth="2"
+              vectorEffect="non-scaling-stroke"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              initial={{ pathLength: 0 }}
+              animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
+              transition={{ duration: 1.4, ease: [0.22, 0.61, 0.36, 1] }}
+            />
+            <motion.circle
+              cx="100"
+              cy={lastY}
+              r="3"
+              fill="#e30613"
+              animate={{ scale: [1, 1.6, 1], opacity: [1, 0.7, 1] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+            />
           </svg>
         </div>
       </div>
