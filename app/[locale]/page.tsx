@@ -12,10 +12,17 @@ export default function HomePage() {
   return (
     <>
       <EcommerceNavbar1 />
-      <Feature283 />
+      {/*
+        BackgroundPattern115 is authored as a backdrop wrapper (accepts
+        children; PatternPlaceholder is just the demo default). The handoff
+        rendered it standalone at the bottom purely as a showcase. Real
+        placement: use it as the hero backdrop behind Feature283.
+      */}
+      <BackgroundPattern115 className="!min-h-0">
+        <Feature283 />
+      </BackgroundPattern115>
       <FeaturedBrandsStrip />
       <LiveFeed />
-      <BackgroundPattern115 />
       <ThemeToggle />
       <LocaleToggle />
     </>
