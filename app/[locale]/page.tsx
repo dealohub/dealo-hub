@@ -3,6 +3,7 @@
 import EcommerceNavbar1 from '@/components/shadcnblocks/ecommerce-navbar-1';
 import Feature283 from '@/components/shadcnblocks/feature-283';
 import FeaturedBrandsStrip from '@/components/shadcnblocks/featured-brands-strip';
+import AIProtectionStrip from '@/components/shadcnblocks/ai-protection-strip';
 import LiveFeed from '@/components/shadcnblocks/live-feed';
 import BackgroundPattern115 from '@/components/shadcnblocks/background-pattern-115';
 import ThemeToggle from '@/components/theme-toggle';
@@ -22,6 +23,7 @@ export default function HomePage() {
         <Feature283 />
       </BackgroundPattern115>
       <FeaturedBrandsStrip />
+      <AIProtectionStrip />
       <LiveFeed />
       <ThemeToggle />
       <LocaleToggle />
