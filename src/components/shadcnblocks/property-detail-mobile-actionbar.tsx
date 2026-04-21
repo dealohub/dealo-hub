@@ -1,9 +1,10 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { MessageCircle, Phone } from 'lucide-react';
+import { Phone } from 'lucide-react';
 import type { PropertyDetail } from '@/lib/properties/types';
 import { formatPrice } from '@/lib/format';
+import ContactSellerButton from '@/components/chat/contact-seller-button';
 
 /**
  * Property detail — mobile sticky action bar.
@@ -51,14 +52,21 @@ export default function PropertyDetailMobileActionBar({ listing, locale }: Props
             )}
           </div>
         </div>
-        <button className="inline-flex items-center gap-1 rounded-xl bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/30 transition hover:bg-emerald-500/15">
+        <button
+          type="button"
+          disabled
+          className="inline-flex items-center gap-1 rounded-xl bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/30 opacity-60 cursor-not-allowed"
+          title="Chat-only — WhatsApp coming in Phase 5d"
+        >
           <Phone size={14} />
           {t('panelCtaWhatsApp')}
         </button>
-        <button className="inline-flex items-center gap-1 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90">
-          <MessageCircle size={14} />
-          {t('mobileChat')}
-        </button>
+        <ContactSellerButton
+          listingId={listing.id}
+          locale={locale}
+          variant="compact"
+          labelOverride={t('mobileChat')}
+        />
       </div>
     </div>
   );

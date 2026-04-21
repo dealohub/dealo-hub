@@ -10,6 +10,7 @@ import { markConversationRead } from '@/lib/chat/actions';
 import { listingDetailPath } from '@/lib/chat/types';
 import MessageBubble from '@/components/chat/message-bubble';
 import MessageComposer from '@/components/chat/message-composer';
+import ThreadRealtime from '@/components/chat/thread-realtime';
 import EcommerceNavbar1 from '@/components/shadcnblocks/ecommerce-navbar-1';
 
 export async function generateMetadata({
@@ -51,6 +52,7 @@ export default async function ThreadPage({
   return (
     <>
       <EcommerceNavbar1 />
+      <ThreadRealtime conversationId={conv.id} />
       <main className="mx-auto flex min-h-[calc(100vh-80px)] max-w-3xl flex-col px-4 py-4 md:py-6">
         {/* Thread header */}
         <header className="mb-3 flex items-center gap-3 rounded-xl border border-border/50 bg-card p-3">

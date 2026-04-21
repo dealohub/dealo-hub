@@ -1,7 +1,8 @@
 import { useTranslations } from 'next-intl';
-import { MessageCircle, CalendarCheck2, Phone, Heart, Scale, Share2 } from 'lucide-react';
+import { Phone, Heart, Scale, Share2 } from 'lucide-react';
 import type { PropertyDetail } from '@/lib/properties/types';
 import { formatPrice } from '@/lib/format';
+import ContactSellerButton from '@/components/chat/contact-seller-button';
 
 /**
  * Property detail — purchase panel (right sidebar on lg+, inline on sm).
@@ -109,25 +110,28 @@ export default function PropertyDetailPurchasePanel({ listing, locale }: Props) 
         </div>
       )}
 
-      {/* Primary CTA by purpose */}
+      {/* Primary CTA by purpose — wired to chat system */}
       <div className="space-y-2">
-        {isChaletRent ? (
-          <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-600">
-            <CalendarCheck2 size={16} />
-            {t('panelCtaBookNow')}
-          </button>
-        ) : isSale ? (
-          <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90">
-            <MessageCircle size={16} />
-            {t('panelCtaMakeOffer')}
-          </button>
-        ) : (
-          <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90">
-            <MessageCircle size={16} />
-            {t('panelCtaContactSeller')}
-          </button>
-        )}
-        <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/30 transition hover:bg-emerald-500/15">
+        <ContactSellerButton
+          listingId={listing.id}
+          locale={locale}
+          variant={isSale ? 'offer' : 'primary'}
+          labelOverride={
+            isChaletRent
+              ? t('panelCtaBookNow')
+              : isSale
+              ? t('panelCtaMakeOffer')
+              : t('panelCtaContactSeller')
+          }
+        />
+        {/* WhatsApp CTA stays stubbed — chat-only per DECISIONS.md #2.
+            Visible today to ease user expectations; activates in Phase 5c+. */}
+        <button
+          type="button"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/30 opacity-60 cursor-not-allowed"
+          disabled
+          title="Chat-only — WhatsApp coming in Phase 5d"
+        >
           <Phone size={16} />
           {t('panelCtaWhatsApp')}
         </button>
