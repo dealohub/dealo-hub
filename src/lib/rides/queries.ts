@@ -1,7 +1,13 @@
 import { cache } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { UsedCarFieldsSchema } from './validators';
-import type { RideCard, RideDetail, RideImage, RideSeller } from './types';
+import type {
+  ImageCategory,
+  RideCard,
+  RideDetail,
+  RideImage,
+  RideSeller,
+} from './types';
 
 /**
  * Read-side queries for the rides (automotive) vertical.
@@ -29,12 +35,14 @@ import type { RideCard, RideDetail, RideImage, RideSeller } from './types';
 const DETAIL_SELECT = `
   id, slug, title, description, brand, model, color,
   condition, price_mode, price_minor_units, currency_code, min_offer_minor_units,
+  old_price_minor_units, is_featured, is_hot,
   country_code, city_id, status, published_at, category_fields,
-  listing_images ( url, width, height, alt_text, position ),
+  listing_images ( url, width, height, alt_text, position, category ),
   seller:profiles!listings_seller_id_fkey (
     id, display_name, handle, avatar_url,
     rating_avg, rating_count,
-    is_dealer, dealer_name, dealer_verified_at
+    is_dealer, dealer_name, dealer_verified_at,
+    created_at
   ),
   city:cities!listings_city_id_fkey ( id, name_ar, name_en ),
   category:categories!listings_category_id_fkey ( id, slug, name_ar, name_en )
@@ -44,7 +52,8 @@ const CARD_SELECT = `
   id, slug, title, brand, model, price_minor_units, currency_code,
   category_fields,
   listing_images ( url, position ),
-  city:cities!listings_city_id_fkey ( name_ar, name_en )
+  city:cities!listings_city_id_fkey ( name_ar, name_en ),
+  category:categories!listings_category_id_fkey ( slug )
 ` as const;
 
 // ---------------------------------------------------------------------------
@@ -64,6 +73,9 @@ interface RawDetailRow {
   price_minor_units: number | string;
   currency_code: string;
   min_offer_minor_units: number | string | null;
+  old_price_minor_units: number | string | null;
+  is_featured: boolean;
+  is_hot: boolean;
   country_code: string;
   city_id: number;
   status: RideDetail['status'];
@@ -76,6 +88,7 @@ interface RawDetailRow {
         height: number;
         alt_text: string | null;
         position: number;
+        category: string | null;
       }[]
     | null;
   seller: {
@@ -88,6 +101,7 @@ interface RawDetailRow {
     is_dealer: boolean;
     dealer_name: string | null;
     dealer_verified_at: string | null;
+    created_at: string;
   } | null;
   city: {
     id: number;
@@ -113,11 +127,20 @@ interface RawCardRow {
   category_fields: unknown;
   listing_images: { url: string; position: number }[] | null;
   city: { name_ar: string; name_en: string } | null;
+  category: { slug: string } | null;
 }
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+const IMAGE_CATEGORIES: readonly ImageCategory[] = [
+  'exterior',
+  'interior',
+  'engine',
+  'wheels',
+  'details',
+];
 
 function isNumericInput(input: string | number): boolean {
   if (typeof input === 'number') return true;
@@ -130,6 +153,52 @@ function pickCityName(
 ): string {
   if (!city) return '';
   return locale === 'ar' ? city.name_ar : city.name_en;
+}
+
+/**
+ * Maps a sub-category slug to the UI tint used for badges, chip dots,
+ * and ambient glows on rides cards + detail pages. Temporary: expand
+ * this table as new automotive sub-categories gain distinct visual
+ * treatment. Default falls through to the generic cars red.
+ */
+export function getRideCatColor(
+  subCategorySlug: string | null | undefined,
+): string {
+  if (!subCategorySlug) return '#ef4444';
+  switch (subCategorySlug) {
+    case 'motorcycles':
+      return '#f59e0b';
+    case 'watercraft':
+      return '#0ea5e9';
+    case 'cmvs':
+    case 'food-trucks':
+      return '#78716c';
+    default:
+      return '#ef4444';
+  }
+}
+
+/** Coerces a nullable string-or-number BIGINT into a number (or null). */
+function toNumberOrNull(value: number | string | null): number | null {
+  if (value === null) return null;
+  return Number(value);
+}
+
+/** Full integer years since the given ISO date. */
+function yearsSince(isoDate: string): number {
+  const then = new Date(isoDate).getTime();
+  const now = Date.now();
+  if (!isFinite(then) || now <= then) return 0;
+  const ms = now - then;
+  return Math.floor(ms / (365.25 * 24 * 60 * 60 * 1000));
+}
+
+/** Safe cast to ImageCategory — falls back to null for unknown / missing. */
+function asImageCategory(value: string | null): ImageCategory | null {
+  if (value === null) return null;
+  return (IMAGE_CATEGORIES as readonly string[]).includes(value)
+    ? (value as ImageCategory)
+    : null;
 }
 
 // ---------------------------------------------------------------------------
@@ -157,6 +226,7 @@ function mapDetail(row: RawDetailRow, locale: 'ar' | 'en'): RideDetail | null {
       height: img.height,
       altText: img.alt_text,
       position: img.position,
+      category: asImageCategory(img.category),
     }));
 
   const seller: RideSeller = {
@@ -169,7 +239,10 @@ function mapDetail(row: RawDetailRow, locale: 'ar' | 'en'): RideDetail | null {
     isDealer: row.seller?.is_dealer ?? false,
     dealerName: row.seller?.dealer_name ?? null,
     dealerVerifiedAt: row.seller?.dealer_verified_at ?? null,
+    yearsActive: row.seller ? yearsSince(row.seller.created_at) : 0,
   };
+
+  const catColor = getRideCatColor(row.category?.slug);
 
   return {
     id: row.id,
@@ -183,15 +256,15 @@ function mapDetail(row: RawDetailRow, locale: 'ar' | 'en'): RideDetail | null {
     priceMode: row.price_mode,
     priceMinorUnits: Number(row.price_minor_units),
     currencyCode: row.currency_code,
-    minOfferMinorUnits:
-      row.min_offer_minor_units === null
-        ? null
-        : Number(row.min_offer_minor_units),
+    minOfferMinorUnits: toNumberOrNull(row.min_offer_minor_units),
+    oldPriceMinorUnits: toNumberOrNull(row.old_price_minor_units),
     countryCode: row.country_code,
     cityId: row.city_id,
     cityName: pickCityName(row.city, locale),
     status: row.status,
     publishedAt: row.published_at,
+    isFeatured: row.is_featured,
+    isHot: row.is_hot,
     specs: specsResult.data,
     images,
     seller,
@@ -203,6 +276,7 @@ function mapDetail(row: RawDetailRow, locale: 'ar' | 'en'): RideDetail | null {
           nameEn: row.category.name_en,
         }
       : { id: 0, slug: '', nameAr: '', nameEn: '' },
+    catColor,
   };
 }
 
@@ -239,6 +313,7 @@ function mapCard(row: RawCardRow, locale: 'ar' | 'en'): RideCard {
     bodyStyle,
     fuelType,
     mileageKm,
+    catColor: getRideCatColor(row.category?.slug),
   };
 }
 
@@ -251,8 +326,8 @@ function mapCard(row: RawCardRow, locale: 'ar' | 'en'): RideCard {
  * Returns null on miss or validation failure — caller renders notFound().
  *
  * @example
- *   const ride = await getRideById('bmw-m5-competition-2024-2');
- *   const ride = await getRideById(2);
+ *   const ride = await getRideById('bmw-m5-competition-2024-7');
+ *   const ride = await getRideById(7);
  */
 export const getRideById = cache(async function getRideById(
   idOrSlug: string | number,

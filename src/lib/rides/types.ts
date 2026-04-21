@@ -16,6 +16,17 @@ import type { UsedCarFields } from './validators';
 type ListingRow = Database['public']['Tables']['listings']['Row'];
 
 // ---------------------------------------------------------------------------
+// Image categories (mirrors listing_images.category CHECK constraint)
+// ---------------------------------------------------------------------------
+
+export type ImageCategory =
+  | 'exterior'
+  | 'interior'
+  | 'engine'
+  | 'wheels'
+  | 'details';
+
+// ---------------------------------------------------------------------------
 // RideDetail — the full shape consumed by /rides/[id]
 // ---------------------------------------------------------------------------
 
@@ -35,6 +46,8 @@ export interface RideDetail {
   priceMinorUnits: number;
   currencyCode: string;
   minOfferMinorUnits: number | null;
+  /** Previous price when the seller dropped it — null when no drop. */
+  oldPriceMinorUnits: number | null;
 
   // Location
   countryCode: string;
@@ -44,6 +57,10 @@ export interface RideDetail {
   // Lifecycle
   status: ListingRow['status'];
   publishedAt: string | null;
+
+  // Badges (generic across verticals)
+  isFeatured: boolean;
+  isHot: boolean;
 
   // Vertical-specific — Zod-parsed, camelCase
   specs: UsedCarFields;
@@ -61,6 +78,12 @@ export interface RideDetail {
     nameAr: string;
     nameEn: string;
   };
+
+  /**
+   * Display tint derived from the category slug in the query mapper.
+   * UI layer uses this for badges, accents, ambient glows.
+   */
+  catColor: string;
 }
 
 export interface RideImage {
@@ -69,6 +92,8 @@ export interface RideImage {
   height: number;
   altText: string | null;
   position: number;
+  /** Gallery filter bucket. NULL for verticals that don't categorise. */
+  category: ImageCategory | null;
 }
 
 export interface RideSeller {
@@ -81,6 +106,8 @@ export interface RideSeller {
   isDealer: boolean;
   dealerName: string | null;
   dealerVerifiedAt: string | null;
+  /** Full years between profiles.created_at and NOW() — for "N yrs on Dealo". */
+  yearsActive: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -103,4 +130,7 @@ export interface RideCard {
   bodyStyle: string | null;
   fuelType: string | null;
   mileageKm: number | null;
+
+  /** Same derivation rule as RideDetail.catColor. */
+  catColor: string;
 }
