@@ -282,7 +282,7 @@ export const FeedHeader = () => {
         {t('subline')}
       </p>
       <a
-        href="#"
+        href="#live-feed"
         className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-foreground/60 transition hover:text-foreground"
       >
         {t('viewFull')}

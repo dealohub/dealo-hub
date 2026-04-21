@@ -131,7 +131,7 @@ const LiveFeed = ({ initialFeed, activitySignals }: Props) => {
   });
 
   return (
-    <section className="relative w-full bg-background">
+    <section id="live-feed" className="relative w-full bg-background">
       <LiveStatusBar feed={feed} />
 
       <div className="mx-auto max-w-4xl px-6 py-10">
