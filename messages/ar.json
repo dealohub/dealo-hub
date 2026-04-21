@@ -1650,6 +1650,71 @@
           "eventFeatured": "مميّز"
         }
       }
+    },
+    "chat": {
+      "metaTitle": "الرسائل · ديلو هَب",
+      "inbox": {
+        "title": "الرسائل",
+        "subtitle": "حادث المشترين والبائعين. رقم هاتفك يبقى خاصّاً — دائماً.",
+        "tabActive": "النشطة",
+        "tabArchived": "المؤرشفة",
+        "emptyActiveTitle": "صندوق الرسائل فارغ",
+        "emptyActiveBody": "تصفّح إعلاناً واضغط 'تواصل مع البائع' لبدء أول محادثة.",
+        "emptyArchivedTitle": "لا محادثات مؤرشفة",
+        "emptyArchivedBody": "المحادثات التي تؤرشفها تظهر هنا.",
+        "browseCta": "تصفّح الإعلانات",
+        "unreadBadge": "{n} جديدة",
+        "youBuyer": "أنت تشتري",
+        "youSeller": "أنت تبيع",
+        "offerTag": "عرض",
+        "searchPlaceholder": "ابحث في الرسائل…"
+      },
+      "thread": {
+        "backToInbox": "الرسائل",
+        "viewListing": "عرض الإعلان",
+        "onlineNow": "متصل",
+        "offlineLabel": "غير متصل",
+        "typingIndicator": "يكتب…",
+        "emptyThreadTitle": "لا رسائل بعد",
+        "emptyThreadBody": "ابدأ بتحية — البائعون يردّون أسرع حين تكون أول رسالة محدّدة (اذكر الحالة، السعر، أو وقت المعاينة).",
+        "phoneRemovedNotice": "لا نشارك أرقام الهواتف على ديلو هَب. احتفظ بالتواصل داخل المحادثة.",
+        "composerPlaceholder": "اكتب رسالة…",
+        "composerSend": "إرسال",
+        "composerSending": "جاري الإرسال…",
+        "offerCompose": "قدّم عرضاً",
+        "offerAmountLabel": "قيمة العرض",
+        "offerAmountPlaceholder": "مثلاً 35000",
+        "offerSent": "أُرسل العرض",
+        "markAsRead": "وسم كمقروء",
+        "archive": "أرشفة",
+        "unarchive": "إلغاء الأرشفة",
+        "block": "حظر",
+        "unblock": "إلغاء الحظر",
+        "blockedBanner": "حظرت هذه المحادثة. ألغِ الحظر لاستئناف الدردشة.",
+        "theyBlockedBanner": "الطرف الآخر حظر هذه المحادثة.",
+        "todayLabel": "اليوم",
+        "yesterdayLabel": "أمس"
+      },
+      "errors": {
+        "generic": "حدث خطأ. حاول مجدداً.",
+        "not_authenticated": "سجّل الدخول لإرسال رسالة.",
+        "validation_failed": "الرسالة فارغة أو طويلة جداً (الحد الأقصى 2000 حرف).",
+        "message_empty": "لا يمكن إرسال رسالة فارغة.",
+        "message_too_long": "الرسالة طويلة جداً (الحد 2000 حرف).",
+        "phone_not_allowed": "أرقام الهواتف غير مسموح بها في الدردشة. اذكر وقت التواصل بدلاً من ذلك.",
+        "discriminatory_not_allowed": "اوصف العقار أو السلعة، لا من يحقّ له التواصل.",
+        "listing_not_found": "هذا الإعلان لم يعد موجوداً.",
+        "listing_not_live": "هذا الإعلان لم يعد نشطاً.",
+        "own_listing": "لا يمكنك محادثة نفسك على إعلانك.",
+        "start_failed": "تعذّر بدء المحادثة. حاول مجدداً.",
+        "send_failed": "تعذّر إرسال رسالتك. حاول مجدداً.",
+        "conversation_not_found": "المحادثة غير موجودة.",
+        "not_a_participant": "لست طرفاً في هذه المحادثة."
+      },
+      "navbarBadge": {
+        "label": "الرسائل",
+        "ariaUnread": "{n} رسائل غير مقروءة"
+      }
     }
   }
 }

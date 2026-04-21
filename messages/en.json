@@ -1650,6 +1650,71 @@
           "eventFeatured": "Featured"
         }
       }
+    },
+    "chat": {
+      "metaTitle": "Messages · Dealo Hub",
+      "inbox": {
+        "title": "Messages",
+        "subtitle": "Chat with buyers and sellers. Your phone number stays private — always.",
+        "tabActive": "Active",
+        "tabArchived": "Archived",
+        "emptyActiveTitle": "Your inbox is empty",
+        "emptyActiveBody": "Browse a listing and tap 'Contact seller' to start your first conversation.",
+        "emptyArchivedTitle": "No archived threads",
+        "emptyArchivedBody": "Threads you archive will appear here.",
+        "browseCta": "Browse listings",
+        "unreadBadge": "{n} new",
+        "youBuyer": "You buy",
+        "youSeller": "You sell",
+        "offerTag": "Offer",
+        "searchPlaceholder": "Search messages…"
+      },
+      "thread": {
+        "backToInbox": "Inbox",
+        "viewListing": "View listing",
+        "onlineNow": "Online",
+        "offlineLabel": "Offline",
+        "typingIndicator": "Typing…",
+        "emptyThreadTitle": "No messages yet",
+        "emptyThreadBody": "Say hello — sellers respond faster when the first message is specific (mention availability, condition, or a price question).",
+        "phoneRemovedNotice": "We don't share phone numbers on Dealo Hub. Keep it in chat.",
+        "composerPlaceholder": "Write a message…",
+        "composerSend": "Send",
+        "composerSending": "Sending…",
+        "offerCompose": "Make an offer",
+        "offerAmountLabel": "Offer amount",
+        "offerAmountPlaceholder": "e.g. 35000",
+        "offerSent": "Offer sent",
+        "markAsRead": "Mark as read",
+        "archive": "Archive",
+        "unarchive": "Unarchive",
+        "block": "Block",
+        "unblock": "Unblock",
+        "blockedBanner": "You've blocked this conversation. Unblock to resume chat.",
+        "theyBlockedBanner": "The other party has blocked this conversation.",
+        "todayLabel": "Today",
+        "yesterdayLabel": "Yesterday"
+      },
+      "errors": {
+        "generic": "Something went wrong. Try again.",
+        "not_authenticated": "Please sign in to send messages.",
+        "validation_failed": "Message can't be empty or too long (max 2000 chars).",
+        "message_empty": "Can't send an empty message.",
+        "message_too_long": "Message is too long (max 2000 characters).",
+        "phone_not_allowed": "Phone numbers aren't allowed in chat. Please describe availability instead.",
+        "discriminatory_not_allowed": "Please describe the property or item, not who can contact you.",
+        "listing_not_found": "This listing no longer exists.",
+        "listing_not_live": "This listing is no longer active.",
+        "own_listing": "You can't chat with yourself on your own listing.",
+        "start_failed": "Couldn't start the conversation. Try again.",
+        "send_failed": "Couldn't send your message. Try again.",
+        "conversation_not_found": "Conversation not found.",
+        "not_a_participant": "You're not part of this conversation."
+      },
+      "navbarBadge": {
+        "label": "Messages",
+        "ariaUnread": "{n} unread messages"
+      }
     }
   }
 }
