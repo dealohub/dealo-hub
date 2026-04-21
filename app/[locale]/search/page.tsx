@@ -155,6 +155,12 @@ function NoResults({
       </div>
       <div className="mt-2 flex gap-2">
         <Link
+          href={`/${locale}/categories`}
+          className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition hover:bg-primary/90"
+        >
+          /categories
+        </Link>
+        <Link
           href={`/${locale}/rides`}
           className="rounded-lg bg-foreground/5 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-foreground/10"
         >

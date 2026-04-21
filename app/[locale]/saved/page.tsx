@@ -58,6 +58,12 @@ export default async function SavedListingsPage({
             </div>
             <div className="mt-2 flex gap-2">
               <Link
+                href={`/${params.locale}/categories`}
+                className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition hover:bg-primary/90"
+              >
+                {t('browseAction')}
+              </Link>
+              <Link
                 href={`/${params.locale}/rides`}
                 className="rounded-lg bg-foreground/5 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-foreground/10"
               >
