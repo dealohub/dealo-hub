@@ -181,6 +181,56 @@
       "minOffer": "Min {price}"
     }
   },
+  "electronicsHub": {
+    "metaTitle": "Tech & Electronics · Dealo Hub",
+    "metaDescription": "Buy and sell phones, laptops, TVs, gaming, smart watches and cameras in Kuwait — every spec verified, every battery disclosed.",
+    "eyebrow": "Tech · Kuwait",
+    "headline": "Every spec verified. Every battery disclosed.",
+    "subline": "Kuwait's first AI-protected tech marketplace. IMEI on every phone, battery health on every device, region and carrier-lock on every spec sheet — none of which Dubizzle and Q84Sale make you disclose.",
+    "statsListings": "live listings",
+    "statsInspected": "Dealo Inspected",
+    "sellCta": "Sell your tech →",
+    "typesTitle": "Browse by type",
+    "typesSubline": "6 device families, mapped to how Kuwait actually shops.",
+    "listingsShort": "live",
+    "types": {
+      "phones-tablets": "Phones & tablets",
+      "laptops-computers": "Laptops & computers",
+      "tvs-audio": "TVs & audio",
+      "gaming": "Gaming",
+      "smart-watches": "Smart watches",
+      "cameras": "Cameras"
+    },
+    "featuredTitle": "Verified picks",
+    "featuredSubline": "Top-tier listings — AI- or Dealo-verified.",
+    "trustTitle": "Why Dealo Tech is different",
+    "trust": {
+      "imei": {
+        "title": "IMEI on every phone",
+        "body": "Last-4 digits structured + visible. Verify against Zain/STC/Ooredoo before you pay."
+      },
+      "battery": {
+        "title": "Battery health, structured",
+        "body": "Green ≥ 85, amber 70-84, red < 70. No more 'excellent' descriptions hiding a 71% battery."
+      },
+      "region": {
+        "title": "Region & carrier lock",
+        "body": "GCC vs US vs JP regions disclosed. Carrier-lock state required for phones — never a surprise on day one."
+      },
+      "warranty": {
+        "title": "Warranty is country-locked",
+        "body": "Apple Kuwait won't honour a US iPhone. We surface purchase country + warranty status side-by-side."
+      }
+    },
+    "trustFootnote": "Dealo doesn't ship counterfeit. Filter B blocks 'replica' / '1st copy' / 'ماستر كوبي' at submit.",
+    "gridTitle": "All tech",
+    "viewAll": "View all in /categories",
+    "emptyTitle": "No tech listings yet",
+    "emptyBody": "Be the first seller — your listing will be visible to buyers across Kuwait within seconds.",
+    "emptyCta": "List your device",
+    "badgeAi": "AI verified",
+    "badgeInspected": "Inspected"
+  },
   "electronicsDetail": {
     "crumbHome": "Home",
     "crumbTech": "Tech",
