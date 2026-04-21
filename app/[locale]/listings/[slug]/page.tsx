@@ -53,9 +53,23 @@ export async function generateMetadata({
   if (!listing) {
     return { title: 'Listing · Dealo Hub', robots: { index: false, follow: false } };
   }
+  const description = listing.description.slice(0, 160);
+  const cover = listing.images[0]?.url;
   return {
     title: `${listing.title} · Dealo Hub`,
-    description: listing.description.slice(0, 160),
+    description,
+    openGraph: {
+      title: listing.title,
+      description,
+      type: 'website',
+      images: cover ? [cover] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: listing.title,
+      description,
+      images: cover ? [cover] : undefined,
+    },
   };
 }
 

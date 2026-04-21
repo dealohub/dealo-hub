@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import EcommerceNavbar1 from '@/components/shadcnblocks/ecommerce-navbar-1';
 import SiteFooter from '@/components/shadcnblocks/site-footer';
@@ -24,6 +25,36 @@ import RideDetailMobileActionBar from '@/components/shadcnblocks/ride-detail-mob
 
 // ISR: each path is rendered on demand and cached for 60s.
 export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: 'ar' | 'en'; id: string };
+}): Promise<Metadata> {
+  const listing = await getRideById(params.id, { locale: params.locale });
+  if (!listing) {
+    return { title: 'Dealo Hub', robots: { index: false, follow: false } };
+  }
+  const title = listing.title;
+  const description = listing.description.slice(0, 160);
+  const cover = listing.images[0]?.url;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      images: cover ? [cover] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: cover ? [cover] : undefined,
+    },
+  };
+}
 
 export default async function RideDetailPage({
   params,
