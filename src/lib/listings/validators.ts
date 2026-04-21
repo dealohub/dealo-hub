@@ -59,6 +59,59 @@ export function containsCounterfeitTerm(text: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
+// Phase 4a Filter C — discriminatory-wording reject (applied at properties)
+// ---------------------------------------------------------------------------
+//
+// Kuwait property classifieds commonly carry filters like "Non-Arabs Only",
+// "Bachelors only", "For Filipinos only" — observed live on Dubizzle KW
+// 2026-04-21 (see planning/PHASE-4A-AUDIT.md §12 Evidence A). Dealo Hub
+// rejects these at submit time. Servers as a trust signal + Kuwait-wide
+// fair-housing posture.
+//
+// The regex set covers:
+//   • Nationality / ethnicity (only|no X · X only — EN + AR)
+//   • Religion (same patterns, locked list of religions)
+//   • Marital / family status (bachelors, singles, families, students)
+//   • Arabic negation forms (لا يوجد / لا يقبل / ممنوع + category)
+//
+// Word boundaries (\b) prevent false positives like "bachelor's pad"
+// matching "bachelors only". A second-pass GPT-4o-mini check (not
+// shipped in Phase 4a — Phase 4b adds it) catches obfuscated wording.
+//
+// The rejection UX (consumer-facing) lives in the submit form — this
+// helper returns the boolean trigger.
+
+const DISCRIMINATORY_PATTERNS: ReadonlyArray<RegExp> = [
+  // English — nationality / ethnicity / religion: "only|no X" and "X only"
+  /\b(only|no)\s+(arabs?|asians?|indians?|pakistan(i|is)|filipin(a|o|os)?|nepal(i|is)?|sri[- ]lankan|egyptians?|syrians?|iraqis?|lebanese|iranians?|africans?|muslims?|christians?|hindus?|sikhs?)\b/i,
+  /\b(arabs?|asians?|indians?|pakistani|filipino|nepali|sri[- ]lankan|egyptian|syrian|lebanese|iranian|african|muslim|christian|hindu|sikh)\s+only\b/i,
+
+  // English — marital / family status: bachelors, singles, families, students, couples
+  /\b(only|no)\s+(bachelors?|singles?|families|couples?|students?)\b/i,
+  /\b(bachelors?|singles?|families|couples?|students?)\s+only\b/i,
+
+  // English — explicit preference language
+  /\bpreference\s+(?:to|for)\s+(arabs?|asians?|indians?|filipinos?|muslims?|christians?)\b/i,
+  /\b(asians?|indians?|filipinos?|arabs?|muslims?|christians?)\s+preferred\b/i,
+
+  // Arabic — nationality / ethnicity (لا يوجد / لا يقبل / ممنوع + group)
+  /(لا\s+(يوجد|يقبل|نقبل)|ممنوع)\s+(عرب|آسيويين|هنود|فلبينيين|نيباليين|سوريين|مصريين|عراقيين|لبنانيين|إيرانيين|أفارقة|باكستانيين)/,
+  /(عرب|آسيويين|هنود|فلبينيين|نيباليين|سوريين|مصريين|عراقيين|لبنانيين)\s+فقط/,
+
+  // Arabic — marital
+  /(لا\s+(يوجد|يقبل)|ممنوع)\s+(عزاب|عائلات|طلاب|أزواج)/,
+  /(عزاب|عائلات|طلاب|أزواج)\s+فقط/,
+
+  // Arabic — religion
+  /(لا\s+(يوجد|يقبل)|ممنوع)\s+(مسلمين|مسيحيين|هندوس|سيخ)/,
+  /(مسلمين|مسيحيين|هندوس|سيخ)\s+فقط/,
+];
+
+export function containsDiscriminatoryWording(text: string): boolean {
+  return DISCRIMINATORY_PATTERNS.some(re => re.test(text));
+}
+
+// ---------------------------------------------------------------------------
 // Step 1 — category
 // ---------------------------------------------------------------------------
 
@@ -145,6 +198,32 @@ export const Step3DetailsLuxurySchema = Step3DetailsSchema.superRefine((data, ct
     });
   }
 });
+
+/**
+ * Properties-tier extension (Filter C): rejects discriminatory wording
+ * in title + description. Dealo Doctrine pillar P3. Applied to all
+ * real-estate sub-categories (property-for-rent, property-for-sale,
+ * rooms-for-rent, land, etc.).
+ *
+ * Submit-form UX on rejection:
+ *   "Our policy: describe the property, not who can live in it.
+ *    If you mean 'quiet building' or 'working professionals welcome',
+ *    write that instead."
+ *
+ * Reference: planning/PHASE-4A-AUDIT.md §6 (Filter C spec)
+ */
+export const Step3DetailsPropertiesSchema = Step3DetailsSchema.superRefine(
+  (data, ctx) => {
+    const combined = [data.title, data.description].join(' ');
+    if (containsDiscriminatoryWording(combined)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'discriminatory_wording_not_allowed',
+        path: ['description'],
+      });
+    }
+  },
+);
 
 // ---------------------------------------------------------------------------
 // Step 4 — price
