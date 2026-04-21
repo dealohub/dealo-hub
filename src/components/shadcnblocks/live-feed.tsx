@@ -13,37 +13,51 @@ import {
   type CategoryKey,
 } from './live-feed-parts';
 // Card variant swap:
-//   - Original (handoff):  `ListingCard` from './live-feed-parts'
 //   - Option A editorial:  `ListingCardEditorial` from './listing-card-editorial'
 //   - Option B compact:    `ListingCardCompact`   from './listing-card-compact'
 //   - Option C polished:   `ListingCardPolished`  from './listing-card-polished'
-//   - Option D circular:   `ListingCardCircular`  from './listing-card-circular'
+//   - Option D circular:   `ListingCardCircular`  from './listing-card-circular'  (shipped)
 import { ListingCardCircular as ListingCard } from './listing-card-circular';
-import { SEED_LISTINGS, SEED_PRICE_DROPS, ACTIVITY_SIGNALS } from './listings-data';
+import type { FeedListing } from '@/lib/landing/types';
 
-/* LiveFeed — real-time marketplace activity feed */
+/* LiveFeed — real-time marketplace activity feed.
+ *
+ * Phase 3d: the feed now seeds from Supabase (via the page's
+ * `getLiveFeedListings` call) and rotates new items every 8 seconds
+ * by picking from the pre-fetched pool. ACTIVITY_SIGNALS are still
+ * editorial (kept in src/lib/landing/constants.ts) and passed in
+ * alongside so the feed can intersperse them like before.
+ */
 
-const LiveFeed = () => {
+interface Props {
+  /** Server-fetched listings + pricedrops. Used as both the initial
+   *  visible set and the rotation pool. */
+  initialFeed: FeedListing[];
+  /** Editorial one-liners interspersed with listings. */
+  activitySignals: readonly string[];
+}
 
+const LiveFeed = ({ initialFeed, activitySignals }: Props) => {
   const [filter, setFilter] = useState('all');
   const [feed, setFeed] = useState<FeedItem[]>(() => {
+    // Stagger the initial timestamps so relative-time reads ("Just
+    // now" / "2m ago" / "4m ago") feel natural even if all rows were
+    // created within a second of each other in the seed.
     const now = Date.now();
-    const items: FeedItem[] = [
-      { kind: 'listing',   ...SEED_LISTINGS[0], ts: now - 1000 * 60 * 2 },
-      { kind: 'listing',   ...SEED_LISTINGS[1], ts: now - 1000 * 60 * 4 },
-      { kind: 'signal',    id: 's1', text: ACTIVITY_SIGNALS[0], ts: now - 1000 * 60 * 5 },
-      { kind: 'listing',   ...SEED_LISTINGS[2], ts: now - 1000 * 60 * 8 },
-      { kind: 'pricedrop', ...SEED_PRICE_DROPS[0],   ts: now - 1000 * 60 * 11 },
-      { kind: 'listing',   ...SEED_LISTINGS[3], ts: now - 1000 * 60 * 14 },
-      { kind: 'listing',   ...SEED_LISTINGS[4], ts: now - 1000 * 60 * 18 },
-      { kind: 'listing',   ...SEED_LISTINGS[5], ts: now - 1000 * 60 * 28 },
-    ];
-    return items;
+    return initialFeed.map((item, i) => ({
+      ...item,
+      ts: now - 1000 * 60 * (i * 2 + 1),
+    })) as FeedItem[];
   });
 
   useEffect(() => {
-    // Extract the seed id from a feed item id. Feed items carry ids
-    // like "101-169…" (seed 101, timestamped); pure seeds stay as "101".
+    if (initialFeed.length === 0 && activitySignals.length === 0) {
+      // Nothing to rotate — skip the interval entirely.
+      return;
+    }
+
+    // Extract the underlying DB id from a feed item id. Pre-fetched
+    // items carry pure numeric ids; rotated items carry "<id>-<ts>".
     const seedIdOf = (id: string | number) => String(id).split('-')[0];
 
     const tick = () => {
@@ -53,25 +67,48 @@ const LiveFeed = () => {
         const recentSeeds = new Set(prev.map((it) => seedIdOf(it.id)));
         let newItem: FeedItem;
 
-        if (roll < 0.15) {
+        if (roll < 0.15 && activitySignals.length > 0) {
           newItem = {
             kind: 'signal',
             id: `s-${now}`,
-            text: ACTIVITY_SIGNALS[Math.floor(Math.random() * ACTIVITY_SIGNALS.length)],
+            text:
+              activitySignals[
+                Math.floor(Math.random() * activitySignals.length)
+              ],
             ts: now,
           };
-        } else if (roll < 0.3) {
-          // Pick a price-drop seed that isn't already in the feed.
-          const pool = SEED_PRICE_DROPS.filter((s) => !recentSeeds.has(String(s.id)));
-          const candidates = pool.length > 0 ? pool : SEED_PRICE_DROPS;
-          const base = candidates[Math.floor(Math.random() * candidates.length)];
-          newItem = { ...base, id: `${base.id}-${now}`, kind: 'pricedrop', ts: now };
+        } else if (initialFeed.length > 0) {
+          // Prefer listings not already visible so the feed doesn't
+          // rapidly duplicate. If every listing is already on screen,
+          // fall back to the full pool and accept the repetition —
+          // small demo inventory trade-off tracked in Phase 3d audit Q2.
+          const pool = initialFeed.filter(
+            (s) => !recentSeeds.has(String(s.id)),
+          );
+          const candidates = pool.length > 0 ? pool : initialFeed;
+
+          // Weighted toward pricedrops when the roll is low (<0.3) so
+          // they appear a little more often in the rotation.
+          const preferPricedrop = roll < 0.3;
+          const prioritised = preferPricedrop
+            ? [
+                ...candidates.filter((c) => c.kind === 'pricedrop'),
+                ...candidates.filter((c) => c.kind !== 'pricedrop'),
+              ]
+            : candidates;
+
+          const base =
+            prioritised[Math.floor(Math.random() * prioritised.length)] ??
+            candidates[0];
+          newItem = {
+            ...base,
+            id: `${base.id}-${now}`,
+            ts: now,
+          } as FeedItem;
         } else {
-          // Pick a listing seed that isn't already in the feed.
-          const pool = SEED_LISTINGS.filter((s) => !recentSeeds.has(String(s.id)));
-          const candidates = pool.length > 0 ? pool : SEED_LISTINGS;
-          const base = candidates[Math.floor(Math.random() * candidates.length)];
-          newItem = { ...base, id: `${base.id}-${now}`, kind: 'listing', ts: now };
+          // No listings at all (signal-only mode without any pre-fetched
+          // rows) — skip this tick.
+          return prev;
         }
 
         return [newItem, ...prev].slice(0, 8);
@@ -80,14 +117,15 @@ const LiveFeed = () => {
 
     const id = setInterval(tick, 8000);
     return () => clearInterval(id);
-  }, []);
+  }, [initialFeed, activitySignals]);
 
   const visible = feed.filter((it) => {
     if (filter === 'all') return true;
     if (it.kind === 'signal') {
       return false;
     }
-    if (filter === 'featured') return it.kind === 'listing' && (it as ListingItem).featured;
+    if (filter === 'featured')
+      return it.kind === 'listing' && (it as ListingItem).featured;
     if (filter === 'pricedrop') return it.kind === 'pricedrop';
     return (it as ListingItem).cat === (filter as CategoryKey);
   });
@@ -107,7 +145,13 @@ const LiveFeed = () => {
               if (item.kind === 'signal')
                 return <SignalRow key={item.id} item={item as SignalItem} />;
               if (item.kind === 'pricedrop')
-                return <ListingCard key={item.id} item={item as ListingItem} priceDrop />;
+                return (
+                  <ListingCard
+                    key={item.id}
+                    item={item as ListingItem}
+                    priceDrop
+                  />
+                );
               return <ListingCard key={item.id} item={item as ListingItem} />;
             })}
           </AnimatePresence>

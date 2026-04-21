@@ -4,13 +4,15 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { SEED_LISTINGS, HERO_LISTING_INDICES } from './listings-data';
+import type { HeroImage } from '@/lib/landing/types';
 
 interface Feature283Props {
   className?: string;
+  /** Up to 6 cover images scattered around the headline. */
+  images: HeroImage[];
 }
 
-const Feature283 = ({ className = '' }: Feature283Props) => {
+const Feature283 = ({ className = '', images }: Feature283Props) => {
   const t = useTranslations('marketplace');
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   // Order matches the navbar categories so the scope pills line up
@@ -61,9 +63,9 @@ const Feature283 = ({ className = '' }: Feature283Props) => {
     </div>
   );
 
-  // Hero scatters — the 6 slots are fixed positions; the images come
-  // from the shared SEED_LISTINGS so the hero stays in sync with the
-  // live feed below. Swap listings ⇒ swap hero imagery automatically.
+  // Hero scatters — 6 fixed wrapper slots. `images` comes from the
+  // page via `getHeroListings`; if fewer than 6 listings exist, the
+  // extra slots stay empty and the headline remains the visual focus.
   const wraps = [
     'w-40 h-52 absolute -left-10 top-1/2 -translate-x-full -translate-y-1/2',
     'size-28 absolute -top-3 left-10 -translate-x-full -translate-y-full',
@@ -73,9 +75,9 @@ const Feature283 = ({ className = '' }: Feature283Props) => {
     'size-32 absolute -bottom-3 right-10 translate-x-full translate-y-full',
   ];
 
-  const images = HERO_LISTING_INDICES.map((idx, i) => ({
-    src: SEED_LISTINGS[idx].image,
-    alt: SEED_LISTINGS[idx].title,
+  const scatters = images.slice(0, wraps.length).map((img, i) => ({
+    src: img.src,
+    alt: img.alt,
     wrap: wraps[i],
   }));
 
@@ -91,7 +93,7 @@ const Feature283 = ({ className = '' }: Feature283Props) => {
           </p>
           <DealoSearchInline />
 
-          {images.map((image, index) => (
+          {scatters.map((image, index) => (
             <div key={index} className={image.wrap}>
               <motion.div
                 drag
