@@ -518,6 +518,191 @@ export const getSimilarProperties = cache(
 );
 
 // ---------------------------------------------------------------------------
+// Hub queries — Phase 4c
+// ---------------------------------------------------------------------------
+
+/**
+ * Featured properties — drives the "premium" row on /properties.
+ *
+ * Filter: is_featured=true, live, visible. Ordered by a doctrine-led
+ * ranking:
+ *   1. verification_tier DESC (dealo_inspected first)
+ *   2. published_at DESC
+ *
+ * Default limit: 6 (two rows of 3 on desktop, or 3 cards × 2 rows).
+ */
+export const getFeaturedProperties = cache(
+  async function getFeaturedProperties(
+    opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
+  ): Promise<PropertyCard[]> {
+    const limit = opts.limit ?? 6;
+    const supabase = createClient();
+
+    // Get real-estate parent's child ids
+    const { data: catData } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', (
+        await supabase.from('categories').select('id').eq('slug', 'real-estate').single()
+      ).data?.id ?? 0);
+
+    const subCatIds = (catData ?? []).map((c: any) => c.id);
+    if (subCatIds.length === 0) return [];
+
+    const { data, error } = await supabase
+      .from('listings')
+      .select(CARD_SELECT)
+      .in('category_id', subCatIds)
+      .eq('status', 'live')
+      .eq('is_featured', true)
+      .not('fraud_status', 'in', '(held,rejected)')
+      .is('soft_deleted_at', null)
+      .order('verification_tier', { ascending: false }) // dealo_inspected > ai_verified > unverified
+      .order('published_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('[properties/queries] getFeaturedProperties error:', error.message);
+      return [];
+    }
+    if (!data) return [];
+
+    return (data as unknown as RawCardRow[])
+      .map(r => mapCard(r, opts.locale))
+      .filter((c): c is PropertyCard => c !== null);
+  },
+);
+
+/**
+ * Main grid query for /properties hub.
+ *
+ * Supports a small set of filter params driven by the UI chips:
+ *   - subCat?  filter by one of the 8 property-for-rent / -for-sale / etc.
+ *   - propertyType?  filter by the 14-value property_type JSONB field
+ *   - cityId?  optional city narrow
+ *
+ * Default order: published_at DESC. Returns up to `limit` PropertyCard rows.
+ * Client-side sort (price asc/desc, newest, popular) is Phase 4c UI —
+ * this query just exposes the raw ordered list.
+ */
+export const getPropertiesForGrid = cache(
+  async function getPropertiesForGrid(
+    opts: {
+      limit?: number;
+      subCat?: PropertyCategoryKey;
+      propertyType?: string;
+      cityId?: number;
+      locale: 'ar' | 'en';
+    } = { locale: 'ar' },
+  ): Promise<PropertyCard[]> {
+    const limit = opts.limit ?? 24;
+    const supabase = createClient();
+
+    // Resolve category scope
+    let categoryIds: number[];
+    if (opts.subCat) {
+      const sc = await supabase
+        .from('categories')
+        .select('id')
+        .eq('slug', opts.subCat)
+        .single();
+      if (!sc.data?.id) return [];
+      categoryIds = [sc.data.id];
+    } else {
+      // All real-estate children
+      const parent = await supabase
+        .from('categories')
+        .select('id')
+        .eq('slug', 'real-estate')
+        .single();
+      if (!parent.data?.id) return [];
+      const kids = await supabase
+        .from('categories')
+        .select('id')
+        .eq('parent_id', parent.data.id);
+      categoryIds = (kids.data ?? []).map((c: any) => c.id);
+      if (categoryIds.length === 0) return [];
+    }
+
+    let q = supabase
+      .from('listings')
+      .select(CARD_SELECT)
+      .in('category_id', categoryIds)
+      .eq('status', 'live')
+      .not('fraud_status', 'in', '(held,rejected)')
+      .is('soft_deleted_at', null);
+
+    if (opts.propertyType) {
+      q = q.eq('category_fields->>property_type', opts.propertyType);
+    }
+    if (opts.cityId) {
+      q = q.eq('city_id', opts.cityId);
+    }
+
+    const { data, error } = await q
+      .order('published_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('[properties/queries] getPropertiesForGrid error:', error.message);
+      return [];
+    }
+    if (!data) return [];
+
+    return (data as unknown as RawCardRow[])
+      .map(r => mapCard(r, opts.locale))
+      .filter((c): c is PropertyCard => c !== null);
+  },
+);
+
+/**
+ * Live counts per property_type (inside JSONB) across live real-estate
+ * listings. Drives the filter chip strip + "browse by type" tiles on
+ * the hub page. Counts reflect only visible listings, so empty types
+ * are excluded from the UI automatically.
+ *
+ * Returns a Record<propertyType, count>. Missing keys = 0.
+ */
+export const getPropertyTypeCounts = cache(
+  async function getPropertyTypeCounts(): Promise<Record<string, number>> {
+    const supabase = createClient();
+
+    const parent = await supabase
+      .from('categories')
+      .select('id')
+      .eq('slug', 'real-estate')
+      .single();
+    if (!parent.data?.id) return {};
+    const kids = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', parent.data.id);
+    const categoryIds = (kids.data ?? []).map((c: any) => c.id);
+    if (categoryIds.length === 0) return {};
+
+    const { data, error } = await supabase
+      .from('listings')
+      .select('category_fields')
+      .in('category_id', categoryIds)
+      .eq('status', 'live')
+      .not('fraud_status', 'in', '(held,rejected)')
+      .is('soft_deleted_at', null);
+
+    if (error) {
+      console.error('[properties/queries] getPropertyTypeCounts error:', error.message);
+      return {};
+    }
+
+    const counts: Record<string, number> = {};
+    for (const row of data ?? []) {
+      const type = (row as any).category_fields?.property_type as string | undefined;
+      if (type) counts[type] = (counts[type] ?? 0) + 1;
+    }
+    return counts;
+  },
+);
+
+// ---------------------------------------------------------------------------
 // Convenience — ownership eligibility re-export for UI consumers
 // ---------------------------------------------------------------------------
 // Re-exported here so page-level UI can import from one place without

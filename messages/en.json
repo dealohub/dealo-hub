@@ -1555,6 +1555,91 @@
         "statInquiries": "inquiries",
         "statPhotos": "photos",
         "statListingId": "Listing ID"
+      },
+      "hub": {
+        "hero": {
+          "eyebrow": "Properties · Kuwait",
+          "headline": "Every home verified. Every chalet bookable.",
+          "subline": "Kuwait's first AI-protected property marketplace. Law-74 clarity, Dealo-inspected listings, chalet booking primitives, and structured diwaniya — absent on every other platform.",
+          "searchPlaceholder": "Search by area, building, or keyword…",
+          "searchCta": "Find",
+          "statsListings": "live listings",
+          "statsInspected": "Dealo Inspected",
+          "statsChalets": "chalets"
+        },
+        "types": {
+          "title": "Browse by type",
+          "subline": "14 property types, mapped to how Kuwait actually shops."
+        },
+        "featured": {
+          "eyebrow": "◆ Featured",
+          "title": "Hand-picked by our inspection team",
+          "subline": "Listings that pass our full trust audit — timestamped photos, verified deeds, inspected in person. No 'Non-Arabs Only' wording. No 1-KWD bait. No hidden fees.",
+          "viewAll": "View all featured"
+        },
+        "grid": {
+          "title": "All properties",
+          "showingCount": "Showing {count} of {total} properties",
+          "sortLabel": "Sort",
+          "sortRecent": "Most recent",
+          "sortPriceLow": "Price: low to high",
+          "sortPriceHigh": "Price: high to low",
+          "sortBeds": "Bedrooms: most",
+          "sortArea": "Area: largest",
+          "filterAll": "All",
+          "filterRent": "For rent",
+          "filterSale": "For sale",
+          "filterRooms": "Rooms",
+          "filterLand": "Land",
+          "filterChalet": "Chalets ⭐",
+          "emptyTitle": "No properties match these filters",
+          "emptyBody": "Try widening the sub-category or type selection."
+        },
+        "trustStrip": {
+          "title": "Why Dealo Properties",
+          "subline": "Five things Dubizzle doesn't do in Kuwait.",
+          "pillar1Title": "Law 74 clarity",
+          "pillar1Body": "Every sale listing shows whether non-Kuwaitis can legally own. No wasted conversations.",
+          "pillar2Title": "No discriminatory filters",
+          "pillar2Body": "Filter C rejects 'Only for X' at submit. Observed live on Dubizzle; blocked here.",
+          "pillar3Title": "Structured diwaniya",
+          "pillar3Body": "Separate entrance? Private bathroom? Kitchenette? Each filterable — not buried in free text.",
+          "pillar4Title": "Chalet booking data",
+          "pillar4Body": "Seasonal multipliers, weekend premiums, check-in times. Dubizzle has 9 chalet rentals total.",
+          "pillar5Title": "Dealo Inspected tier",
+          "pillar5Body": "Physically inspected listings carry a timestamped verification badge. Auditable."
+        },
+        "developers": {
+          "eyebrow": "Verified developers",
+          "title": "Trusted names, inspected listings",
+          "subline": "Developers whose units have been physically audited by our team."
+        },
+        "articles": {
+          "eyebrow": "Gulf property guide",
+          "title": "Know before you buy",
+          "viewAll": "All articles",
+          "article1Tag": "Guide",
+          "article1Title": "Law 74: what non-Kuwaitis can and can't own",
+          "article1Excerpt": "Every expat's first question, answered without the legalese. Residency, investment zones, the rare exceptions.",
+          "article1ReadTime": "7 min read",
+          "article2Tag": "Buying",
+          "article2Title": "Chalet buying guide: Bnaider vs Khairan vs Sabah Al-Ahmad",
+          "article2Excerpt": "The three coastal tiers, how they differ in plot economics, and which is right for weekend rental income.",
+          "article2ReadTime": "9 min read",
+          "article3Tag": "Renting",
+          "article3Title": "Cheques count: how to negotiate 12 down to 4",
+          "article3Excerpt": "Kuwait's cheque system is negotiable more than tenants realise. The framework that works without losing the unit.",
+          "article3ReadTime": "5 min read"
+        },
+        "card": {
+          "negotiable": "Negotiable",
+          "periodDaily": "/night",
+          "periodWeekly": "/week",
+          "periodMonthly": "/mo",
+          "periodYearly": "/yr",
+          "chequesN": "{n} cheques",
+          "sqmShort": "m²"
+        }
       }
     }
   }
