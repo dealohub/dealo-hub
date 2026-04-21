@@ -29,13 +29,16 @@ export default async function SigninPage({
       subtitle={t('subtitle')}
       footer={
         <span>
-          {t('noAccount')}{' '}
-          <Link
-            href={`/${params.locale}/signup`}
-            className="font-semibold text-primary transition hover:text-primary/80"
-          >
-            {t('cta')}
-          </Link>
+          {t.rich('noAccount', {
+            link: chunks => (
+              <Link
+                href={`/${params.locale}/signup`}
+                className="font-semibold text-primary transition hover:text-primary/80"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
         </span>
       }
     >
