@@ -58,6 +58,7 @@ const DETAIL_SELECT = `
     created_at
   ),
   city:cities!listings_city_id_fkey ( id, name_ar, name_en ),
+  area:areas!listings_area_id_fkey ( id, name_ar, name_en ),
   category:categories!listings_category_id_fkey ( id, slug, name_ar, name_en )
 ` as const;
 
@@ -67,6 +68,7 @@ const CARD_SELECT = `
   is_featured, verification_tier, created_at, category_fields,
   listing_images ( url, position ),
   city:cities!listings_city_id_fkey ( name_ar, name_en ),
+  area:areas!listings_area_id_fkey ( name_ar, name_en ),
   category:categories!listings_category_id_fkey ( slug )
 ` as const;
 
@@ -135,6 +137,11 @@ interface RawDetailRow {
     name_ar: string;
     name_en: string;
   } | null;
+  area: {
+    id: number;
+    name_ar: string;
+    name_en: string;
+  } | null;
   category: {
     id: number;
     slug: string;
@@ -161,6 +168,7 @@ interface RawCardRow {
   category_fields: unknown;
   listing_images: { url: string; position: number }[] | null;
   city: { name_ar: string; name_en: string } | null;
+  area: { name_ar: string; name_en: string } | null;
   category: { slug: string } | null;
 }
 
@@ -193,6 +201,17 @@ function pickCityName(
 ): string {
   if (!city) return '';
   return locale === 'ar' ? city.name_ar : city.name_en;
+}
+
+/** Pick the locale-appropriate area name, or null when no area is set.
+ *  Used by card + detail mappers — surfaces the specific neighbourhood
+ *  (e.g. "Bayan" instead of just the governorate "Hawalli"). */
+function pickAreaName(
+  area: { name_ar: string; name_en: string } | null,
+  locale: 'ar' | 'en',
+): string | null {
+  if (!area) return null;
+  return locale === 'ar' ? area.name_ar : area.name_en;
 }
 
 /** Pick the locale-appropriate title with fallbacks. */
@@ -320,7 +339,7 @@ function mapDetail(
     cityId: row.city?.id ?? row.city_id,
     cityName: pickCityName(row.city, locale),
     areaId: row.area_id,
-    areaName: null, // Phase 4e — areas table join
+    areaName: pickAreaName(row.area, locale),
     images,
     viewCount: row.view_count,
     saveCount: row.save_count,
@@ -368,7 +387,7 @@ function mapCard(
     chequesCount: f.chequesCount ?? null,
     furnishedStatus: f.furnishedStatus ?? null,
     cityName: pickCityName(row.city, locale),
-    areaName: null,
+    areaName: pickAreaName(row.area, locale),
     isFeatured: row.is_featured,
     createdAt: row.created_at,
   };
@@ -728,6 +747,7 @@ export interface PropertyActivityItem {
   title: string;
   cover: string | null;
   cityName: string;
+  areaName: string | null;
   priceMinorUnits: number;
   currencyCode: 'KWD' | 'USD' | 'AED' | 'SAR';
   rentPeriod: PropertyFields['rentPeriod'] | null;
@@ -808,6 +828,7 @@ export const getRecentPropertyActivity = cache(
           title: pickTitle(row, opts.locale),
           cover,
           cityName: pickCityName(row.city, opts.locale),
+          areaName: pickAreaName(row.area, opts.locale),
           priceMinorUnits: Number(row.price_minor_units),
           currencyCode: row.currency_code as PropertyActivityItem['currencyCode'],
           rentPeriod: f.rentPeriod ?? null,

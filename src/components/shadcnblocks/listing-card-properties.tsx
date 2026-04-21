@@ -135,10 +135,10 @@ export default function ListingCardProperties({ card, locale, priority }: Props)
 
         {/* City + type */}
         <div className="flex items-center justify-between gap-2 text-[10px] text-foreground/50">
-          {card.cityName ? (
+          {(card.areaName || card.cityName) ? (
             <span className="inline-flex items-center gap-1 truncate">
               <MapPin size={10} />
-              {card.cityName}
+              {[card.areaName, card.cityName].filter(Boolean).join(' · ')}
             </span>
           ) : (
             <span />

@@ -138,10 +138,14 @@ export default function PropertyDetailHeader({ listing, locale }: Props) {
               </strong>{' '}
               {t('keyInfoSqmShort')}
             </span>
-            {listing.cityName && (
+            {(listing.areaName || listing.cityName) && (
               <>
                 <span className="text-foreground/30">·</span>
-                <span>{listing.cityName}</span>
+                <span>
+                  {[listing.areaName, listing.cityName]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </span>
               </>
             )}
           </div>

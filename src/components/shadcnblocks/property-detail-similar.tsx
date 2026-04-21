@@ -100,9 +100,11 @@ export default function PropertyDetailSimilar({ similar, locale }: Props) {
                 <span className="text-sm font-semibold text-foreground">
                   {formatPrice(card.priceMinorUnits, card.currencyCode, locale)}
                 </span>
-                {card.cityName && (
+                {(card.areaName || card.cityName) && (
                   <span className="truncate text-[11px] text-foreground/50">
-                    {card.cityName}
+                    {[card.areaName, card.cityName]
+                      .filter(Boolean)
+                      .join(' · ')}
                   </span>
                 )}
               </div>

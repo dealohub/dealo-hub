@@ -178,12 +178,12 @@ function ActivityCard({
 
         <div className="flex items-center gap-1 text-[10px] text-foreground/50">
           <span className="uppercase tracking-wide">{typeLabel}</span>
-          {item.cityName && (
+          {(item.areaName || item.cityName) && (
             <>
               <span>·</span>
               <span className="inline-flex items-center gap-0.5 truncate">
                 <MapPin size={9} />
-                {item.cityName}
+                {[item.areaName, item.cityName].filter(Boolean).join(' · ')}
               </span>
             </>
           )}
