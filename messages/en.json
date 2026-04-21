@@ -181,6 +181,23 @@
       "minOffer": "Min {price}"
     }
   },
+  "listingDetail": {
+    "crumbHome": "Home",
+    "featured": "Featured",
+    "noPhoto": "No photo available",
+    "tierAiVerified": "AI Verified",
+    "tierDealoInspected": "Dealo Inspected",
+    "descriptionTitle": "Description",
+    "deliveryTitle": "Delivery options",
+    "priceLabel": "Price",
+    "negotiableBadge": "Negotiable",
+    "privateSeller": "Private seller",
+    "dealerSeller": "Verified dealer",
+    "statViews": "views",
+    "statSaves": "saved",
+    "statInquiries": "inquiries",
+    "statPhotos": "photos"
+  },
   "trust": {
     "foundingPartner": "Founding Partner",
     "idVerified": "ID Verified",

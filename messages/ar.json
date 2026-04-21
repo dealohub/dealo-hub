@@ -181,6 +181,23 @@
       "minOffer": "الحد الأدنى {price}"
     }
   },
+  "listingDetail": {
+    "crumbHome": "الرئيسية",
+    "featured": "مميّز",
+    "noPhoto": "لا توجد صورة",
+    "tierAiVerified": "موثّق بالذكاء",
+    "tierDealoInspected": "مفحوص ديلو",
+    "descriptionTitle": "الوصف",
+    "deliveryTitle": "خيارات التسليم",
+    "priceLabel": "السعر",
+    "negotiableBadge": "قابل للتفاوض",
+    "privateSeller": "بائع خاص",
+    "dealerSeller": "معرض موثّق",
+    "statViews": "مشاهدة",
+    "statSaves": "حفظ",
+    "statInquiries": "استفسار",
+    "statPhotos": "صور"
+  },
   "trust": {
     "foundingPartner": "شريك مؤسس",
     "idVerified": "هوية موثّقة",

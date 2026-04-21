@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { MapPin, Image as ImageIcon, Video } from 'lucide-react';
 import type { ListingCardData } from '@/lib/browse/types';
 import { formatPrice } from '@/lib/format';
+import { listingDetailHref } from '@/lib/listings/route';
 
 /**
  * SearchResultCard — card shape for /search results + future /browse
@@ -15,46 +16,8 @@ interface Props {
   locale: 'ar' | 'en';
 }
 
-/**
- * Route a listing to its vertical detail page.
- * categorySlug lookup: `used-cars|motorcycles|...` → /rides/, properties slugs → /properties/.
- * Fallback to home if vertical unknown.
- */
-function listingHref(
-  locale: 'ar' | 'en',
-  id: number,
-  categorySlug: string | null,
-): string {
-  const ridesSubs = new Set([
-    'used-cars',
-    'new-cars',
-    'classic-cars',
-    'junk-cars',
-    'wanted-cars',
-    'motorcycles',
-    'watercraft',
-    'cmvs',
-    'auto-spare-parts',
-    'auto-accessories',
-    'auto-services',
-  ]);
-  const propertiesSubs = new Set([
-    'property-for-rent',
-    'property-for-sale',
-    'rooms-for-rent',
-    'land',
-    'property-for-exchange',
-    'international-property',
-    'property-management',
-    'realestate-offices',
-  ]);
-  if (categorySlug && ridesSubs.has(categorySlug)) return `/${locale}/rides/${id}`;
-  if (categorySlug && propertiesSubs.has(categorySlug)) return `/${locale}/properties/${id}`;
-  return `/${locale}/`;
-}
-
 export default function SearchResultCard({ card, locale }: Props) {
-  const href = listingHref(locale, card.id, card.categorySlug);
+  const href = listingDetailHref(locale, card.id, card.categorySlug);
 
   const priceMinor =
     typeof card.priceMinorUnits === 'bigint'

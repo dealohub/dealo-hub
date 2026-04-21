@@ -9,6 +9,7 @@ import { generateListingEmbedding } from './embeddings';
 import { PublishSchema } from './validators';
 import { validatePropertyFieldsRaw } from '@/lib/properties/validators';
 import type { PropertyCategoryKey } from '@/lib/properties/types';
+import { listingDetailHrefFromParent } from './route';
 import type { DraftState, WizardStep } from './draft';
 
 /** Sub-cat slugs recognized by the Properties vertical. Mirrors
@@ -403,14 +404,11 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
     .single();
   const slug = slugRow?.slug ?? String(listingId);
 
-  let redirectTo: string;
-  if (parentSlug === 'automotive') {
-    redirectTo = `/${locale}/rides/${slug}`;
-  } else if (parentSlug === 'real-estate') {
-    redirectTo = `/${locale}/properties/${slug}`;
-  } else {
-    redirectTo = `/${locale}/`;
-  }
+  // Centralised detail-page router. Automotive → /rides, real-estate →
+  // /properties, everything else → /listings (generic). Before the
+  // generic fallback existed, non-vertical categories silently
+  // redirected to `/` — a supply-loop break.
+  const redirectTo = listingDetailHrefFromParent(locale, slug, parentSlug);
 
   revalidatePath('/sell');
   revalidatePath(redirectTo);
