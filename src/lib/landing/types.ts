@@ -56,3 +56,26 @@ export interface HeroImage {
   /** Slug of the underlying listing — useful as a stable React key. */
   listingSlug: string;
 }
+
+/**
+ * Resolve the vertical-specific detail path for a feed listing.
+ *
+ * Before Phase 5f this was hard-coded to `/rides/<slug>` for every
+ * feed row, which broke property listings — clicking a villa hero
+ * scatter landed on a 404-ish rides page. The feed already carries
+ * `cat` (FeedCategoryKey) derived from the listing's sub-category,
+ * so we route by it:
+ *   'cars'     → /rides/<slug>
+ *   'property' → /properties/<slug>
+ *   other      → landing (safe fallback until each vertical ships
+ *                 its own detail page)
+ */
+export function verticalPathForFeedCat(
+  locale: 'ar' | 'en',
+  cat: FeedCategoryKey,
+  slug: string,
+): string {
+  if (cat === 'cars') return `/${locale}/rides/${slug}`;
+  if (cat === 'property') return `/${locale}/properties/${slug}`;
+  return `/${locale}/`;
+}

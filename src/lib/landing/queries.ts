@@ -56,7 +56,16 @@ const SUB_CAT_TO_BUCKET: Readonly<Record<string, FeedCategoryKey>> = {
   'car-garages': 'cars',
   'car-rental-business': 'cars',
   'food-trucks': 'cars',
-  // Future: real-estate, electronics, jobs sub-cats — add when seeded.
+  // Real-estate family (Phase 4a) — 8 sub-cats → 'property'.
+  'property-for-sale': 'property',
+  'property-for-rent': 'property',
+  'property-for-exchange': 'property',
+  'rooms-for-rent': 'property',
+  land: 'property',
+  'international-property': 'property',
+  'property-management': 'property',
+  'realestate-offices': 'property',
+  // Future: electronics, jobs sub-cats — add when seeded.
 };
 
 function toFeedCategory(

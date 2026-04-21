@@ -29,7 +29,7 @@ interface RawListingMini {
   category:
     | {
         slug: string;
-        parent: { slug: string } | null;
+        parent_id: number | null;
       }
     | null;
 }
@@ -83,10 +83,17 @@ function coverFromImages(imgs: { url: string; position: number }[] | null): stri
   return imgs.slice().sort((a, b) => a.position - b.position)[0]?.url ?? null;
 }
 
-function mapInbox(row: RawConversationRow, viewerId: string): InboxConversation | null {
+function mapInbox(
+  row: RawConversationRow,
+  viewerId: string,
+  parentSlugById: Map<number, string>,
+): InboxConversation | null {
   if (!row.listing || !row.buyer || !row.seller) return null;
   const viewerIsBuyer = row.buyer_id === viewerId;
   const otherRaw = viewerIsBuyer ? row.seller : row.buyer;
+
+  const parentId = row.listing.category?.parent_id ?? null;
+  const parentSlug = parentId != null ? parentSlugById.get(parentId) ?? null : null;
 
   return {
     id: row.id,
@@ -97,7 +104,7 @@ function mapInbox(row: RawConversationRow, viewerId: string): InboxConversation 
       cover: coverFromImages(row.listing.listing_images),
       priceMinorUnits: Number(row.listing.price_minor_units),
       currencyCode: row.listing.currency_code as InboxConversation['listing']['currencyCode'],
-      vertical: verticalFromParentSlug(row.listing.category?.parent?.slug ?? null),
+      vertical: verticalFromParentSlug(parentSlug),
     },
     otherParty: {
       id: otherRaw.id,
@@ -136,6 +143,13 @@ function mapMessage(row: RawMessageRow): ChatMessage {
 // SELECT strings
 // ---------------------------------------------------------------------------
 
+/**
+ * NOTE: we fetch the listing's category with only `slug, parent_id` —
+ * NOT a nested `parent:categories!...` embed. PostgREST's self-FK
+ * resolution on `categories.parent_id → categories.id` is unreliable
+ * in our schema cache (same gotcha noted in landing/queries.ts). We
+ * look up parent slugs in a second round-trip and stitch in-code.
+ */
 const CONVERSATION_SELECT = `
   id, buyer_id, seller_id, last_message_at, last_message_preview,
   buyer_unread_count, seller_unread_count,
@@ -145,8 +159,7 @@ const CONVERSATION_SELECT = `
     id, slug, title, price_minor_units, currency_code,
     listing_images ( url, position ),
     category:categories!listings_category_id_fkey (
-      slug,
-      parent:categories!categories_parent_id_fkey ( slug )
+      slug, parent_id
     )
   ),
   buyer:profiles!conversations_buyer_id_fkey (
@@ -156,6 +169,25 @@ const CONVERSATION_SELECT = `
     id, display_name, avatar_url, is_dealer, dealer_name
   )
 ` as const;
+
+/** Batch-fetch parent slugs for a set of parent_ids (one DB round-trip). */
+async function fetchParentSlugMap(
+  supabase: ReturnType<typeof createClient>,
+  parentIds: number[],
+): Promise<Map<number, string>> {
+  const map = new Map<number, string>();
+  const uniq = Array.from(new Set(parentIds.filter((n): n is number => n != null)));
+  if (uniq.length === 0) return map;
+  const { data, error } = await supabase
+    .from('categories')
+    .select('id, slug')
+    .in('id', uniq);
+  if (error || !data) return map;
+  for (const row of data as { id: number; slug: string }[]) {
+    map.set(row.id, row.slug);
+  }
+  return map;
+}
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -188,8 +220,14 @@ export const getInbox = cache(async function getInbox(opts: {
   }
   if (!data) return [];
 
-  const mapped = (data as unknown as RawConversationRow[])
-    .map(r => mapInbox(r, user.id))
+  const rows = data as unknown as RawConversationRow[];
+  const parentIds = rows
+    .map(r => r.listing?.category?.parent_id)
+    .filter((n): n is number => typeof n === 'number');
+  const parentSlugById = await fetchParentSlugMap(supabase, parentIds);
+
+  const mapped = rows
+    .map(r => mapInbox(r, user.id, parentSlugById))
     .filter((x): x is InboxConversation => x !== null);
 
   if (opts.includeArchived) return mapped;
@@ -246,7 +284,13 @@ export const getThread = cache(async function getThread(
   }
   if (!convRow) return null;
 
-  const header = mapInbox(convRow as unknown as RawConversationRow, user.id);
+  const convTyped = convRow as unknown as RawConversationRow;
+  const parentId = convTyped.listing?.category?.parent_id;
+  const parentSlugById = await fetchParentSlugMap(
+    supabase,
+    typeof parentId === 'number' ? [parentId] : [],
+  );
+  const header = mapInbox(convTyped, user.id, parentSlugById);
   if (!header) return null;
 
   // Fetch messages

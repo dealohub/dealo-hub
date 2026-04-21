@@ -1,7 +1,7 @@
 'use client';
 
 import { Facebook, Instagram, Linkedin, Send, Twitter, ShieldCheck } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 /**
  * SiteFooter — landing-page footer with four link columns, social,
@@ -18,12 +18,16 @@ const SOCIALS = [
 export const SiteFooter = () => {
   const t = useTranslations('marketplace');
   const tFs = useTranslations('marketplace.footerSite');
+  const locale = useLocale() as 'ar' | 'en';
   const COLUMNS = [
     {
       title: tFs('columns.browse'),
+      // Only the two shipped verticals link to real routes. Everything
+      // else stays on '#' until its hub page lands — avoids flashing
+      // dead links to users. Track the backlog in PHASE-5-ROADMAP.md.
       links: [
-        { label: t('categories.rides'), href: '#' },
-        { label: t('categories.spaces'), href: '#' },
+        { label: t('categories.rides'), href: `/${locale}/rides` },
+        { label: t('categories.spaces'), href: `/${locale}/properties` },
         { label: t('categories.careers'), href: '#' },
         { label: t('categories.market'), href: '#' },
         { label: t('categories.living'), href: '#' },

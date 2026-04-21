@@ -10,7 +10,7 @@ import ThemeToggle from '@/components/theme-toggle';
 import LocaleToggle from '@/components/locale-toggle';
 import { getLiveFeedListings } from '@/lib/landing/queries';
 import { ACTIVITY_SIGNALS } from '@/lib/landing/constants';
-import type { HeroImage } from '@/lib/landing/types';
+import { verticalPathForFeedCat, type HeroImage } from '@/lib/landing/types';
 
 /**
  * Landing page — pre-auth marketplace homepage.
@@ -42,7 +42,9 @@ export default async function HomePage({
   const heroImages: HeroImage[] = feed.slice(0, 6).map((item) => ({
     src: item.image,
     alt: item.title,
-    href: `/${locale}/rides/${item.slug}`,
+    // Vertical-aware routing — Phase 5f. Routes property listings to
+    // /properties/<slug> and automotive to /rides/<slug>.
+    href: verticalPathForFeedCat(locale, item.cat, item.slug),
     listingSlug: item.slug,
   }));
 

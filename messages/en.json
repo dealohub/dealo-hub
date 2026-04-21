@@ -3,6 +3,23 @@
     "name": "Dealo Hub",
     "tagline": "The first AI-Protected C2C Marketplace in the Gulf"
   },
+  "errors": {
+    "boundary": {
+      "title": "Something went wrong",
+      "body": "We hit a snag loading this page. Try again — if it keeps happening, please reach out to support.",
+      "retry": "Try again",
+      "home": "Go home"
+    },
+    "notFound": {
+      "title": "This page doesn't exist",
+      "body": "The link you followed is broken or outdated. Try a search or head back to the homepage.",
+      "ctaHome": "Home",
+      "ctaSearch": "Search",
+      "shortcutRides": "Rides",
+      "shortcutProperties": "Properties",
+      "shortcutSell": "Sell a listing"
+    }
+  },
   "home": {
     "heroHeadline": "Dealo Hub — Coming Soon",
     "heroSubline": "The first AI-Protected C2C marketplace in the Gulf. Human-written listings, safer chat, trust you can feel.",
@@ -714,6 +731,11 @@
       "search": "Search",
       "menu": "Menu",
       "login": "Login",
+      "menuMessages": "Messages",
+      "menuMyListings": "My listings",
+      "menuSaved": "Saved",
+      "menuProfile": "My profile",
+      "menuSignOut": "Sign out",
       "helpfulLinks": {
         "helpSupport": "Help & Support",
         "safetyTips": "Safety Tips",
@@ -1709,7 +1731,8 @@
         "start_failed": "Couldn't start the conversation. Try again.",
         "send_failed": "Couldn't send your message. Try again.",
         "conversation_not_found": "Conversation not found.",
-        "not_a_participant": "You're not part of this conversation."
+        "not_a_participant": "You're not part of this conversation.",
+        "rate_limited": "Slow down — you're sending messages too fast. Try again in a minute."
       },
       "navbarBadge": {
         "label": "Messages",

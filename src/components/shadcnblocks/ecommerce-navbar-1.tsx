@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   Menu,
   X,
@@ -15,6 +15,7 @@ import {
   Send,
   type LucideIcon,
 } from 'lucide-react';
+import NavbarUserMenu from '@/components/navbar/navbar-user-menu';
 
 /* ---------- Types ---------- */
 
@@ -173,7 +174,7 @@ const MENU: MenuItem[] = [
     },
   },
   {
-    id: 'property', label: 'Spaces', href: '#',
+    id: 'property', label: 'Spaces', href: '/properties',
     megaMenu: {
       sections: [
         {
@@ -525,8 +526,21 @@ const useLocalizedCategoryLabel = () => {
   };
 };
 
+/**
+ * Prefix a relative path with the current locale (e.g. "/rides" → "/ar/rides").
+ * Returns bare hashes / full URLs / empty strings untouched so we never
+ * accidentally prepend a locale to a `#` placeholder or an absolute URL.
+ */
+function localizeNavHref(href: string, locale: 'ar' | 'en'): string {
+  if (!href || href === '#' || href.startsWith('#')) return href;
+  if (/^https?:\/\//i.test(href)) return href;
+  if (href.startsWith('/')) return `/${locale}${href}`;
+  return href;
+}
+
 const DesktopMenuItem = ({ item, isOpen, onEnter }: { item: MenuItem; isOpen: boolean; onEnter: () => void }) => {
   const getLabel = useLocalizedCategoryLabel();
+  const locale = useLocale() as 'ar' | 'en';
   const label = getLabel(item);
   const style = { color: item.accentColor };
   const base =
@@ -538,14 +552,41 @@ const DesktopMenuItem = ({ item, isOpen, onEnter }: { item: MenuItem; isOpen: bo
     </span>
   ) : null;
 
+  const href = localizeNavHref(item.href, locale);
+  // Treat '#' (and empty) as unshipped — renders as a dead hover-only
+  // button so we don't flash a dead navigation.
+  const isRealLink = href !== '#' && !!href;
+
   if (!item.megaMenu) {
     return (
-      <a href={item.href} style={style} className={base} onMouseEnter={onEnter}>
+      <a href={href} style={style} className={base} onMouseEnter={onEnter}>
         {label}
         {badge}
       </a>
     );
   }
+
+  // With a real href + megaMenu: render an anchor so clicking
+  // navigates to the vertical hub; hover still opens the megamenu
+  // (onMouseEnter fires on <a> equally). ChevronDown is purely a
+  // visual affordance now.
+  if (isRealLink) {
+    return (
+      <a
+        href={href}
+        style={style}
+        onMouseEnter={onEnter}
+        className={`${base} gap-1 ${isOpen ? 'bg-muted' : ''}`}
+      >
+        {label}
+        {badge}
+        <ChevronDown size={12} className={`transition ${isOpen ? 'rotate-180' : ''}`} />
+      </a>
+    );
+  }
+
+  // Fallback: megaMenu only, no hub page yet — keep as a button so we
+  // don't ship dead `#` links in production.
   return (
     <button
       type="button"
@@ -617,19 +658,21 @@ const MenuFeaturedLink = ({ href, imageSrc, label }: FeaturedItem) => (
 
 const SecondaryNav = () => {
   const t = useTranslations('marketplace.navbar');
+  const locale = useLocale() as 'ar' | 'en';
   return (
     <div className="flex items-center gap-2">
       {/* Primary action for a C2C marketplace: post a listing. */}
       <a
-        href="#"
+        href={`/${locale}/sell/category`}
         className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#e30613] px-3.5 text-[12px] font-semibold text-white shadow transition hover:bg-[#c80510]"
       >
         <Plus size={14} strokeWidth={2.5} />
         {t('sellNow')}
       </a>
-      <IconButton title={t('account')}>
-        <CircleUserRound size={18} />
-      </IconButton>
+      {/* Auth-aware account menu — renders avatar + dropdown when
+          signed in, "تسجيل الدخول" link when signed out. Includes
+          unread-messages badge. */}
+      <NavbarUserMenu locale={locale} />
       <IconButton title={t('search')}>
         <Search size={18} />
       </IconButton>
@@ -814,6 +857,7 @@ const RootMobilePanel = ({
   socialLinks: SocialLink[];
   contactInfo: ContactLink[];
 }) => {
+  const locale = useLocale() as 'ar' | 'en';
   const linkStyle =
     'flex w-full items-center justify-between gap-2 border-b px-2 py-4 text-sm font-semibold leading-relaxed text-foreground hover:bg-transparent';
 
@@ -823,9 +867,10 @@ const RootMobilePanel = ({
         <IconButton title="Close" onClick={onClose}>
           <X size={18} />
         </IconButton>
-        <button className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted">
-          <CircleUserRound size={16} /> Login
-        </button>
+        {/* Auth-aware: same avatar+dropdown (or sign-in link) as the
+            desktop nav. Keeps a single source of truth for who's
+            logged in. */}
+        <NavbarUserMenu locale={locale} />
       </header>
       <div className="flex-1 overflow-auto px-6 py-5">
         <div>
@@ -870,9 +915,12 @@ const MegaMenuMobile = ({
   onClose: () => void;
   onPickSub: (s: MenuSection) => void;
 }) => {
+  const locale = useLocale() as 'ar' | 'en';
   if (!menuItem) return null;
   const linkStyle =
     'flex w-full items-center justify-between gap-2 border-b px-2 py-4 text-sm font-semibold leading-relaxed text-foreground';
+  const viewHref = localizeNavHref(menuItem.href, locale);
+  const isRealViewLink = viewHref !== '#' && !!viewHref;
 
   return (
     <div
@@ -910,12 +958,14 @@ const MegaMenuMobile = ({
             ))}
           </div>
         )}
-        <a
-          href={menuItem.href}
-          className="flex h-11 w-full items-center justify-center rounded-md border border-border bg-background text-sm font-medium text-foreground hover:bg-muted"
-        >
-          View {menuItem.label}
-        </a>
+        {isRealViewLink && (
+          <a
+            href={viewHref}
+            className="flex h-11 w-full items-center justify-center rounded-md border border-border bg-background text-sm font-medium text-foreground hover:bg-muted"
+          >
+            View {menuItem.label}
+          </a>
+        )}
       </div>
     </div>
   );

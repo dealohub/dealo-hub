@@ -7,6 +7,7 @@ import {
   containsPhoneNumber,
   containsDiscriminatoryWording,
 } from '@/lib/listings/validators';
+import { checkRateLimit } from '@/lib/rate-limit/check';
 import type { ChatActionResult } from './types';
 
 /**
@@ -85,6 +86,16 @@ export async function startOrResumeConversation(
   if (listingErr || !listing) return { ok: false, error: 'listing_not_found' };
   if (listing.status !== 'live') return { ok: false, error: 'listing_not_live' };
   if (listing.seller_id === user.id) return { ok: false, error: 'own_listing' };
+
+  // Rate limit: 10 fresh conversations / 10 minutes / user. Re-opening
+  // an existing conversation with the same seller is idempotent on our
+  // side, so this is specifically about bot-driven spam fanouts.
+  const within = await checkRateLimit({
+    action: 'chat.start_conversation',
+    max: 10,
+    windowSeconds: 600,
+  });
+  if (!within) return { ok: false, error: 'rate_limited' };
 
   // Filter A + C on opening message if provided
   if (parsed.data.opening_message) {
@@ -173,6 +184,16 @@ export async function sendMessage(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'not_authenticated' };
+
+  // Rate limit: 30 messages / minute / user across all conversations.
+  // Tuned for an engaged negotiation (a few back-and-forths per second)
+  // without letting a bot fire thousands.
+  const within = await checkRateLimit({
+    action: 'chat.send_message',
+    max: 30,
+    windowSeconds: 60,
+  });
+  if (!within) return { ok: false, error: 'rate_limited' };
 
   // For offers, resolve currency from the conversation's listing
   let offer_currency: string | null = null;

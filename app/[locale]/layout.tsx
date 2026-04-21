@@ -84,6 +84,20 @@ export default async function LocaleLayout({
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
+        {/*
+          Skip-to-content link — invisible until focused by keyboard.
+          Critical a11y affordance for users navigating with Tab: lets
+          them jump past the ~10 navbar links straight to page content.
+          Pages that want to be the target add id="main-content" to
+          their top-level <main>. Pages without one just fall through
+          harmlessly (the anchor resolves to nothing, same as today).
+        */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:start-3 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-primary-foreground focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary/40"
+        >
+          {locale === 'ar' ? 'تخطّى إلى المحتوى' : 'Skip to content'}
+        </a>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <NextIntlClientProvider locale={locale} messages={messages}>
             {children}

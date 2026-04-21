@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { moveDraftImagesToListing } from '@/lib/supabase/storage-listings';
+import { checkRateLimit } from '@/lib/rate-limit/check';
 import { generateListingEmbedding } from './embeddings';
 import { PublishSchema } from './validators';
 import type { DraftState, WizardStep } from './draft';
@@ -170,6 +171,16 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'not_authenticated' };
 
+  // Rate limit: 20 publishes / hour / user. Even a power seller doesn't
+  // legitimately list more than that — anything higher is either a bug
+  // in a retry loop or a bot staging spam inventory.
+  const within = await checkRateLimit({
+    action: 'listings.publish',
+    max: 20,
+    windowSeconds: 3600,
+  });
+  if (!within) return { ok: false, error: 'rate_limited' };
+
   const { data: draft, error: draftErr } = await supabase
     .from('listing_drafts')
     .select('*')
@@ -301,13 +312,25 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
 
   // Resolve category to choose the right vertical detail path.
   // Automotive → /rides/[slug], real-estate → /properties/[slug], else → home.
+  // NOTE: two-step lookup — PostgREST's self-FK embed on
+  // `categories.parent_id → categories.id` is unreliable (same gotcha
+  // noted in landing/queries.ts + chat/queries.ts).
   const { data: catRow } = await supabase
     .from('categories')
-    .select('slug, parent_id, parent:categories!categories_parent_id_fkey (slug)')
+    .select('slug, parent_id')
     .eq('id', v.category_id)
     .maybeSingle();
 
-  const parentSlug = (catRow as any)?.parent?.slug as string | undefined;
+  let parentSlug: string | undefined;
+  const parentId = (catRow as any)?.parent_id as number | null | undefined;
+  if (typeof parentId === 'number') {
+    const { data: parentRow } = await supabase
+      .from('categories')
+      .select('slug')
+      .eq('id', parentId)
+      .maybeSingle();
+    parentSlug = (parentRow as any)?.slug as string | undefined;
+  }
   // New listings don't have a slug assigned yet (only seeds do). Pull it.
   const { data: slugRow } = await supabase
     .from('listings')

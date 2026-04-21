@@ -57,4 +57,42 @@
     --font-geist-sans: var(--font-cairo);
     --font-bricolage: var(--font-cairo);
   }
+
+  /* ───────────── a11y: keyboard focus ring ─────────────
+     We opt out of the browser's default outline for mouse clicks
+     (which is what `:focus` alone covers) but REINSTATE a visible
+     ring for keyboard focus via `:focus-visible`. This is the
+     modern best practice:
+       - Mouse clicks leave UI clean
+       - Tab / arrow-key navigation shows a crisp ring on every
+         interactive element
+     Anchors, buttons, and form controls all share the same token
+     (var(--ring)) so the ring styling stays consistent with the
+     rest of the design system.
+     Components that define their own `focus:ring-…` classes (many
+     do) keep winning via higher specificity — this rule is only a
+     fallback for the ones that forgot. */
+  :focus {
+    outline: none;
+  }
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Respect reduced motion preferences — strips all CSS transitions
+     and animations for users who opted in at the OS level. Lives at
+     the base layer so it catches every component that declares
+     `transition-*` classes via Tailwind. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
