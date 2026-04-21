@@ -404,6 +404,129 @@ export type Database = {
           },
         ]
       }
+      listing_drafts: {
+        Row: {
+          area_id: number | null
+          authenticity_confirmed: boolean
+          brand: string | null
+          category_id: number | null
+          city_id: number | null
+          color: string | null
+          condition: Database["public"]["Enums"]["item_condition"] | null
+          country_code: string | null
+          created_at: string
+          currency_code: string | null
+          current_step: string
+          delivery_options: Database["public"]["Enums"]["delivery_option"][]
+          description: string | null
+          has_receipt: boolean
+          id: string
+          image_urls: string[]
+          min_offer_minor_units: number | null
+          model: string | null
+          price_minor_units: number | null
+          price_mode: Database["public"]["Enums"]["price_mode"] | null
+          serial_number: string | null
+          subcategory_id: number | null
+          title: string | null
+          updated_at: string
+          user_id: string
+          video_url: string | null
+        }
+        Insert: {
+          area_id?: number | null
+          authenticity_confirmed?: boolean
+          brand?: string | null
+          category_id?: number | null
+          city_id?: number | null
+          color?: string | null
+          condition?: Database["public"]["Enums"]["item_condition"] | null
+          country_code?: string | null
+          created_at?: string
+          currency_code?: string | null
+          current_step?: string
+          delivery_options?: Database["public"]["Enums"]["delivery_option"][]
+          description?: string | null
+          has_receipt?: boolean
+          id?: string
+          image_urls?: string[]
+          min_offer_minor_units?: number | null
+          model?: string | null
+          price_minor_units?: number | null
+          price_mode?: Database["public"]["Enums"]["price_mode"] | null
+          serial_number?: string | null
+          subcategory_id?: number | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+          video_url?: string | null
+        }
+        Update: {
+          area_id?: number | null
+          authenticity_confirmed?: boolean
+          brand?: string | null
+          category_id?: number | null
+          city_id?: number | null
+          color?: string | null
+          condition?: Database["public"]["Enums"]["item_condition"] | null
+          country_code?: string | null
+          created_at?: string
+          currency_code?: string | null
+          current_step?: string
+          delivery_options?: Database["public"]["Enums"]["delivery_option"][]
+          description?: string | null
+          has_receipt?: boolean
+          id?: string
+          image_urls?: string[]
+          min_offer_minor_units?: number | null
+          model?: string | null
+          price_minor_units?: number | null
+          price_mode?: Database["public"]["Enums"]["price_mode"] | null
+          serial_number?: string | null
+          subcategory_id?: number | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_drafts_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_drafts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_drafts_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_drafts_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_drafts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listing_embeddings: {
         Row: {
           created_at: string
@@ -546,6 +669,7 @@ export type Database = {
           area_id: number | null
           authenticity_confirmed: boolean
           brand: string | null
+          category_fields: Json
           category_id: number
           chat_initiation_count: number
           city_id: number
@@ -576,6 +700,7 @@ export type Database = {
           save_count: number
           seller_id: string
           serial_number: string | null
+          slug: string
           soft_deleted_at: string | null
           sold_at: string | null
           status: Database["public"]["Enums"]["listing_status"]
@@ -600,6 +725,7 @@ export type Database = {
           area_id?: number | null
           authenticity_confirmed?: boolean
           brand?: string | null
+          category_fields?: Json
           category_id: number
           chat_initiation_count?: number
           city_id: number
@@ -630,6 +756,7 @@ export type Database = {
           save_count?: number
           seller_id: string
           serial_number?: string | null
+          slug: string
           soft_deleted_at?: string | null
           sold_at?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
@@ -654,6 +781,7 @@ export type Database = {
           area_id?: number | null
           authenticity_confirmed?: boolean
           brand?: string | null
+          category_fields?: Json
           category_id?: number
           chat_initiation_count?: number
           city_id?: number
@@ -684,6 +812,7 @@ export type Database = {
           save_count?: number
           seller_id?: string
           serial_number?: string | null
+          slug?: string
           soft_deleted_at?: string | null
           sold_at?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
@@ -803,12 +932,15 @@ export type Database = {
           bio: string | null
           country_code: string
           created_at: string
+          dealer_name: string | null
+          dealer_verified_at: string | null
           display_name: string
           email: string | null
           handle: string | null
           id: string
           id_verified_at: string | null
           is_banned: boolean
+          is_dealer: boolean
           is_founding_partner: boolean
           last_active_at: string
           phone_e164: string | null
@@ -826,12 +958,15 @@ export type Database = {
           bio?: string | null
           country_code?: string
           created_at?: string
+          dealer_name?: string | null
+          dealer_verified_at?: string | null
           display_name: string
           email?: string | null
           handle?: string | null
           id: string
           id_verified_at?: string | null
           is_banned?: boolean
+          is_dealer?: boolean
           is_founding_partner?: boolean
           last_active_at?: string
           phone_e164?: string | null
@@ -849,12 +984,15 @@ export type Database = {
           bio?: string | null
           country_code?: string
           created_at?: string
+          dealer_name?: string | null
+          dealer_verified_at?: string | null
           display_name?: string
           email?: string | null
           handle?: string | null
           id?: string
           id_verified_at?: string | null
           is_banned?: boolean
+          is_dealer?: boolean
           is_founding_partner?: boolean
           last_active_at?: string
           phone_e164?: string | null

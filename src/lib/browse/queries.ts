@@ -1,6 +1,9 @@
 import { createClient } from '@/lib/supabase/server';
-import type { ListingCardData } from '@/components/listings/ListingCard';
-import { DEFAULT_PAGE_SIZE, type FilterState } from './types';
+import {
+  DEFAULT_PAGE_SIZE,
+  type FilterState,
+  type ListingCardData,
+} from './types';
 
 /**
  * Shape of the joined row we select for browse/search pages.

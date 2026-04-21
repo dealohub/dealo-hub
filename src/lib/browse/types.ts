@@ -4,6 +4,42 @@ import type {
   PriceMode,
 } from '@/lib/listings/validators';
 
+/**
+ * App-facing shape for a listing rendered in a browse/search grid card.
+ *
+ * Canonical location. Previously lived in `src/components/listings/ListingCard`
+ * (removed during the UI reset). Moved here so the `src/lib/browse` layer
+ * owns the shape it maps listings into; the UI layer re-exports or consumes
+ * from here.
+ *
+ * Kept narrow for safety: `phone_e164` and `email` must NEVER be present
+ * on this shape (Decision 2 — chat-only contact).
+ */
+export interface ListingCardData {
+  id: number;
+  title: string;
+  priceMode: PriceMode;
+  priceMinorUnits: bigint | number;
+  currencyCode: string;
+  minOfferMinorUnits: bigint | number | null;
+  coverUrl: string | null;
+  imageCount: number;
+  hasVideo: boolean;
+  areaName: string | null;
+  cityName: string | null;
+  createdAt: string;
+  saveCount: number;
+  categorySlug: string | null;
+  isAuthenticityConfirmed: boolean;
+  seller: {
+    id: string;
+    displayName: string;
+    handle: string | null;
+    avatarUrl: string | null;
+    isPhoneVerified: boolean;
+  };
+}
+
 export type SortOption =
   | 'newest'
   | 'price_asc'
