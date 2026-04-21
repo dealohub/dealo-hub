@@ -3,7 +3,7 @@
 > Living snapshot of what's built, what's in flight, and what's queued.
 > Update this file whenever a section lands or a decision flips.
 >
-> Last updated: **2026-04-21** (Phase 3d complete + landing polish: unified hero+feed source, 6th hero car seeded, broken image URLs swapped)
+> Last updated: **2026-04-21** (Phase 4a complete — Properties vertical schema + 10-listing seed landed; no UI yet. Earlier: Phase 3d landing polish.)
 
 ---
 
@@ -15,6 +15,7 @@
 | Rides vertical — grid | `/[locale]/rides` | Hub page with 10 sections. **3 dynamic sections DB-backed** (featured-premium + main-grid + listing-card) via `getFeaturedRides` / `getRidesForGrid` / `getRideTypeCounts`. 8 editorial sections stay hardcoded per Q3-locked strategy. Filter chips driven by real sub-category counts. |
 | Rides vertical — detail | `/[locale]/rides/[id]` | Premium detail page, 8 components (header, gallery, key info, features, description, similar, purchase panel, mobile action bar). **Fully DB-backed** via `getRideById` / `getSimilarRides`. See `docs/RIDES-DETAIL.md`. |
 | Rides DB wiring (Phase 3b + 3c) | `listings.category_fields` JSONB + related columns | Schema extensions: `category_fields`, `slug`, `is_featured`, `is_hot`, `old_price_minor_units`, `listing_images.category`, profiles dealer fields. **6 used-cars seeded** with full detail data (BMW M5, Mercedes G63, Toyota Camry, Honda Civic Type R, Tesla Model 3 LR, Porsche 911 Carrera S). `buildRideSpecs` + `buildRideGallery` + `rides-data.ts` (seed) retired. |
+| Properties DB foundation (Phase 4a) | `src/lib/properties/` + migrations 0025-0027 | **Doctrine-led** evidence-based design (Dubizzle KW + Q84Sale live DOM + Kuwait Law 74/1979 + global benchmarks). Taxonomy: `real-estate` parent + 8 sub-cats. `PropertyFields` Zod schema (14 property types, 22 amenities, structured diwaniya, chalet availability primitives, off-plan payment plans). New cross-vertical columns: `verification_tier` + `verified_at/by` (drives trust badge), bilingual `title_ar`/`title_en`. **Filter C** — discriminatory-wording rejection at submit (validated by Dubizzle live listing `"Non-Arabs Only"`). 10 seed properties, each demonstrating one doctrine pillar (chalet daily booking, off-plan payment plan, structured diwaniya, rooms-for-rent differentiator, `dealo_inspected` flagship tier). No UI — /properties hub + detail ship in Phase 4b + 4c. |
 | Supabase backend | 22 migrations, 18 tables | Profiles, listings (with category_fields JSONB + slug + badges), images (with category)/videos/drafts, categories (80: 10 original + automotive parent + 15 automotive sub-cats), geo (countries/cities/areas), social, AI layer, waitlist. RLS on every table. |
 | Server actions / queries | 27 files in `src/lib/` | Listings, auth, profile, favorites, search (hybrid keyword + pgvector), embeddings, storage. |
 | i18n | AR (default) + EN | 16 namespaces under `messages/{ar,en}.json`. |
@@ -44,7 +45,7 @@ Rides was the first vertical. The pattern (see `docs/RIDES-DETAIL.md §7`) is re
 | Vertical | Status | Notes |
 |----------|--------|-------|
 | Rides (vehicles) | ✅ Fully DB-wired · detail (Phase 3b) + hub (Phase 3c) | Zero seed, zero synthesis, zero adapter. Covers 15 automotive sub-categories via `getRidesForGrid`; grid chips dynamic. |
-| Properties | ⬜ Planned | Different data shape (bedrooms, area m², amenities) |
+| Properties | 🟡 Phase 4a shipped (DB-only) · 4b detail + 4c hub queued | 14-pillar doctrine in `PHASE-4A-AUDIT.md`. Schema: `real-estate` parent + 8 sub-cats (migration 0025), `verification_tier` enum + bilingual `title_ar`/`title_en` + image-category extension (0026), 10-property seed demonstrating every pillar (0027). `src/lib/properties/` types + validators (PropertyFields Zod — 34 fields, 7 domains, conditional refinement). **Filter C** (discriminatory-wording reject) live in `src/lib/listings/validators.ts`. No UI yet. |
 | Tech | ⬜ Planned | Phones, laptops, cameras — condition-heavy |
 | Jobs | ⬜ Planned | Different CTA model (apply, not buy) |
 | Fashion | ⬜ Planned | Size grids, condition states |
@@ -84,6 +85,7 @@ Rides was the first vertical. The pattern (see `docs/RIDES-DETAIL.md §7`) is re
 | `planning/PHASE-3B-AUDIT.md` | Full-field audit + wiring plan for `/rides/[id]` detail page. |
 | `planning/PHASE-3C-AUDIT.md` | Hub component triage + wiring plan for `/rides`. |
 | `planning/PHASE-3D-AUDIT.md` | Landing component triage + wiring plan for `/[locale]/`. |
+| `planning/PHASE-4A-AUDIT.md` | Properties vertical — 14-pillar doctrine, evidence-based schema, 22-amenity master, Filter C spec, 10-property seed plan. |
 | `planning/TAXONOMY-V2.md` | 21-parent category taxonomy — locked source for JSONB strategy. |
 | `planning/MASTER-PLAN.md` | Full strategic plan |
 | `planning/DECISIONS.md` | 9 locked project-level decisions |
