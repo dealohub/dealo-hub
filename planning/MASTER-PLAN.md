@@ -157,7 +157,7 @@ If <70% TPR → Review prompts, add more scam patterns
 - User accounts (email + phone OTP)
 - User profiles (bio, avatar, phone verification, member-since)
 - Listings (title, description, price, condition, images up to 10, location, category, price_mode, delivery_options, AI telemetry fields)
-- Categories (10 categories taxonomy with Arabic + English names)
+- Categories (11 top-level: 10 primary launch verticals + `automotive` parent for the Rides vertical; 64 sub-categories total — see `TAXONOMY-V2.md`)
 - Messages (1:1 realtime chat between buyer and seller)
 - Favorites / Save for later
 - Reports (listing, user)

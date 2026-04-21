@@ -15,7 +15,7 @@
 | Item | State |
 |------|-------|
 | Route | `app/[locale]/rides/[id]/page.tsx` ✅ |
-| Data source | `RIDE_LISTINGS` seed (in `rides-data.ts`) — **not yet wired to Supabase** |
+| Data source | **DB-backed** via `getListingById` / `getSimilarRides` (wired in Phase 3b.6; `rides-data.ts` retired in Phase 3c.4) |
 | Static generation | `generateStaticParams` → pre-renders all seed listings |
 | TypeScript | Clean (`tsc --noEmit` passes, excl. the pre-existing `browse/queries.ts` issue) |
 | i18n | Fully bilingual (AR default · EN toggle) under `marketplace.rides.detail.*` |
@@ -306,23 +306,19 @@ and rendered in `/rides/[id]`. No deactivated leftovers remain after the
 
 ---
 
-## 9. Wiring to Supabase — the pending step
+## 9. Wiring to Supabase — complete
 
-Everything above consumes `RIDE_LISTINGS` (seed). The documented backend already
-supports real listings:
+Landed in **Phase 3b.6** (2026-04-20). No seed, no synthesis, no adapter.
 
-- `src/lib/listings/queries.ts` → `getListingById(id)`
-- Supabase tables: `listings`, `listing_images`, `listing_videos`, `profiles`
-- Buckets: `listing-images`, `listing-videos`, `avatars`
+**What shipped:**
+- `src/lib/rides/queries.ts` — `getRideById(slug)` + `getSimilarRides(rideId, subCategorySlug, limit)`. Both return a `RideDetail` shape parsed from `listings` + `listing_images` + `profiles` + `cities` + `categories` via one PostgREST call each.
+- `src/lib/rides/validators.ts` — Zod schema over `listings.category_fields` (automotive JSONB) with snake→camel `.transform()`. Invalid rows fail loudly at query time rather than silently rendering broken specs.
+- Schema extensions landed in migrations 0015–0021: `listings.category_fields` (JSONB), `slug`, `is_featured`, `is_hot`, `old_price_minor_units`; `listing_images.category` (exterior/interior/engine/wheels/details); profiles dealer fields. 6 used-cars seeded with full data (migrations 0022 + 0023 + 0024).
+- `app/[locale]/rides/[id]/page.tsx` consumes `getRideById` directly. All 8 page components receive a single `RideDetail` object; they no longer touch a seed array.
+- `buildRideSpecs` + `buildRideGallery` synthesis engines **deleted** in Phase 3b.7 (no consumers remain).
+- `Save` / `Compare` / `Share` interactions already existed client-side; `toggleFavorite(listingId)` is the final hook for the Save button when auth persistence lands.
 
-**To go live:**
-1. Extend `listings` schema (or a joined table) with the vehicle-specific fields currently in `RideSpecs` — or compute them in `buildRideSpecs` from the stored JSONB `extras` column.
-2. Swap `const listing = RIDE_LISTINGS.find(...)` for `const listing = await getListingById(params.id)`.
-3. Replace `listing.image` / `images` with public URLs from `listing_images` (ordered by `position`).
-4. Wire `Save`, `Compare`, `Share` buttons to:
-   - `toggleFavorite(listingId)` (already exists in `src/lib/favorites/actions.ts`)
-   - Compare bar (planned — see §10)
-   - Web Share API with clipboard fallback (already implemented client-side)
+**Reference:** `planning/PHASE-3B-AUDIT.md` for the full wiring plan + before/after diff.
 
 ---
 
@@ -332,7 +328,6 @@ supports real listings:
 |-------|----------|-------|
 | Compare bar + `/rides/compare` page | 🟠 Mid | Up to 4 vehicles side-by-side |
 | Seller dashboard — vehicle-specific panel | 🟠 Mid | Host the Price AI + Performance views that don't fit on the public page |
-| Supabase wiring (§9) | 🔴 High, after seller dashboard schema lands | |
 | Image hashes for vehicle photos | 🟡 Low | Reuse the `image_hashes` fraud pipeline |
 | Semantic search for rides vertical | 🟡 Low | `listing_embeddings` already exists |
 | `/rides/new` (or reuse generic `/sell` flow) | ⚪ Future | Decide once `/sell` wizard ships |

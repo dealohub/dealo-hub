@@ -3,7 +3,7 @@
 > Living snapshot of what's built, what's in flight, and what's queued.
 > Update this file whenever a section lands or a decision flips.
 >
-> Last updated: **2026-04-20** (Phase 3d complete — every dynamic surface is DB-backed)
+> Last updated: **2026-04-21** (Phase 3d complete + landing polish: unified hero+feed source, 6th hero car seeded, broken image URLs swapped)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Area | Route / surface | Notes |
 |------|-----------------|-------|
-| Landing page | `/[locale]/` | Built by Claude Design; shell unchanged. **Dynamic surfaces DB-backed** (Phase 3d): Feature283 hero scatters via `getHeroListings`, LiveFeed via `getLiveFeedListings` + editorial `ACTIVITY_SIGNALS`. 4 editorial sections (brands strip, AI protection, partners, footer) stay hardcoded. ISR revalidate=60. |
+| Landing page | `/[locale]/` | Built by Claude Design; shell unchanged. **Dynamic surfaces DB-backed** (Phase 3d + 2026-04-21 polish): one `getLiveFeedListings({ limit: 12 })` call feeds both Feature283 hero scatters (6 slots via `.slice(0, 6)`, each a `Link` into `/rides/[slug]`) and LiveFeed (`.slice(0, 8)` as `initialFeed`). Editorial `ACTIVITY_SIGNALS` passed as a sibling prop. 4 editorial sections (brands strip, AI protection, partners, footer) stay hardcoded. ISR revalidate=60. |
 | Rides vertical — grid | `/[locale]/rides` | Hub page with 10 sections. **3 dynamic sections DB-backed** (featured-premium + main-grid + listing-card) via `getFeaturedRides` / `getRidesForGrid` / `getRideTypeCounts`. 8 editorial sections stay hardcoded per Q3-locked strategy. Filter chips driven by real sub-category counts. |
 | Rides vertical — detail | `/[locale]/rides/[id]` | Premium detail page, 8 components (header, gallery, key info, features, description, similar, purchase panel, mobile action bar). **Fully DB-backed** via `getRideById` / `getSimilarRides`. See `docs/RIDES-DETAIL.md`. |
-| Rides DB wiring (Phase 3b + 3c) | `listings.category_fields` JSONB + related columns | Schema extensions: `category_fields`, `slug`, `is_featured`, `is_hot`, `old_price_minor_units`, `listing_images.category`, profiles dealer fields. 5 used-cars seeded with full detail data. `buildRideSpecs` + `buildRideGallery` + `rides-data.ts` (seed) retired. |
+| Rides DB wiring (Phase 3b + 3c) | `listings.category_fields` JSONB + related columns | Schema extensions: `category_fields`, `slug`, `is_featured`, `is_hot`, `old_price_minor_units`, `listing_images.category`, profiles dealer fields. **6 used-cars seeded** with full detail data (BMW M5, Mercedes G63, Toyota Camry, Honda Civic Type R, Tesla Model 3 LR, Porsche 911 Carrera S). `buildRideSpecs` + `buildRideGallery` + `rides-data.ts` (seed) retired. |
 | Supabase backend | 22 migrations, 18 tables | Profiles, listings (with category_fields JSONB + slug + badges), images (with category)/videos/drafts, categories (80: 10 original + automotive parent + 15 automotive sub-cats), geo (countries/cities/areas), social, AI layer, waitlist. RLS on every table. |
 | Server actions / queries | 27 files in `src/lib/` | Listings, auth, profile, favorites, search (hybrid keyword + pgvector), embeddings, storage. |
 | i18n | AR (default) + EN | 16 namespaces under `messages/{ar,en}.json`. |
@@ -58,7 +58,7 @@ Rides was the first vertical. The pattern (see `docs/RIDES-DETAIL.md §7`) is re
 | 1 | ~~`src/lib/browse/queries.ts` imports the deleted `ListingCard`~~ | — | **Fixed 2026-04-20** in Phase 3b.1 — `ListingCardData` canonicalised to `src/lib/browse/types.ts` |
 | 2 | ~~Rides detail page uses seed data, not Supabase~~ | — | **Fixed 2026-04-20** in Phase 3b.6 — `/rides/[id]` fully DB-backed |
 | 3 | ~~`/rides` hub still uses `RIDE_LISTINGS` seed~~ | — | **Fixed 2026-04-20** in Phase 3c.2+3 — hub wired; `rides-data.ts` deleted in Phase 3c.4 |
-| 4 | ~~Landing `LiveFeed` + `Feature283` still read `listings-data.ts` seed~~ | — | **Fixed 2026-04-20** in Phase 3d.2 — wired via `getLiveFeedListings` / `getHeroListings`; `listings-data.ts` deleted in Phase 3d.3 |
+| 4 | ~~Landing `LiveFeed` + `Feature283` still read `listings-data.ts` seed~~ | — | **Fixed 2026-04-20** in Phase 3d.2 — wired via `getLiveFeedListings` / `getHeroListings`; `listings-data.ts` deleted in Phase 3d.3. Follow-up (2026-04-21): `getHeroListings` retired — hero scatters now reuse the same `getLiveFeedListings` call as the feed, giving cohesion. Seeded a 6th car (Porsche) to fill the 6 hero slots; replaced 3 dead Unsplash URLs (migration 0024). |
 
 ## 6. Deprecations / removed from surface
 
@@ -80,7 +80,6 @@ Rides was the first vertical. The pattern (see `docs/RIDES-DETAIL.md §7`) is re
 | `docs/RIDES-DETAIL.md` | Complete record of the rides-detail build (all components, decisions, patterns, pending work) |
 | `docs/STATUS.md` | **This file** — build status at a glance |
 | `README.md` | Project overview + quick start |
-| `planning/BUILD-STATE.md` | 2026-04-19 snapshot — historical reference. Predates the rides vertical. |
 | `planning/PHASE-3-SUPABASE.md` | v1.1 — JSONB wiring plan (superseded by 3B/3C audits but retains context). |
 | `planning/PHASE-3B-AUDIT.md` | Full-field audit + wiring plan for `/rides/[id]` detail page. |
 | `planning/PHASE-3C-AUDIT.md` | Hub component triage + wiring plan for `/rides`. |
