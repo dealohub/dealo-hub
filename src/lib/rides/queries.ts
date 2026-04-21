@@ -36,6 +36,7 @@ const DETAIL_SELECT = `
   id, slug, title, description, brand, model, color,
   condition, price_mode, price_minor_units, currency_code, min_offer_minor_units,
   old_price_minor_units, is_featured, is_hot,
+  view_count, save_count, chat_initiation_count,
   country_code, city_id, status, published_at, category_fields,
   listing_images ( url, width, height, alt_text, position, category ),
   seller:profiles!listings_seller_id_fkey (
@@ -76,6 +77,9 @@ interface RawDetailRow {
   old_price_minor_units: number | string | null;
   is_featured: boolean;
   is_hot: boolean;
+  view_count: number;
+  save_count: number;
+  chat_initiation_count: number;
   country_code: string;
   city_id: number;
   status: RideDetail['status'];
@@ -265,6 +269,9 @@ function mapDetail(row: RawDetailRow, locale: 'ar' | 'en'): RideDetail | null {
     publishedAt: row.published_at,
     isFeatured: row.is_featured,
     isHot: row.is_hot,
+    viewCount: row.view_count,
+    saveCount: row.save_count,
+    chatInitiationCount: row.chat_initiation_count,
     specs: specsResult.data,
     images,
     seller,

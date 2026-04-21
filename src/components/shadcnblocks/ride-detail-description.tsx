@@ -1,64 +1,77 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Quote,
   ChevronDown,
   ChevronUp,
   Flag,
-  Languages,
   Check,
   Sparkles,
 } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { VEHICLE_COLORS, type RideListing } from './rides-data';
-import { buildRideSpecs } from './build-ride-specs';
+import { useTranslations } from 'next-intl';
+import type { RideDetail } from '@/lib/rides/types';
 
 /**
  * RideDetailDescription — "كلام البائع" block.
  *
- * Synthesizes a believable seller blurb from listing data (title, year,
- * specA, color, warranty) and presents it like a real dealer wrote it,
- * with collapsible "read more" and highlight chips for key selling
- * points. Bilingual — toggle AR / EN inline.
+ * Displays the real description text stored on the listing, with
+ * word-boundary-aware truncation and a "read more" toggle. Highlight
+ * chips are derived from listing signals (warranty active, low
+ * mileage, featured, dealer-verified, hot) — no synthetic prose.
+ *
+ * The prior version synthesized bilingual copy from structured fields
+ * and offered an AR/EN toggle. With real descriptions in DB (one
+ * language per listing), that pattern is gone.
  */
 
 interface Props {
-  listing: RideListing;
+  listing: RideDetail;
+  locale: 'ar' | 'en';
 }
 
-export const RideDetailDescription = ({ listing }: Props) => {
+const PREVIEW_CHARS = 320;
+
+const LOW_MILEAGE_THRESHOLD_KM = 10_000;
+
+export const RideDetailDescription = ({ listing, locale }: Props) => {
   const t = useTranslations('marketplace.rides.detail.description');
-  const locale = useLocale();
-  const catColor = VEHICLE_COLORS[listing.type];
-  const specs = useMemo(() => buildRideSpecs(listing), [listing]);
+  const catColor = listing.catColor;
+
+  const dealerLabel =
+    listing.seller.dealerName?.trim() || listing.seller.displayName;
 
   const [expanded, setExpanded] = useState(false);
-  // Default language matches page locale — toggle flips between AR / EN
-  const [lang, setLang] = useState<'ar' | 'en'>(locale === 'en' ? 'en' : 'ar');
-
-  // Synthesize the blurb in two languages
-  const { ar, en } = useMemo(
-    () => ({
-      ar: buildArabic(listing, specs),
-      en: buildEnglish(listing, specs),
-    }),
-    [listing, specs],
-  );
-
-  const primary = lang === 'ar' ? ar : en;
-  const body = primary.body;
-  const highlights = primary.highlights;
-  const oppositeLabel = lang === 'ar' ? 'EN' : 'AR';
-  const contentDir = lang === 'ar' ? 'rtl' : 'ltr';
-
-  // Word-boundary-aware truncation so we never chop mid-word
-  const PREVIEW_CHARS = 320;
+  const body = listing.description;
   const isLong = body.length > PREVIEW_CHARS;
   const preview = isLong
     ? body.slice(0, PREVIEW_CHARS).replace(/\s+\S*$/, '').trimEnd() + '…'
     : body;
+
+  // Derive highlight chips from real listing signals (locale-aware labels).
+  const highlights: string[] = [];
+  const mileageKm = listing.specs.mileageKm;
+  if (mileageKm != null && mileageKm === 0) {
+    highlights.push(locale === 'ar' ? 'جديدة 0 كم' : 'Brand new');
+  } else if (mileageKm != null && mileageKm < LOW_MILEAGE_THRESHOLD_KM) {
+    highlights.push(locale === 'ar' ? 'ميلاج قليل' : 'Low mileage');
+  }
+  if (listing.specs.warrantyActive) {
+    highlights.push(locale === 'ar' ? 'ضمان ساري' : 'Under warranty');
+  }
+  if (listing.isFeatured) {
+    highlights.push(locale === 'ar' ? 'عرض مميّز' : 'Featured listing');
+  }
+  if (listing.isHot) {
+    highlights.push(locale === 'ar' ? 'رائج هذا الأسبوع' : 'Trending');
+  }
+  if (
+    listing.seller.isDealer &&
+    listing.seller.dealerVerifiedAt
+  ) {
+    highlights.push(locale === 'ar' ? 'وكيل معتمد' : 'Verified dealer');
+  }
 
   return (
     <motion.section
@@ -87,21 +100,10 @@ export const RideDetailDescription = ({ listing }: Props) => {
               {t('eyebrow')}
             </p>
             <h3 className="font-calSans text-[15px] font-bold leading-tight text-foreground">
-              {listing.dealer}
+              {dealerLabel}
             </h3>
           </div>
         </div>
-
-        {/* Language toggle — switches between AR and EN content */}
-        <button
-          type="button"
-          onClick={() => setLang((l) => (l === 'ar' ? 'en' : 'ar'))}
-          className="inline-flex items-center gap-1.5 rounded-full border border-foreground/10 bg-foreground/[0.03] px-2.5 py-1 text-[10.5px] font-semibold text-foreground/70 transition hover:border-foreground/25 hover:text-foreground"
-          aria-label={`Switch to ${oppositeLabel}`}
-        >
-          <Languages size={11} strokeWidth={2.2} />
-          {oppositeLabel}
-        </button>
       </div>
 
       {/* Body */}
@@ -127,13 +129,12 @@ export const RideDetailDescription = ({ listing }: Props) => {
         {/* The text */}
         <AnimatePresence initial={false} mode="wait">
           <motion.div
-            key={lang + String(expanded)}
+            key={String(expanded)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             className="whitespace-pre-line text-[13.5px] leading-[1.85] text-foreground/75"
-            dir={contentDir}
             style={{ textAlign: 'start' }}
           >
             {expanded || !isLong ? body : preview}
@@ -157,11 +158,11 @@ export const RideDetailDescription = ({ listing }: Props) => {
           </button>
         )}
 
-        {/* Footer: posted date + report */}
+        {/* Footer: written-by + report */}
         <div className="mt-5 flex items-center justify-between gap-3 border-t border-foreground/[0.06] pt-4 text-[11px] text-foreground/50">
           <span className="inline-flex items-center gap-1.5">
             <Check size={11} strokeWidth={2.4} className="text-emerald-500" />
-            {t('writtenBy', { dealer: listing.dealer })}
+            {t('writtenBy', { dealer: dealerLabel })}
           </span>
           <button
             type="button"
@@ -175,169 +176,5 @@ export const RideDetailDescription = ({ listing }: Props) => {
     </motion.section>
   );
 };
-
-// ─── Text synthesis ──────────────────────────────────
-
-type Specs = ReturnType<typeof buildRideSpecs>;
-
-const buildArabic = (
-  l: RideListing,
-  s: Specs,
-): { body: string; highlights: string[] } => {
-  const lines: string[] = [];
-  const hi: string[] = [];
-
-  lines.push(
-    `${l.title} بحالة ممتازة، ${l.specA} بأداء قوي وموثوقية عالية مناسبة لطرق الخليج.`,
-  );
-
-  if (s.mileageKm === 0) {
-    lines.push(
-      `السيارة جديدة (0 كم) — مواصفات ${arRegion(s.regionSpec)}، لون ${arColor(s.exteriorColor.key)} خارجي مع فرش ${arColor(s.interiorColor.key)} داخلي.`,
-    );
-    hi.push('جديدة 0 كم');
-  } else {
-    lines.push(
-      `موديل ${l.year} بـ ${s.mileageKm.toLocaleString('en-US')} كيلومتر فقط — مواصفات ${arRegion(s.regionSpec)}، لون ${arColor(s.exteriorColor.key)} خارجي مع فرش ${arColor(s.interiorColor.key)} داخلي.`,
-    );
-    if (s.mileageVsMarketPct <= -20) hi.push('ميلاج قليل جداً');
-  }
-
-  if (s.warranty.active) {
-    lines.push(
-      `\nالسيارة تحت الضمان الساري لمدة ${s.warranty.remainingMonths} شهراً — صيانة كاملة في الوكالة وفحص شامل قبل العرض.`,
-    );
-    hi.push('ضمان ساري');
-  } else {
-    lines.push(
-      `\nالسيارة فحصت بالكامل من فريقنا الفني قبل العرض — جميع التقارير متوفرة عند الطلب.`,
-    );
-  }
-
-  lines.push(
-    `\nالمميزات التقنية:\n• ناقل حركة ${arTransmission(s.transmission)}\n• نظام ${arDrivetrain(s.drivetrain)}\n• وقود ${arFuel(s.fuel)}${s.cylinders ? ` · ${s.cylinders} أسطوانات` : ''}\n• ${s.seats} مقاعد${s.doors ? ` · ${s.doors} أبواب` : ''}`,
-  );
-
-  lines.push(
-    `\nخيارات التمويل متاحة من خلال شركائنا (أقساط من ${Math.round((priceNum(l.price) * 0.8) / 60 / 10) * 10} درهم شهرياً)، ونوفّر التوصيل داخل الإمارة مجاناً.`,
-  );
-
-  lines.push(
-    `\nللمعاينة أو الحجز تواصل معنا مباشرة — نردّ عادة خلال 15 دقيقة.`,
-  );
-
-  if (l.featured) hi.push('عرض حصري');
-  if (l.dealerVerified) hi.push('وكيل معتمد');
-  if (l.hot) hi.push('رائج هذا الأسبوع');
-
-  return { body: lines.join('\n'), highlights: hi };
-};
-
-const buildEnglish = (
-  l: RideListing,
-  s: Specs,
-): { body: string; highlights: string[] } => {
-  const lines: string[] = [];
-  const hi: string[] = [];
-
-  lines.push(
-    `${l.title} in immaculate condition — ${l.specA} delivers the confident performance this model is known for, tuned for GCC roads.`,
-  );
-
-  if (s.mileageKm === 0) {
-    lines.push(
-      `Brand-new, 0 km. ${enRegion(s.regionSpec)} specifications, finished in ${s.exteriorColor.key} with a ${s.interiorColor.key} interior.`,
-    );
-    hi.push('Brand new');
-  } else {
-    lines.push(
-      `${l.year} model with only ${s.mileageKm.toLocaleString('en-US')} km on the clock. ${enRegion(s.regionSpec)} specifications, finished in ${s.exteriorColor.key} over a ${s.interiorColor.key} interior.`,
-    );
-    if (s.mileageVsMarketPct <= -20) hi.push('Low mileage');
-  }
-
-  if (s.warranty.active) {
-    lines.push(
-      `\nStill covered by the manufacturer warranty — ${s.warranty.remainingMonths} months remaining, full dealer service history, and a multi-point inspection completed before listing.`,
-    );
-    hi.push('Under warranty');
-  } else {
-    lines.push(
-      `\nInspected in full by our technicians before being listed — the complete report is available on request.`,
-    );
-  }
-
-  lines.push(
-    `\nKey highlights:\n• ${enTransmission(s.transmission)} transmission\n• ${enDrivetrain(s.drivetrain)}\n• ${enFuel(s.fuel)}${s.cylinders ? ` · ${s.cylinders}-cylinder` : ''}\n• ${s.seats} seats${s.doors ? ` · ${s.doors} doors` : ''}`,
-  );
-
-  lines.push(
-    `\nFinance is available through our banking partners (from around AED ${Math.round((priceNum(l.price) * 0.8) / 60 / 10) * 10}/month), and we offer free delivery within the emirate.`,
-  );
-
-  lines.push(`\nMessage us to arrange a viewing — we usually reply within 15 minutes.`);
-
-  if (l.featured) hi.push('Featured listing');
-  if (l.dealerVerified) hi.push('Authorized dealer');
-  if (l.hot) hi.push('Trending this week');
-
-  return { body: lines.join('\n'), highlights: hi };
-};
-
-// ─── Tiny translators ────────────────────────────────
-const priceNum = (p: string) => Number(p.replace(/[^0-9]/g, ''));
-
-const arColor = (k: string) =>
-  ({
-    white: 'أبيض',
-    black: 'أسود',
-    silver: 'فضي',
-    grey: 'رمادي',
-    blue: 'أزرق',
-    red: 'أحمر',
-    green: 'أخضر',
-    beige: 'بيج',
-    brown: 'بنّي',
-  })[k] || k;
-
-const arRegion = (k: string) =>
-  ({
-    gcc: 'خليجية',
-    american: 'أمريكية',
-    european: 'أوروبية',
-    japanese: 'يابانية',
-  })[k] || k;
-
-const arTransmission = (k: string) =>
-  ({
-    automatic: 'أوتوماتيك',
-    manual: 'عادي',
-    dct: 'DCT مزدوج',
-  })[k] || k;
-
-const arDrivetrain = (k: string) =>
-  ({
-    awd: 'دفع رباعي دائم',
-    fwd: 'دفع أمامي',
-    rwd: 'دفع خلفي',
-    '4wd': 'دفع 4×4',
-  })[k] || k;
-
-const arFuel = (k: string) =>
-  ({
-    petrol: 'بنزين',
-    diesel: 'ديزل',
-    electric: 'كهربائي',
-    hybrid: 'هجين',
-  })[k] || k;
-
-const enRegion = (k: string) =>
-  ({ gcc: 'GCC', american: 'American', european: 'European', japanese: 'Japanese' })[k] || k;
-const enTransmission = (k: string) =>
-  ({ automatic: 'Automatic', manual: 'Manual', dct: 'Dual-clutch (DCT)' })[k] || k;
-const enDrivetrain = (k: string) =>
-  ({ awd: 'All-wheel drive', fwd: 'Front-wheel drive', rwd: 'Rear-wheel drive', '4wd': '4×4' })[k] || k;
-const enFuel = (k: string) =>
-  ({ petrol: 'Petrol', diesel: 'Diesel', electric: 'Electric', hybrid: 'Hybrid' })[k] || k;
 
 export default RideDetailDescription;

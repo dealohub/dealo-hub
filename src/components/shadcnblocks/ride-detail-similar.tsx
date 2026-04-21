@@ -1,65 +1,37 @@
 'use client';
 
-import { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, ArrowLeft, MapPin, Calendar } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import {
-  VEHICLE_COLORS,
-  RIDE_LISTINGS,
-  type RideListing,
-} from './rides-data';
+import { formatPriceNumber } from '@/lib/format';
+import type { RideCard } from '@/lib/rides/types';
 
 /**
  * RideDetailSimilar — curated "you may also like" carousel.
  *
- * Deliberately neutral: no price verdicts, no judgments, no
- * side-by-side comparison that might disadvantage either the current
- * listing or the recommended ones. Just a helpful way for the buyer
- * to keep exploring inside Dealo.
- *
- * Sorting logic: same vehicle type, then closest price — so a shopper
- * looking at a 500k SUV sees 400k–600k SUVs next, not random picks.
+ * Receives pre-fetched RideCard[] from the server (getSimilarRides)
+ * — no local filtering. The parent listing's catColor + category slug
+ * are passed for the eyebrow accent and the "view all" link.
  */
 
 interface Props {
-  listing: RideListing;
+  similar: RideCard[];
+  catColor: string;
+  /** Sub-category slug (e.g. 'used-cars') used for the "view all" filter. */
+  categorySlug: string;
 }
 
-const parsePriceAmount = (raw: string): number => {
-  const m = raw.match(/([\d,\.]+)/);
-  return m ? Number(m[1].replace(/,/g, '')) : 0;
-};
-
-const parsePriceParts = (raw: string) => {
-  const m = raw.match(/^([A-Z]+)\s*([\d,\.]+)/);
-  return {
-    currency: m?.[1] ?? 'AED',
-    amount: m ? Number(m[2].replace(/,/g, '')) : 0,
-  };
-};
-
-export const RideDetailSimilar = ({ listing }: Props) => {
+export const RideDetailSimilar = ({
+  similar,
+  catColor,
+  categorySlug,
+}: Props) => {
   const t = useTranslations('marketplace.rides.detail.similar');
   const locale = useLocale();
   const isAr = locale === 'ar';
   const ArrowIcon = isAr ? ArrowLeft : ArrowRight;
-  const catColor = VEHICLE_COLORS[listing.type];
-
-  const similar = useMemo(() => {
-    const currentPrice = parsePriceAmount(listing.price);
-    const others = RIDE_LISTINGS.filter(
-      (l) => l.id !== listing.id && l.type === listing.type,
-    );
-    const withDistance = others.map((l) => ({
-      l,
-      diff: Math.abs(parsePriceAmount(l.price) - currentPrice),
-    }));
-    withDistance.sort((a, b) => a.diff - b.diff);
-    return withDistance.slice(0, 4).map((x) => x.l);
-  }, [listing.id, listing.type, listing.price]);
 
   if (similar.length === 0) return null;
 
@@ -77,7 +49,7 @@ export const RideDetailSimilar = ({ listing }: Props) => {
           </h2>
         </div>
         <Link
-          href={`/${locale}/rides?type=${listing.type}`}
+          href={`/${locale}/rides?cat=${categorySlug}`}
           className="group inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-foreground/70 transition hover:text-foreground"
         >
           {t('viewAll')}
@@ -92,8 +64,7 @@ export const RideDetailSimilar = ({ listing }: Props) => {
       {/* Grid / carousel */}
       <div className="-mx-2 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-3 [scrollbar-width:thin] md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:px-0">
         {similar.map((s, i) => {
-          const sp = parsePriceParts(s.price);
-          const sColor = VEHICLE_COLORS[s.type];
+          const locale2 = (isAr ? 'ar' : 'en') as 'ar' | 'en';
           return (
             <motion.div
               key={s.id}
@@ -104,44 +75,41 @@ export const RideDetailSimilar = ({ listing }: Props) => {
               className="min-w-[220px] flex-shrink-0 snap-start md:min-w-0"
             >
               <Link
-                href={`/${locale}/rides/${s.id}`}
+                href={`/${locale}/rides/${s.slug}`}
                 className="group block overflow-hidden rounded-2xl border border-foreground/10 bg-background transition-all duration-300 hover:-translate-y-1 hover:border-foreground/20 hover:shadow-xl hover:shadow-black/5"
               >
                 {/* Image */}
                 <div className="relative aspect-[4/3] overflow-hidden bg-foreground/[0.04]">
-                  <Image
-                    src={s.image}
-                    alt={s.title}
-                    fill
-                    sizes="(max-width: 768px) 240px, 25vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                  />
+                  {s.coverImage && (
+                    <Image
+                      src={s.coverImage}
+                      alt={s.title}
+                      fill
+                      sizes="(max-width: 768px) 240px, 25vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                    />
+                  )}
                   {/* Gradient for legibility */}
                   <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent" />
 
                   {/* Year chip */}
-                  <span className="absolute start-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur">
-                    <Calendar size={9} strokeWidth={2.6} />
-                    <span className="tabular-nums">{s.year}</span>
-                  </span>
-
-                  {/* Featured / hot dot */}
-                  {(s.featured || s.hot) && (
-                    <span
-                      className="absolute end-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider backdrop-blur"
-                      style={{ color: sColor }}
-                    >
-                      <span
-                        className="size-1.5 rounded-full"
-                        style={{ background: sColor }}
-                      />
-                      {s.featured ? t('featured') : t('hot')}
+                  {s.year != null && (
+                    <span className="absolute start-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur">
+                      <Calendar size={9} strokeWidth={2.6} />
+                      <span className="tabular-nums">{s.year}</span>
                     </span>
                   )}
 
-                  {/* Photo count */}
-                  <span className="absolute bottom-2.5 end-2.5 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold tabular-nums text-white backdrop-blur">
-                    {s.photoCount} {t('photos')}
+                  {/* Sub-category tint dot */}
+                  <span
+                    className="absolute end-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider backdrop-blur"
+                    style={{ color: s.catColor }}
+                  >
+                    <span
+                      className="size-1.5 rounded-full"
+                      style={{ background: s.catColor }}
+                    />
+                    {s.bodyStyle ?? ''}
                   </span>
                 </div>
 
@@ -152,14 +120,18 @@ export const RideDetailSimilar = ({ listing }: Props) => {
                   </p>
                   <p className="mt-1 flex items-center gap-1 truncate text-[11px] text-foreground/55">
                     <MapPin size={10} strokeWidth={2.2} className="shrink-0" />
-                    <span className="truncate">{s.location}</span>
+                    <span className="truncate">{s.cityName}</span>
                   </p>
                   <div className="mt-2.5 flex items-baseline justify-between gap-2 border-t border-foreground/[0.06] pt-2.5">
                     <span className="font-calSans text-[15px] font-bold tabular-nums text-foreground">
                       <span className="text-[10px] font-semibold text-foreground/55">
-                        {sp.currency}{' '}
+                        {s.currencyCode}{' '}
                       </span>
-                      {sp.amount.toLocaleString('en-US')}
+                      {formatPriceNumber(
+                        s.priceMinorUnits,
+                        s.currencyCode,
+                        locale2,
+                      )}
                     </span>
                     <span className="inline-flex size-6 items-center justify-center rounded-full border border-foreground/10 text-foreground/40 transition group-hover:border-foreground/30 group-hover:text-foreground">
                       <ArrowIcon size={11} strokeWidth={2.6} />

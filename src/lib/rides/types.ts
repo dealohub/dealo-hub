@@ -62,6 +62,11 @@ export interface RideDetail {
   isFeatured: boolean;
   isHot: boolean;
 
+  // Engagement counters (trigger-maintained on listings)
+  viewCount: number;
+  saveCount: number;
+  chatInitiationCount: number;
+
   // Vertical-specific — Zod-parsed, camelCase
   specs: UsedCarFields;
 

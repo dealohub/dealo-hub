@@ -28,35 +28,24 @@ import {
   Info,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import {
-  buildRideGallery,
-  galleryThumb,
-  type GalleryCategory,
-} from './build-ride-gallery';
-import { VEHICLE_COLORS, type RideListing } from './rides-data';
+import type { ImageCategory, RideDetail } from '@/lib/rides/types';
 
 /**
- * RideDetailGallery — premium 2026-era media gallery.
+ * RideDetailGallery — premium media gallery.
  *
- * Tech:
- *   - framer-motion AnimatePresence for crossfade transitions
- *   - useMotionValue + useSpring for cursor-follow parallax zoom
- *   - Category filter pills (Exterior / Interior / Engine / Wheels / Details)
- *   - Horizontal thumbnail rail with auto-scroll-into-view
- *   - Keyboard nav (ArrowLeft / ArrowRight / Escape)
- *   - Touch & pointer swipe (framer-motion drag)
- *   - Fullscreen lightbox modal with wheel-zoom
- *   - Ken-Burns subtle zoom on idle
- *   - Progress bar
- *   - 360° + Video badges (featured listings unlock)
- *   - Share via navigator.share with fallback to clipboard
+ * Reads images from `listing.images` (DB-backed, ordered by position).
+ * Each image carries an ImageCategory that drives the filter pills.
+ * No synthesis; uncategorised rows (if any) fall into an "other"
+ * bucket that's treated as exterior for display.
  */
 
 interface Props {
-  listing: RideListing;
+  listing: RideDetail;
 }
 
-const CATEGORIES: { key: GalleryCategory | 'all'; labelKey: string }[] = [
+type FilterKey = ImageCategory | 'all';
+
+const CATEGORIES: { key: FilterKey; labelKey: string }[] = [
   { key: 'all', labelKey: 'catAll' },
   { key: 'exterior', labelKey: 'catExterior' },
   { key: 'interior', labelKey: 'catInterior' },
@@ -65,13 +54,20 @@ const CATEGORIES: { key: GalleryCategory | 'all'; labelKey: string }[] = [
   { key: 'details', labelKey: 'catDetails' },
 ];
 
+/** Rewrite the Unsplash-style `w=` query param to a small thumbnail. */
+const toThumb = (url: string): string => url.replace(/w=\d+/, 'w=320');
+
 export const RideDetailGallery = ({ listing }: Props) => {
   const t = useTranslations('marketplace.rides.detail.gallery');
-  const catColor = VEHICLE_COLORS[listing.type];
+  const catColor = listing.catColor;
 
-  const allImages = useMemo(() => buildRideGallery(listing), [listing]);
+  // All images (already sorted by position in queries.mapDetail)
+  const allImages = useMemo(
+    () => listing.images.filter((img) => img.url),
+    [listing.images],
+  );
 
-  const [activeCat, setActiveCat] = useState<GalleryCategory | 'all'>('all');
+  const [activeCat, setActiveCat] = useState<FilterKey>('all');
   const visible = useMemo(
     () =>
       activeCat === 'all'
@@ -111,7 +107,7 @@ export const RideDetailGallery = ({ listing }: Props) => {
     [idx],
   );
 
-  // Keyboard nav — works always, lightbox Escape handled separately
+  // Keyboard nav
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') go(1);
@@ -122,12 +118,13 @@ export const RideDetailGallery = ({ listing }: Props) => {
     return () => window.removeEventListener('keydown', onKey);
   }, [go, lightbox]);
 
-  // Scroll active thumb into view
   const thumbRailRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const rail = thumbRailRef.current;
     if (!rail) return;
-    const el = rail.querySelector<HTMLButtonElement>(`[data-thumb-idx="${idx}"]`);
+    const el = rail.querySelector<HTMLButtonElement>(
+      `[data-thumb-idx="${idx}"]`,
+    );
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }, [idx]);
 
@@ -168,12 +165,18 @@ export const RideDetailGallery = ({ listing }: Props) => {
   // Counts per category for pill badges
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: allImages.length };
-    for (const img of allImages) c[img.category] = (c[img.category] || 0) + 1;
+    for (const img of allImages) {
+      if (img.category) c[img.category] = (c[img.category] || 0) + 1;
+    }
     return c;
   }, [allImages]);
 
-  const hasVideo = listing.featured;
-  const has360 = listing.featured || listing.hot;
+  const hasVideo = listing.isFeatured;
+  const has360 = listing.isFeatured || listing.isHot;
+
+  if (allImages.length === 0 || !current) return null;
+
+  const currentCategoryKey: ImageCategory = current.category ?? 'exterior';
 
   return (
     <div className="relative w-full">
@@ -189,7 +192,7 @@ export const RideDetailGallery = ({ listing }: Props) => {
                 <button
                   key={c.key}
                   type="button"
-                  onClick={() => setActiveCat(c.key as GalleryCategory | 'all')}
+                  onClick={() => setActiveCat(c.key)}
                   className={
                     'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border px-3 text-[11.5px] font-medium transition ' +
                     (active
@@ -218,7 +221,7 @@ export const RideDetailGallery = ({ listing }: Props) => {
               icon={<Download size={13} />}
               label={t('download')}
               as="a"
-              href={current?.src}
+              href={current.url}
               download
             />
             <UtilButton
@@ -239,7 +242,6 @@ export const RideDetailGallery = ({ listing }: Props) => {
               onMouseLeave={onHeroLeave}
               onDoubleClick={() => setLightbox(true)}
             >
-              {/* Ambient tint — fills in while images load */}
               <div
                 aria-hidden
                 className="pointer-events-none absolute inset-0"
@@ -248,12 +250,11 @@ export const RideDetailGallery = ({ listing }: Props) => {
                 }}
               />
 
-              {/* Crossfade stack */}
               <AnimatePresence mode="popLayout" initial={false} custom={direction}>
                 <motion.img
-                  key={current?.src}
-                  src={current?.src}
-                  alt={current?.alt}
+                  key={current.url}
+                  src={current.url}
+                  alt={current.altText ?? listing.title}
                   draggable={false}
                   initial={{ opacity: 0, scale: 1.04, x: direction * 24 }}
                   animate={{ opacity: 1, scale: 1.02, x: 0 }}
@@ -265,7 +266,6 @@ export const RideDetailGallery = ({ listing }: Props) => {
                 />
               </AnimatePresence>
 
-              {/* Drag-to-swipe surface */}
               <motion.div
                 className="absolute inset-0 cursor-grab active:cursor-grabbing"
                 drag="x"
@@ -307,7 +307,6 @@ export const RideDetailGallery = ({ listing }: Props) => {
                 )}
               </div>
 
-              {/* Prev / Next */}
               <NavButton dir="prev" onClick={() => go(-1)} />
               <NavButton dir="next" onClick={() => go(1)} />
 
@@ -318,7 +317,7 @@ export const RideDetailGallery = ({ listing }: Props) => {
                   style={{ background: `${catColor}cc` }}
                 >
                   <span className="inline-block size-1.5 rounded-full bg-white/90" />
-                  {t(`cat${capitalize(current?.category ?? 'exterior')}`)}
+                  {t(`cat${capitalize(currentCategoryKey)}`)}
                 </span>
                 <span className="hidden items-center gap-1.5 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-medium text-white/80 backdrop-blur-md md:inline-flex">
                   <ZoomIn size={11} strokeWidth={2.2} />
@@ -326,7 +325,7 @@ export const RideDetailGallery = ({ listing }: Props) => {
                 </span>
               </div>
 
-              {/* Progress bar at very bottom */}
+              {/* Progress bar */}
               <div className="absolute inset-x-0 bottom-0 z-20 h-[3px] w-full bg-white/10">
                 <motion.div
                   className="h-full"
@@ -403,7 +402,7 @@ export const RideDetailGallery = ({ listing }: Props) => {
             const active = i === idx;
             return (
               <button
-                key={img.src + i}
+                key={img.url + i}
                 type="button"
                 data-thumb-idx={i}
                 onClick={() => jump(i)}
@@ -414,13 +413,15 @@ export const RideDetailGallery = ({ listing }: Props) => {
                     : 'border-foreground/10 opacity-55 hover:opacity-90')
                 }
                 style={
-                  active ? ({ '--tw-ring-color': catColor } as React.CSSProperties) : undefined
+                  active
+                    ? ({ '--tw-ring-color': catColor } as React.CSSProperties)
+                    : undefined
                 }
                 aria-label={`${t('thumb')} ${i + 1}`}
               >
                 <img
-                  src={galleryThumb(img.src)}
-                  alt={img.alt}
+                  src={toThumb(img.url)}
+                  alt={img.altText ?? listing.title}
                   className="size-full object-cover"
                   loading="lazy"
                 />
@@ -460,7 +461,7 @@ export const RideDetailGallery = ({ listing }: Props) => {
               <span className="tabular-nums">{idx + 1} / {visible.length}</span>
               <span className="text-white/50">·</span>
               <span className="text-white/80">
-                {t(`cat${capitalize(current?.category ?? 'exterior')}`)}
+                {t(`cat${capitalize(currentCategoryKey)}`)}
               </span>
             </div>
 
@@ -488,9 +489,9 @@ export const RideDetailGallery = ({ listing }: Props) => {
             </button>
 
             <motion.img
-              key={current?.src + '-lb'}
-              src={current?.src}
-              alt={current?.alt}
+              key={current.url + '-lb'}
+              src={current.url}
+              alt={current.altText ?? listing.title}
               onClick={(e) => {
                 e.stopPropagation();
                 setIsZoomed((z) => !z);

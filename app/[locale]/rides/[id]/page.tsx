@@ -3,7 +3,7 @@ import EcommerceNavbar1 from '@/components/shadcnblocks/ecommerce-navbar-1';
 import SiteFooter from '@/components/shadcnblocks/site-footer';
 import ThemeToggle from '@/components/theme-toggle';
 import LocaleToggle from '@/components/locale-toggle';
-import { RIDE_LISTINGS } from '@/components/shadcnblocks/rides-data';
+import { getRideById, getSimilarRides } from '@/lib/rides/queries';
 import RideDetailHeader from '@/components/shadcnblocks/ride-detail-header';
 import RideDetailGallery from '@/components/shadcnblocks/ride-detail-gallery';
 import RideDetailPurchasePanel from '@/components/shadcnblocks/ride-detail-purchase-panel';
@@ -14,27 +14,33 @@ import RideDetailSimilar from '@/components/shadcnblocks/ride-detail-similar';
 import RideDetailMobileActionBar from '@/components/shadcnblocks/ride-detail-mobile-actionbar';
 
 /**
- * /rides/[id] — individual vehicle detail page.
+ * /rides/[id] — vehicle detail page.
  *
- * Layout:
- *   Header (full width)
- *   Grid 2-col (from top):
- *     Main col:   Gallery → KeyInfo → (future sections 5-8)
- *     Sidebar:    Sticky purchase panel (price, CTAs, finance)
- *   Mobile: sidebar stacks, sticky bottom action bar appears
+ * The `[id]` param accepts either a numeric id or a slug (the query
+ * layer regex-sniffs the input). Paths resolve on-demand and are
+ * cached for 60 seconds via ISR, per Q6 locked decision — no
+ * generateStaticParams.
  */
+
+// ISR: each path is rendered on demand and cached for 60s.
+export const revalidate = 60;
+
 export default async function RideDetailPage({
   params,
 }: {
-  params: { locale: string; id: string };
+  params: { locale: 'ar' | 'en'; id: string };
 }) {
-  const listing = RIDE_LISTINGS.find((l) => String(l.id) === params.id);
+  const listing = await getRideById(params.id, { locale: params.locale });
   if (!listing) notFound();
+
+  const similar = await getSimilarRides(listing.id, 4, {
+    locale: params.locale,
+  });
 
   return (
     <>
       <EcommerceNavbar1 />
-      <RideDetailHeader listing={listing} />
+      <RideDetailHeader listing={listing} locale={params.locale} />
 
       <section className="mx-auto max-w-7xl px-6 pb-16 pt-6">
         <div className="grid items-start gap-8 lg:grid-cols-[1fr_400px] lg:gap-10">
@@ -43,24 +49,24 @@ export default async function RideDetailPage({
             <RideDetailGallery listing={listing} />
             <RideDetailKeyInfo listing={listing} />
             <RideDetailFeatures listing={listing} />
-            <RideDetailDescription listing={listing} />
-            <RideDetailSimilar listing={listing} />
+            <RideDetailDescription listing={listing} locale={params.locale} />
+            <RideDetailSimilar
+              similar={similar}
+              catColor={listing.catColor}
+              categorySlug={listing.category.slug}
+            />
           </div>
 
           {/* Sidebar */}
-          <RideDetailPurchasePanel listing={listing} />
+          <RideDetailPurchasePanel listing={listing} locale={params.locale} />
         </div>
       </section>
 
-      <RideDetailMobileActionBar listing={listing} />
+      <RideDetailMobileActionBar listing={listing} locale={params.locale} />
 
       <SiteFooter />
       <ThemeToggle />
       <LocaleToggle />
     </>
   );
-}
-
-export function generateStaticParams() {
-  return RIDE_LISTINGS.map((l) => ({ id: String(l.id) }));
 }

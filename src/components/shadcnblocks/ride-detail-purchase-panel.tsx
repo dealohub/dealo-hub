@@ -3,9 +3,9 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import { AnimatePresence, motion, animate } from 'framer-motion';
 import {
-  Phone,
   MessageCircle,
   Mail,
+  MessageSquare,
   ChevronDown,
   ShieldCheck,
   Sparkles,
@@ -13,12 +13,10 @@ import {
   Star,
   Clock,
   Eye,
-  CheckCircle2,
   Wrench,
   Truck,
   Award,
   Calculator,
-  Copy,
   ExternalLink,
   CircleDot,
   Heart,
@@ -26,31 +24,30 @@ import {
   Share2,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { VEHICLE_COLORS, type RideListing } from './rides-data';
+import { fromMinorUnits, formatPrice } from '@/lib/format';
+import type { RideDetail } from '@/lib/rides/types';
 
 /**
  * RideDetailPurchasePanel — the "buy-side" sticky sidebar.
  *
- * Features:
- *   • Big price with strike-through for price drops
- *   • AI-style market verdict ("Great deal" / "Fair" / "Premium")
- *   • Phone-reveal pattern (masked → click reveals + copy)
- *   • WhatsApp deep-link with pre-filled message
- *   • Email inquiry CTA
- *   • Collapsible finance calculator with live monthly payment
- *   • Dealer mini-card with verified, rating, online-now pulse
- *   • Trust strip (inspected, warranty, free delivery)
- *   • Urgency / social-proof footer (posted N days ago, X viewed today)
- *   • Sticky on desktop, bottom action bar on mobile (separate component)
+ * Reads entirely from RideDetail (DB-backed). Synthesis helpers are
+ * gone: rating / reviews / years-active come from the joined seller
+ * profile, view_count comes from the listings counter, postedDays is
+ * derived from publishedAt.
+ *
+ * Per Decision 2 (chat-only), phone numbers are never exposed. The
+ * "Start a chat" primary CTA + WhatsApp + Inquiry buttons are the
+ * contact entry points — all three will open the in-app chat flow in
+ * Phase 5+. For V1 they are placeholders that stay consistent with
+ * the UI but do not dial out.
  */
 
 interface Props {
-  listing: RideListing;
+  listing: RideDetail;
+  locale: 'ar' | 'en';
 }
 
 // ─── Helpers ──────────────────────────────────────────
-const priceNum = (p: string) => Number(p.replace(/[^0-9]/g, ''));
-
 const monthlyPayment = (principal: number, aprPct: number, years: number) => {
   const n = years * 12;
   const r = aprPct / 100 / 12;
@@ -58,76 +55,64 @@ const monthlyPayment = (principal: number, aprPct: number, years: number) => {
   return (principal * (r * Math.pow(1 + r, n))) / (Math.pow(1 + r, n) - 1);
 };
 
-// Deterministic per-listing pseudo-random for social proof / verdict
-const hashSig = (id: number) => {
-  let h = 0;
-  const s = String(id);
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
-  return {
-    postedDays: 1 + (h % 14),
-    viewedToday: 180 + ((h >>> 3) % 2400),
-    phone:
-      '+971 4 ' +
-      String(1000 + ((h >>> 5) % 9000)) +
-      ' ' +
-      String(1000 + ((h >>> 9) % 9000)),
-    rating: (4.5 + ((h >>> 7) % 5) / 10).toFixed(1),
-    reviews: 40 + ((h >>> 11) % 260),
-    years: 8 + ((h >>> 13) % 40),
-  };
+const daysBetween = (isoDate: string | null): number => {
+  if (!isoDate) return 0;
+  const then = new Date(isoDate).getTime();
+  if (!isFinite(then)) return 0;
+  return Math.max(0, Math.floor((Date.now() - then) / (24 * 60 * 60 * 1000)));
 };
 
 // ─── Main ─────────────────────────────────────────────
-export const RideDetailPurchasePanel = ({ listing }: Props) => {
+export const RideDetailPurchasePanel = ({ listing, locale }: Props) => {
   const t = useTranslations('marketplace.rides.detail.purchase');
-  const catColor = VEHICLE_COLORS[listing.type];
-  const sig = useMemo(() => hashSig(listing.id), [listing.id]);
-  const price = priceNum(listing.price);
-  const oldPrice = listing.oldPrice ? priceNum(listing.oldPrice) : null;
+  const catColor = listing.catColor;
 
-  // ── Verdict logic (tiny "AI") ────────────────────
+  const price = fromMinorUnits(listing.priceMinorUnits, listing.currencyCode);
+  const oldPrice = listing.oldPriceMinorUnits != null
+    ? fromMinorUnits(listing.oldPriceMinorUnits, listing.currencyCode)
+    : null;
+  const dropPct =
+    oldPrice != null && oldPrice > price
+      ? Math.round((1 - price / oldPrice) * 100)
+      : null;
+
+  const postedDays = daysBetween(listing.publishedAt);
+
+  // ── Verdict logic (tiny signal) ──────────────────
   const verdict = useMemo(() => {
-    if (listing.dropPct !== undefined && listing.dropPct <= -8) {
+    if (dropPct != null && dropPct >= 8) {
       return { key: 'great', tone: '#16a34a' };
     }
-    if (listing.featured) return { key: 'fair', tone: catColor };
-    if (listing.hot) return { key: 'competitive', tone: '#f59e0b' };
+    if (listing.isFeatured) return { key: 'fair', tone: catColor };
+    if (listing.isHot) return { key: 'competitive', tone: '#f59e0b' };
     return { key: 'market', tone: '#64748b' };
-  }, [listing, catColor]);
+  }, [dropPct, listing.isFeatured, listing.isHot, catColor]);
 
   // ── Finance state ─────────────────────────────────
   const [financeOpen, setFinanceOpen] = useState(false);
-  const [down, setDown] = useState(20); // %
-  const [apr, setApr] = useState(2.79); // %
+  const [down, setDown] = useState(20);
+  const [apr, setApr] = useState(2.79);
   const [years, setYears] = useState(5);
   const downAmount = (price * down) / 100;
   const loan = price - downAmount;
   const monthly = Math.round(monthlyPayment(loan, apr, years));
 
-  // ── Phone reveal ─────────────────────────────────
-  const [phoneRevealed, setPhoneRevealed] = useState(false);
-  const [phoneCopied, setPhoneCopied] = useState(false);
-
   // ── Save state (optimistic toggle) ───────────────
   const [saved, setSaved] = useState(false);
-  const maskedPhone = '+971 4 ••• ••••';
-  const revealPhone = async () => {
-    setPhoneRevealed(true);
-    try {
-      await navigator.clipboard.writeText(sig.phone);
-      setPhoneCopied(true);
-      setTimeout(() => setPhoneCopied(false), 2000);
-    } catch {
-      /* noop */
-    }
-  };
 
-  // ── WhatsApp deep link ──────────────────────────
-  const waNumber = sig.phone.replace(/[^0-9]/g, '');
-  const waMessage = encodeURIComponent(
-    t('waMessage', { title: listing.title, id: listing.id }),
-  );
-  const waLink = `https://wa.me/${waNumber}?text=${waMessage}`;
+  // ── Dealer display helpers ───────────────────────
+  const dealerLabel =
+    listing.seller.dealerName?.trim() || listing.seller.displayName;
+  const dealerInitials = dealerLabel
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0] ?? '')
+    .join('');
+  const isVerifiedDealer =
+    listing.seller.isDealer && Boolean(listing.seller.dealerVerifiedAt);
+  const ratingAvg = listing.seller.ratingAvg;
+  const ratingCount = listing.seller.ratingCount;
+  const yearsActive = listing.seller.yearsActive;
 
   return (
     <aside className="relative self-start lg:sticky lg:top-6">
@@ -146,7 +131,7 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
         transition={{ duration: 0.5, ease: [0.22, 0.61, 0.36, 1] }}
         className="relative overflow-hidden rounded-3xl border border-foreground/10 bg-background/95 shadow-xl backdrop-blur-xl"
       >
-        {/* ── AI verdict top-bar — single-line, smart-shrunk ───── */}
+        {/* ── Verdict top-bar ───── */}
         <div
           className="flex items-center gap-2 px-5 py-2 text-[11px] font-semibold"
           style={{
@@ -164,7 +149,7 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
         </div>
 
         <div className="p-5 md:p-6">
-          {/* ── Action icons row — save, compare, share ─────── */}
+          {/* ── Action icons row ─────── */}
           <div className="mb-3 flex items-center justify-end gap-1.5">
             <PanelIconButton
               active={saved}
@@ -188,15 +173,19 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
 
           {/* ── Price block ────────────────────── */}
           <div className="mb-5">
-            {oldPrice && (
+            {oldPrice != null && (
               <div className="mb-1.5 flex items-baseline gap-2 text-[12px]">
                 <span className="text-foreground/40 line-through tabular-nums">
-                  {listing.oldPrice}
+                  {formatPrice(
+                    listing.oldPriceMinorUnits!,
+                    listing.currencyCode,
+                    locale,
+                  )}
                 </span>
-                {listing.dropPct !== undefined && (
+                {dropPct != null && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-[#16a34a]/12 px-2 py-0.5 text-[10px] font-bold text-[#16a34a]">
                     <TrendingDown size={10} strokeWidth={2.6} />
-                    {Math.abs(listing.dropPct)}%
+                    {dropPct}%
                   </span>
                 )}
               </div>
@@ -205,13 +194,12 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
             <div className="flex items-baseline gap-2">
               <AnimatedPrice value={price} />
               <span className="text-[14px] font-medium text-foreground/55">
-                {t('priceCurrency')}
+                {listing.currencyCode}
               </span>
             </div>
 
             <p className="mt-1 text-[12px] text-foreground/55">
-              {listing.specB && <span>{listing.specB} · </span>}
-              <span className="text-foreground/75">{listing.location}</span>
+              <span className="text-foreground/75">{listing.cityName}</span>
             </p>
           </div>
 
@@ -273,7 +261,7 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
                     step={1}
                     onChange={setDown}
                     suffix="%"
-                    extra={`${downAmount.toLocaleString('en-US')} ${t('priceCurrency')}`}
+                    extra={`${downAmount.toLocaleString('en-US')} ${listing.currencyCode}`}
                     accent={catColor}
                   />
                   <SliderRow
@@ -350,16 +338,15 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
 
           {/* ── Primary CTAs ─────────────────────── */}
           <div className="space-y-2">
-            {/* Phone reveal */}
+            {/* Start-a-chat (replaces phone reveal per Decision 2) */}
             <motion.button
               type="button"
-              onClick={revealPhone}
               className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl px-4 py-3 text-[13px] font-semibold text-white shadow-md transition hover:shadow-lg"
               style={{ background: '#dc2626' }}
               whileHover={{ y: -1 }}
               whileTap={{ y: 0 }}
+              aria-label={t('startChat')}
             >
-              {/* subtle inner glow */}
               <motion.span
                 aria-hidden
                 className="pointer-events-none absolute inset-0"
@@ -373,50 +360,18 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
                 transition={{ duration: 2.4, repeat: Infinity, ease: 'linear' }}
                 style={{ backgroundSize: '200% 100%' }}
               />
-              <Phone
+              <MessageSquare
                 size={14}
                 strokeWidth={2.4}
                 className="relative z-10"
               />
-              <span className="relative z-10">
-                <AnimatePresence mode="wait" initial={false}>
-                  {phoneRevealed ? (
-                    <motion.span
-                      key="num"
-                      initial={{ y: 6, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -6, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="inline-flex items-center gap-2 tabular-nums"
-                    >
-                      {sig.phone}
-                      {phoneCopied ? (
-                        <CheckCircle2 size={12} strokeWidth={2.6} />
-                      ) : (
-                        <Copy size={12} strokeWidth={2.2} className="opacity-80" />
-                      )}
-                    </motion.span>
-                  ) : (
-                    <motion.span
-                      key="mask"
-                      initial={{ y: 6, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -6, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {t('showPhone')}{' '}
-                      <span className="opacity-70 tabular-nums">· {maskedPhone}</span>
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </span>
+              <span className="relative z-10">{t('startChat')}</span>
             </motion.button>
 
             {/* WhatsApp */}
-            <a
-              href={waLink}
-              target="_blank"
-              rel="noreferrer"
+            <button
+              type="button"
+              aria-label={t('whatsapp')}
               className="group flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-[12.5px] font-semibold transition hover:-translate-y-0.5"
               style={{
                 borderColor: '#25D36644',
@@ -426,7 +381,7 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
             >
               <MessageCircle size={13} strokeWidth={2.4} fill="#25D36630" />
               {t('whatsapp')}
-            </a>
+            </button>
 
             {/* Inquiry form */}
             <button
@@ -445,12 +400,7 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
                 className="relative grid size-11 shrink-0 place-items-center rounded-xl text-[12px] font-extrabold tracking-tight"
                 style={{ background: `${catColor}1a`, color: catColor }}
               >
-                {listing.dealer
-                  .split(' ')
-                  .slice(0, 2)
-                  .map((w) => w[0])
-                  .join('')}
-                {/* Online now dot */}
+                {dealerInitials}
                 <span className="absolute -bottom-0.5 -end-0.5 flex h-3 w-3 items-center justify-center rounded-full border-2 border-background bg-emerald-500">
                   <span className="absolute h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
                 </span>
@@ -458,10 +408,15 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
                   <p className="truncate text-[13px] font-semibold text-foreground">
-                    {listing.dealer}
+                    {dealerLabel}
                   </p>
-                  {listing.dealerVerified && (
-                    <svg width="12" height="12" viewBox="0 0 24 24" className="shrink-0">
+                  {isVerifiedDealer && (
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      className="shrink-0"
+                    >
                       <path
                         d="M12 2l2.4 2.4 3.3-.4.6 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.6 3.3-3.3-.4L12 22l-2.4-2.4-3.3.4-.6-3.3-3-1.5 1.5-3-1.5-3 3-1.5.6-3.3 3.3.4L12 2z"
                         fill="#3B82F6"
@@ -478,19 +433,29 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
                   )}
                 </div>
                 <div className="mt-0.5 flex items-center gap-2 text-[11px] text-foreground/55">
-                  <span className="inline-flex items-center gap-1">
-                    <Star size={10} fill="#F59E0B" stroke="#F59E0B" />
-                    <span className="tabular-nums font-semibold text-foreground/80">
-                      {sig.rating}
+                  {ratingAvg != null ? (
+                    <span className="inline-flex items-center gap-1">
+                      <Star size={10} fill="#F59E0B" stroke="#F59E0B" />
+                      <span className="tabular-nums font-semibold text-foreground/80">
+                        {ratingAvg.toFixed(1)}
+                      </span>
+                      <span className="text-foreground/40">
+                        ({ratingCount})
+                      </span>
                     </span>
-                    <span className="text-foreground/40">
-                      ({sig.reviews})
+                  ) : (
+                    <span className="text-foreground/55">
+                      {t('noRatingYet')}
                     </span>
-                  </span>
-                  <span className="text-foreground/25">·</span>
-                  <span className="tabular-nums">
-                    {sig.years} {t('years')}
-                  </span>
+                  )}
+                  {yearsActive > 0 && (
+                    <>
+                      <span className="text-foreground/25">·</span>
+                      <span className="tabular-nums">
+                        {yearsActive} {t('years')}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
               <button
@@ -533,20 +498,19 @@ export const RideDetailPurchasePanel = ({ listing }: Props) => {
           <div className="mt-5 flex items-center justify-between gap-3 border-t border-foreground/10 pt-4 text-[11px] text-foreground/55">
             <span className="inline-flex items-center gap-1.5">
               <Clock size={12} strokeWidth={2.2} className="text-foreground/40" />
-              {t('postedAgo', { days: sig.postedDays })}
+              {t('postedAgo', { days: postedDays })}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Eye size={12} strokeWidth={2.2} className="text-foreground/40" />
               <span className="font-semibold tabular-nums text-foreground/80">
-                {sig.viewedToday.toLocaleString('en-US')}
+                {listing.viewCount.toLocaleString('en-US')}
               </span>
-              {t('viewedToday')}
+              {t('views')}
             </span>
           </div>
         </div>
       </motion.div>
 
-      {/* ── Optional: tiny reassurance below ───── */}
       <p className="mx-auto mt-3 flex items-center justify-center gap-1.5 text-center text-[10.5px] text-foreground/45">
         <Wrench size={11} strokeWidth={2.2} />
         {t('reassurance')}

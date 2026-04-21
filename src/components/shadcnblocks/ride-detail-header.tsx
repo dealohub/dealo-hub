@@ -10,44 +10,76 @@ import {
   Flame,
   Camera,
   MessageSquare,
+  Heart,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { VEHICLE_COLORS, type RideListing } from './rides-data';
+import type { RideDetail } from '@/lib/rides/types';
 
 /**
  * RideDetailHeader — page header for /rides/[id].
  *
  * Layout (top to bottom, single narrative column):
  *   1. Breadcrumb (doubles as the back-link — no redundant "back" button)
- *   2. Title block — badges row · H1 title · spec line · action icons
+ *   2. Title block — centered badges · H1 title · spec line
  *   3. Dealer strip — avatar + name on one side, stats on the other
  *
- * Action buttons are now compact circular icons aligned to the title's
- * end instead of a separate right-column stack, which was visually
- * fragmenting the layout.
+ * All data comes from RideDetail (DB-backed). Hash-synthesized counts
+ * are gone; header now shows real view/save/inquiry counters from the
+ * listings table (trigger-maintained).
  */
 
 interface Props {
-  listing: RideListing;
+  listing: RideDetail;
+  locale: 'ar' | 'en';
 }
 
-const hashSignals = (id: number) => {
-  let h = 0;
-  const s = String(id);
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
-  return {
-    watching: 3 + (h % 52),
-    saves: 8 + ((h >>> 3) % 240),
-    inquiries: 1 + ((h >>> 7) % 28),
-  };
-};
+const LOW_MILEAGE_KM = 2000;
 
-export const RideDetailHeader = ({ listing }: Props) => {
+export const RideDetailHeader = ({ listing, locale }: Props) => {
   const t = useTranslations('marketplace.rides.detail');
-  const tTypes = useTranslations('marketplace.rides.types');
-  const sig = hashSignals(listing.id);
-  const catColor = VEHICLE_COLORS[listing.type];
+  const catColor = listing.catColor;
+
+  const categoryLabel =
+    locale === 'ar' ? listing.category.nameAr : listing.category.nameEn;
+
+  // Derive spec-line bits from real specs
+  const mileageKm = listing.specs.mileageKm ?? 0;
+  const mileageLabel =
+    mileageKm === 0
+      ? t('brandNew')
+      : `${mileageKm.toLocaleString('en-US')} km`;
+
+  const engineLabel =
+    listing.specs.fuelType === 'electric'
+      ? 'Electric'
+      : listing.specs.engineCc
+        ? `${(listing.specs.engineCc / 1000).toFixed(1)}L${
+            listing.specs.cylinders
+              ? ` · ${listing.specs.cylinders}-cyl`
+              : ''
+          }`
+        : '';
+
+  // Price-drop derivation
+  const dropPct =
+    listing.oldPriceMinorUnits && listing.oldPriceMinorUnits > listing.priceMinorUnits
+      ? Math.round(
+          (1 - listing.priceMinorUnits / listing.oldPriceMinorUnits) * 100,
+        )
+      : null;
+
+  const dealerLabel =
+    listing.seller.dealerName?.trim() || listing.seller.displayName;
+
+  const initials = dealerLabel
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0] ?? '')
+    .join('');
+
+  const isVerifiedDealer =
+    listing.seller.isDealer && Boolean(listing.seller.dealerVerifiedAt);
 
   return (
     <section className="relative w-full overflow-hidden border-b border-foreground/10 bg-background">
@@ -104,7 +136,7 @@ export const RideDetailHeader = ({ listing }: Props) => {
               className="inline-block size-1.5 rounded-full"
               style={{ background: catColor }}
             />
-            {tTypes(listing.type)}
+            {categoryLabel}
           </span>
           <ChevronRight
             size={12}
@@ -136,23 +168,22 @@ export const RideDetailHeader = ({ listing }: Props) => {
                 className="inline-block size-1.5 rounded-full"
                 style={{ background: catColor }}
               />
-              {tTypes(listing.type)}
+              {categoryLabel}
             </span>
 
-            {listing.verifiedListing && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/30 bg-blue-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-400">
-                <ShieldCheck size={10} strokeWidth={2.4} />
-                {t('badgeVerified')}
-              </span>
-            )}
+            {/* Verified = live + clean (we're rendering, so status=live, fraud NOT held/rejected — show) */}
+            <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/30 bg-blue-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-400">
+              <ShieldCheck size={10} strokeWidth={2.4} />
+              {t('badgeVerified')}
+            </span>
 
-            {listing.featured && (
+            {listing.isFeatured && (
               <span className="inline-flex items-center gap-1 rounded-full border border-[#C9A86A]/40 bg-[#C9A86A]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#C9A86A]">
                 ◆ {t('badgeFeatured')}
               </span>
             )}
 
-            {listing.hot && (
+            {listing.isHot && (
               <motion.span
                 className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-500"
                 animate={{ scale: [1, 1.04, 1] }}
@@ -163,9 +194,15 @@ export const RideDetailHeader = ({ listing }: Props) => {
               </motion.span>
             )}
 
-            {listing.dropPct !== undefined && (
+            {dropPct !== null && (
               <span className="inline-flex items-center gap-1 rounded-full bg-[#e30613] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-md shadow-[#e30613]/25">
-                {listing.dropPct}% {t('badgePriceDrop')}
+                {dropPct}% {t('badgePriceDrop')}
+              </span>
+            )}
+
+            {mileageKm < LOW_MILEAGE_KM && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                {t('badgeLowMileage')}
               </span>
             )}
           </div>
@@ -184,13 +221,17 @@ export const RideDetailHeader = ({ listing }: Props) => {
                 className="text-foreground/40"
               />
               <span className="font-semibold tabular-nums text-foreground/85">
-                {listing.year}
+                {listing.specs.year}
               </span>
             </span>
+            {engineLabel && (
+              <>
+                <Dot />
+                <span>{engineLabel}</span>
+              </>
+            )}
             <Dot />
-            <span>{listing.specA}</span>
-            <Dot />
-            <span>{listing.specB}</span>
+            <span>{mileageLabel}</span>
             <Dot />
             <span className="inline-flex items-center gap-1.5">
               <MapPin
@@ -198,7 +239,7 @@ export const RideDetailHeader = ({ listing }: Props) => {
                 strokeWidth={2.2}
                 className="text-foreground/40"
               />
-              {listing.location}
+              {listing.cityName}
             </span>
           </p>
         </motion.div>
@@ -216,18 +257,14 @@ export const RideDetailHeader = ({ listing }: Props) => {
               className="grid size-10 place-items-center rounded-xl text-[11px] font-extrabold tracking-tight"
               style={{ background: `${catColor}18`, color: catColor }}
             >
-              {listing.dealer
-                .split(' ')
-                .slice(0, 2)
-                .map((w) => w[0])
-                .join('')}
+              {initials}
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="truncate text-[13px] font-semibold text-foreground">
-                  {listing.dealer}
+                  {dealerLabel}
                 </span>
-                {listing.dealerVerified && (
+                {isVerifiedDealer && (
                   <svg
                     width="12"
                     height="12"
@@ -250,41 +287,34 @@ export const RideDetailHeader = ({ listing }: Props) => {
                 )}
               </div>
               <p className="text-[10px] uppercase tracking-wider text-foreground/45">
-                {t('authorizedDealer')}
+                {listing.seller.isDealer
+                  ? t('authorizedDealer')
+                  : t('privateSeller')}
               </p>
             </div>
           </div>
 
-          {/* Stats (incl. live watching) */}
+          {/* Stats — all real, from DB triggers */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11.5px]">
-            {/* Live watching */}
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              </span>
-              <span className="text-foreground/70">
-                <span className="font-bold tabular-nums text-foreground">
-                  {sig.watching}
-                </span>{' '}
-                {t('watchingNow')}
-              </span>
-            </span>
-
             <Stat
               icon={<Eye size={12} strokeWidth={2.2} />}
-              value={sig.saves}
+              value={listing.viewCount}
+              label={t('statViews')}
+            />
+            <Stat
+              icon={<Heart size={12} strokeWidth={2.2} />}
+              value={listing.saveCount}
               label={t('statSaves')}
             />
             <Stat
               icon={<MessageSquare size={12} strokeWidth={2.2} />}
-              value={sig.inquiries}
+              value={listing.chatInitiationCount}
               label={t('statInquiries')}
             />
             <Stat
               icon={<Camera size={12} strokeWidth={2.2} />}
-              value={listing.photoCount}
-              label={t('statPhotos') ?? 'photos'}
+              value={listing.images.length}
+              label={t('statPhotos')}
             />
             <Stat value={`#${listing.id}`} label={t('statListingId')} mono />
           </div>

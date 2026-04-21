@@ -14,23 +14,21 @@ import {
 import { useTranslations } from 'next-intl';
 import {
   FEATURE_CATEGORIES,
-  buildRideSpecs,
   type FeatureCategory,
   type FeatureKey,
-} from './build-ride-specs';
-import { VEHICLE_COLORS, type RideListing } from './rides-data';
+} from '@/lib/rides/validators';
+import type { RideDetail } from '@/lib/rides/types';
 
 /**
  * RideDetailFeatures — buyer-facing equipment summary.
  *
- * Simplified from the earlier version: no tabs, no search, no
- * "show missing" toggle (those are editor-side concerns that belong
- * in the seller's dashboard). This component just lists what the
- * vehicle has, grouped by category, with a "show more" for overflow.
+ * Reads `listing.specs.features` (FeatureKey[]) and groups them
+ * for display using the static FEATURE_CATEGORIES taxonomy. Shows
+ * up to 12 initially with a "show more" expand.
  */
 
 interface Props {
-  listing: RideListing;
+  listing: RideDetail;
 }
 
 const CATEGORY_META: Record<
@@ -48,23 +46,25 @@ const INITIAL_VISIBLE = 12;
 
 export const RideDetailFeatures = ({ listing }: Props) => {
   const t = useTranslations('marketplace.rides.detail.features');
-  const catColor = VEHICLE_COLORS[listing.type];
-  const specs = useMemo(() => buildRideSpecs(listing), [listing]);
+  const catColor = listing.catColor;
 
   // Flat list of INCLUDED features only, preserving category order
   const included: { key: FeatureKey; category: FeatureCategory }[] = useMemo(() => {
+    const have = new Set<FeatureKey>(listing.specs.features);
     const out: { key: FeatureKey; category: FeatureCategory }[] = [];
     (Object.keys(FEATURE_CATEGORIES) as FeatureCategory[]).forEach((cat) => {
       FEATURE_CATEGORIES[cat].forEach((k) => {
-        if (specs.features.has(k)) out.push({ key: k, category: cat });
+        if (have.has(k)) out.push({ key: k, category: cat });
       });
     });
     return out;
-  }, [specs]);
+  }, [listing.specs.features]);
 
   const [expanded, setExpanded] = useState(false);
   const visible = expanded ? included : included.slice(0, INITIAL_VISIBLE);
   const hidden = Math.max(0, included.length - INITIAL_VISIBLE);
+
+  if (included.length === 0) return null;
 
   return (
     <section className="relative">

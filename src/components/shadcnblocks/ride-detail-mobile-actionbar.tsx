@@ -4,31 +4,26 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, MessageCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import type { RideListing } from './rides-data';
+import { formatPrice } from '@/lib/format';
+import type { RideDetail } from '@/lib/rides/types';
 
 /**
  * RideDetailMobileActionBar — fixed bottom pill that appears on
- * mobile after the user scrolls past the hero, giving Phone +
- * WhatsApp shortcuts without scrolling back up.
+ * mobile after the user scrolls past the hero, giving quick-contact
+ * shortcuts without scrolling back up.
+ *
+ * Per Decision 2 (chat-only contact), phone numbers are never exposed.
+ * The Phone and WhatsApp buttons are visual entry points that will
+ * open the in-app chat flow in Phase 5+. For V1 they are wired to
+ * noop handlers so the UI stays intact without a broken `tel:` link.
  */
 
 interface Props {
-  listing: RideListing;
+  listing: RideDetail;
+  locale: 'ar' | 'en';
 }
 
-const genPhone = (id: number) => {
-  let h = 0;
-  const s = String(id);
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
-  return (
-    '+971 4 ' +
-    String(1000 + ((h >>> 5) % 9000)) +
-    ' ' +
-    String(1000 + ((h >>> 9) % 9000))
-  );
-};
-
-export const RideDetailMobileActionBar = ({ listing }: Props) => {
+export const RideDetailMobileActionBar = ({ listing, locale }: Props) => {
   const t = useTranslations('marketplace.rides.detail.purchase');
   const [visible, setVisible] = useState(false);
 
@@ -38,12 +33,6 @@ export const RideDetailMobileActionBar = ({ listing }: Props) => {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  const phone = genPhone(listing.id);
-  const waNumber = phone.replace(/[^0-9]/g, '');
-  const waMessage = encodeURIComponent(
-    t('waMessage', { title: listing.title, id: listing.id }),
-  );
 
   return (
     <AnimatePresence>
@@ -60,28 +49,29 @@ export const RideDetailMobileActionBar = ({ listing }: Props) => {
               {listing.title}
             </p>
             <p className="font-calSans text-[15px] font-extrabold tabular-nums leading-none text-foreground">
-              {listing.price}
+              {formatPrice(listing.priceMinorUnits, listing.currencyCode, locale)}
             </p>
           </div>
 
-          <a
-            href={`https://wa.me/${waNumber}?text=${waMessage}`}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="WhatsApp"
+          {/* Chat (placeholder — opens in Phase 5+ once in-app chat ships) */}
+          <button
+            type="button"
+            aria-label={t('whatsapp')}
+            title={t('whatsapp')}
             className="grid size-10 shrink-0 place-items-center rounded-xl text-white transition active:scale-95"
             style={{ background: '#25D366' }}
           >
             <MessageCircle size={16} strokeWidth={2.4} />
-          </a>
-          <a
-            href={`tel:${waNumber}`}
+          </button>
+          <button
+            type="button"
+            aria-label={t('call')}
             className="flex shrink-0 items-center gap-1.5 rounded-xl px-4 py-2.5 text-[12px] font-bold text-white transition active:scale-95"
             style={{ background: '#dc2626' }}
           >
             <Phone size={13} strokeWidth={2.4} />
             {t('call')}
-          </a>
+          </button>
         </motion.div>
       )}
     </AnimatePresence>
