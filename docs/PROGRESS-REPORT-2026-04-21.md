@@ -2,14 +2,14 @@
 
 **Date:** 2026-04-21
 **Author:** Fawzi Al-Ibrahim
-**Scope:** Block A completion · Phase 5f/5g polish · Block C test foundation · Phase 6a doctrine · Phase 6b AI-negotiator engine
+**Scope:** Block A completion · Phase 5f/5g polish · Block C test foundation · Phase 6a doctrine · Phase 6b AI-negotiator engine · **Phase 4f Property sell wizard · 4d-polish neighbourhood resolution** (evening addendum §5a)
 **Audience:** engineering collaborator / technical co-worker
 
 ---
 
 ## Executive summary
 
-Dealo Hub — the trust-first C2C marketplace for Kuwait/GCC — reached a major milestone today. Two full verticals are live end-to-end: **Rides (automotive, fully DB-wired)** and **Properties (real-estate, 3-phase delivery including the 14-pillar Phase 4a doctrine — the flagship differentiator against Dubizzle Kuwait)**. On top of them, the 7-phase Block A feature build (auth + sell wizard + chat realtime + search + accounts + navbar + observability) is complete. The cosmetic polish block (B) is deliberately skipped because the global redesign is coming. The test foundation (Block C) locked down **271 unit tests + 15 RLS security assertions = 286 total assertions** covering every safety-critical layer. An entire **AI Negotiator subsystem** was researched, specified, shipped to the engine layer, and verified end-to-end with live OpenAI calls at a projected cost of **$0.36 per 1,000 negotiations**.
+Dealo Hub — the trust-first C2C marketplace for Kuwait/GCC — reached a major milestone today. Two full verticals are live end-to-end on **both sides (supply + demand)**: **Rides (automotive, fully DB-wired)** and **Properties (real-estate, 4-phase delivery 4a+4b+4c+4f + 4d-polish including the 14-pillar Phase 4a doctrine — the flagship differentiator against Dubizzle Kuwait)**. On top of them, the 7-phase Block A feature build (auth + sell wizard + chat realtime + search + accounts + navbar + observability) is complete. The cosmetic polish block (B) is deliberately skipped because the global redesign is coming. The test foundation (Block C) locked down **278 unit tests + 15 RLS security assertions = 293 total assertions** covering every safety-critical layer. An entire **AI Negotiator subsystem** was researched, specified, shipped to the engine layer, and verified end-to-end with live OpenAI calls at a projected cost of **$0.36 per 1,000 negotiations**. Evening addendum (§5a): the Property sell wizard gap was closed — sellers can now publish a real property end-to-end with all 34 PropertyFields captured via the wizard, and neighbourhood ("Bayan · Hawalli") now renders across every Property UI surface.
 
 **No code has been pushed to remote yet, per the standing rule to hold push until redesign + polish + tests are all green together.**
 
@@ -211,6 +211,52 @@ Scenario: Bayan villa, list KWD 650,000, secret floor KWD 600,000, 3-turn Arabic
 4. **5-layer safety.** Prompt guardrails → Filter A/B/C → floor-leak regex → rate limits → human close gate. Each layer has unit tests; safety pipeline has integration tests.
 5. **Provider adapter pattern.** `LLMProvider` interface + StubProvider + OpenAIProvider. Adding Claude or Jais is one new class implementing the same interface.
 6. **Test-safe live smoke script.** `scripts/smoke-ai-negotiator.ts` runs a 3-turn real negotiation for ~$0.0004. This is the "prove it actually works" ritual before wiring into production code paths.
+
+---
+
+## 5a. Evening addendum — closing the Properties supply gap
+
+After the morning report was drafted, a review of the Properties vertical surfaced three gaps beyond the two already-deferred items (Maps + Chalet booking calendar):
+
+1. **Property sell wizard missing** — biggest. The generic Step 3 only captured title/description/condition/brand/model. `PropertyFields` (34 fields across 7 domains) had **no UI path**. All 10 live properties were seeds from migration 0027 — a real seller could not publish a property.
+2. **`areaName` hard-coded null** — smaller. Hub card, detail header, live feed, and similar-strip all showed only the governorate ("Hawalli") instead of the neighbourhood ("Bayan · Hawalli") that drives actual property search.
+3. **Admin verification_tier tooling** — internal; deferred.
+
+Both shippable gaps were closed in the same session:
+
+### Phase 4f — Property sell wizard ✅ shipped (commit `bff367a`)
+
+- **Migration 0031** — adds `listing_drafts.category_fields JSONB` mirror column so the wizard can stage the vertical-specific blob progressively across saves.
+- **`PropertyFieldsDraftSchema`** — lenient `.partial().passthrough()` variant of `PropertyFieldsRaw` for draft-time validation. Publish-time stays strict (`validatePropertyFieldsRaw(raw, subCat)` with sub-cat context runs before INSERT).
+- **`PropertyDetailsForm`** — ~600 LOC client component. 14-property-type picker, dimensions, furnished/tenure/year, 22-amenity multi-select (grouped into 4 domains by concern), structured diwaniya (P14), and sub-cat-driven conditional branches:
+  - yearly rent → `rent_period` + `cheques_count`
+  - sale → `completion_status` + `zoning_type` (Law 74 gate)
+  - off-plan → `payment_plan` + `handover_expected_quarter` (P13)
+  - chalet rent → `availability.min_stay_nights` (P4)
+  - rooms sub-cat → property_type locked to `room`
+  - land sub-cat → property_type locked to `land-plot`
+- **`/sell/details` page branches server-side** on `category.parent.slug === 'real-estate'` (two-step parent lookup — PostgREST self-FK embed unreliable, same gotcha as landing/chat/listings queries).
+- **`publishListing`** now resolves parent + sub-cat up front, runs `validatePropertyFieldsRaw`, and surfaces flattened dot-path field errors (e.g. `availability.min_stay_nights`) before INSERT.
+- **i18n** — new `sell.step.property.*` namespace (27 keys × AR+EN). Reuses `properties.detail.*` for locked content (14 types, 22 amenities, diwaniya, furnished, tenure — already locale-complete).
+- **22 new contract tests** (`src/lib/listings/property-wizard.test.ts`) lock the `listings/validators.ts` ↔ `properties/validators.ts` join. PublishSchema must accept `category_fields`, the draft schema must stay lenient, and the strict publish-time validator must reject every conditional-required gap.
+
+### Phase 4d-polish — neighbourhood resolution ✅ shipped (commit `6b6ffb2`)
+
+- **`DETAIL_SELECT` + `CARD_SELECT`** embed `area:areas!listings_area_id_fkey` (clean FK — no self-FK gotcha here).
+- **`pickAreaName()`** helper mirrors `pickCityName()`, returns locale-aware string or null.
+- `mapDetail`, `mapCard`, and `PropertyActivityItem` all populate `areaName`.
+- **4 UI surfaces** now render "area · governorate" with proper null handling: `property-detail-header`, `listing-card-properties`, `property-detail-similar`, `properties-live-feed`.
+- **Migration 0032** — backfills `area_id` on 6 of 10 seed listings (Salmiya, Bayan, Mishref, Hawalli, Sharq, Mubarak Al-Kabeer). Remaining 4 (Bneidar chalet, Sabah Al-Ahmad Sea City, off-plan no-hint, Shuwaikh industrial) have no canonical area row and correctly stay null. Backfill keys on title string not id — the migration is idempotent and environment-safe.
+
+### Numbers update after this evening
+
+| Metric | Morning | Evening |
+|---|---|---|
+| Total test assertions | 286 | **293** (278 unit + 15 RLS) |
+| Test suites | 10 | **11** (new property-wizard.test.ts) |
+| Local commits pending push | 46+ | **48** |
+| Migrations | 30 | **32** (0031 drafts category_fields + 0032 seed area backfill) |
+| Verticals fully live both sides (supply + demand) | 1 (Rides) | **2** (Rides + Properties) |
 
 ---
 
