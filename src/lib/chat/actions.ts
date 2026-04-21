@@ -8,6 +8,7 @@ import {
   containsDiscriminatoryWording,
 } from '@/lib/listings/validators';
 import { checkRateLimit } from '@/lib/rate-limit/check';
+import { maybeFireAiNegotiator } from './ai-hook';
 import type { ChatActionResult } from './types';
 
 /**
@@ -224,6 +225,18 @@ export async function sendMessage(
     console.error('[chat/actions] sendMessage error:', error?.message);
     return { ok: false, error: 'send_failed' };
   }
+
+  // Fire-and-forget AI negotiator hook. Fail-open — the buyer's message
+  // has already persisted + revalidatePath will refresh the thread, so
+  // even if the AI pipeline throws the user experience is unaffected.
+  // The hook checks negotiation_enabled + stage internally and bails
+  // cheaply for non-negotiable listings (~1 SQL round-trip).
+  void maybeFireAiNegotiator({
+    messageId: data.id as number,
+    conversationId: parsed.data.conversation_id,
+    buyerId: user.id,
+    buyerText: parsed.data.body,
+  });
 
   revalidatePath(`/messages/${parsed.data.conversation_id}`);
   revalidatePath('/messages');
