@@ -19,6 +19,8 @@ export type FeedCategoryKey = 'cars' | 'property' | 'tech' | 'jobs';
 export interface FeedListing {
   kind: 'listing' | 'pricedrop';
   id: number;
+  /** URL-safe listing slug — used by hero images to link into /rides/[slug]. */
+  slug: string;
   cat: FeedCategoryKey;
   title: string;
   /** Compact spec line — "2024 · 1,500 km" style. */
@@ -41,10 +43,16 @@ export interface FeedListing {
 
 /**
  * Hero-scatter image for Feature283. Sized and positioned by the
- * component's wrapper classes; the data layer only provides `src`
- * + `alt`.
+ * component's wrapper classes; the data layer provides `src` + `alt`
+ * and a `href` so each scatter links into the underlying listing
+ * detail page (cohesion: the listings teased up top are the ones in
+ * the feed below).
  */
 export interface HeroImage {
   src: string;
   alt: string;
+  /** Full path with locale baked in — e.g. "/ar/rides/bmw-m5-..." */
+  href: string;
+  /** Slug of the underlying listing — useful as a stable React key. */
+  listingSlug: string;
 }

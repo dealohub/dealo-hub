@@ -8,15 +8,20 @@ import SiteFooter from '@/components/shadcnblocks/site-footer';
 import BackgroundPattern115 from '@/components/shadcnblocks/background-pattern-115';
 import ThemeToggle from '@/components/theme-toggle';
 import LocaleToggle from '@/components/locale-toggle';
-import { getHeroListings, getLiveFeedListings } from '@/lib/landing/queries';
+import { getLiveFeedListings } from '@/lib/landing/queries';
 import { ACTIVITY_SIGNALS } from '@/lib/landing/constants';
+import type { HeroImage } from '@/lib/landing/types';
 
 /**
  * Landing page — pre-auth marketplace homepage.
  *
- * Dynamic sections (Feature283 hero scatters + LiveFeed cards) are
- * server-fetched here and passed down as props. The rest are
- * editorial (brands strip, AI protection, partners, footer).
+ * Dynamic surfaces (Feature283 hero scatters + LiveFeed cards) share
+ * a single `getLiveFeedListings` call so the listings teased at the
+ * top are literally the same ones in the feed below. Each hero image
+ * links into the underlying listing's detail page.
+ *
+ * Editorial sections (brands strip, AI protection, partners, footer)
+ * stay hardcoded per Q3-locked strategy.
  *
  * ISR: each locale-variant renders on-demand and caches for 60s,
  * matching the rides pages.
@@ -30,10 +35,18 @@ export default async function HomePage({
 }) {
   const locale = params.locale;
 
-  const [heroImages, feedListings] = await Promise.all([
-    getHeroListings({ limit: 6, locale }),
-    getLiveFeedListings({ limit: 8, locale }),
-  ]);
+  // One query serves both the hero scatters (top 6) and the feed
+  // state (top 8). Single source of truth.
+  const feed = await getLiveFeedListings({ limit: 12, locale });
+
+  const heroImages: HeroImage[] = feed.slice(0, 6).map((item) => ({
+    src: item.image,
+    alt: item.title,
+    href: `/${locale}/rides/${item.slug}`,
+    listingSlug: item.slug,
+  }));
+
+  const initialFeed = feed.slice(0, 8);
 
   return (
     <>
@@ -49,7 +62,7 @@ export default async function HomePage({
       </BackgroundPattern115>
       <FeaturedBrandsStrip />
       <AIProtectionStrip />
-      <LiveFeed initialFeed={feedListings} activitySignals={ACTIVITY_SIGNALS} />
+      <LiveFeed initialFeed={initialFeed} activitySignals={ACTIVITY_SIGNALS} />
       <FeaturedPartnersSection />
       <SiteFooter />
       <ThemeToggle />

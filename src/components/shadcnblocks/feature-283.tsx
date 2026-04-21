@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -78,6 +79,8 @@ const Feature283 = ({ className = '', images }: Feature283Props) => {
   const scatters = images.slice(0, wraps.length).map((img, i) => ({
     src: img.src,
     alt: img.alt,
+    href: img.href,
+    listingSlug: img.listingSlug,
     wrap: wraps[i],
   }));
 
@@ -94,9 +97,10 @@ const Feature283 = ({ className = '', images }: Feature283Props) => {
           <DealoSearchInline />
 
           {scatters.map((image, index) => (
-            <div key={index} className={image.wrap}>
+            <div key={image.listingSlug} className={image.wrap}>
               <motion.div
                 drag
+                dragMomentum={false}
                 initial={{ y: '50%', opacity: 0, scale: 0.8 }}
                 whileInView={{ y: 0, opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -117,11 +121,23 @@ const Feature283 = ({ className = '', images }: Feature283Props) => {
                 onHoverEnd={() => setHoveredIndex(null)}
                 className="size-full overflow-hidden rounded-2xl cursor-grab active:cursor-grabbing"
               >
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="pointer-events-none size-full object-cover"
-                />
+                {/*
+                  Link wraps the <img> (not the motion.div) so drag
+                  gestures on the card don't navigate prematurely —
+                  only taps on the image itself trigger navigation.
+                */}
+                <Link
+                  href={image.href}
+                  aria-label={image.alt}
+                  className="block size-full"
+                  draggable={false}
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="pointer-events-none size-full object-cover"
+                  />
+                </Link>
               </motion.div>
             </div>
           ))}
