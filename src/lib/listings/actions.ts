@@ -299,7 +299,33 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
     console.error('[listings/actions] embedding generation failed:', (err as Error).message);
   }
 
+  // Resolve category to choose the right vertical detail path.
+  // Automotive → /rides/[slug], real-estate → /properties/[slug], else → home.
+  const { data: catRow } = await supabase
+    .from('categories')
+    .select('slug, parent_id, parent:categories!categories_parent_id_fkey (slug)')
+    .eq('id', v.category_id)
+    .maybeSingle();
+
+  const parentSlug = (catRow as any)?.parent?.slug as string | undefined;
+  // New listings don't have a slug assigned yet (only seeds do). Pull it.
+  const { data: slugRow } = await supabase
+    .from('listings')
+    .select('slug')
+    .eq('id', listingId)
+    .single();
+  const slug = slugRow?.slug ?? String(listingId);
+
+  let redirectTo: string;
+  if (parentSlug === 'automotive') {
+    redirectTo = `/${locale}/rides/${slug}`;
+  } else if (parentSlug === 'real-estate') {
+    redirectTo = `/${locale}/properties/${slug}`;
+  } else {
+    redirectTo = `/${locale}/`;
+  }
+
   revalidatePath('/sell');
-  revalidatePath(`/listings/${listingId}`);
-  redirect(`/${locale}/listings/${listingId}`);
+  revalidatePath(redirectTo);
+  redirect(redirectTo);
 }
