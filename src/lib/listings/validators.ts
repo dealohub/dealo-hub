@@ -19,7 +19,10 @@ const PHONE_PATTERNS: ReadonlyArray<RegExp> = [
   /\+?965[\s-]?\d{7,8}/, // +965 12345678
   /\+?(966|971|973|974|968)[\s-]?\d{7,9}/, // other GCC for Phase 2
   /\b\d{8}\b/, // bare 8-digit Kuwait mobile
-  /\b\d{3}[\s-]?\d{4}\b/, // XXX-XXXX
+  // Note: we deliberately do NOT match bare 7-digit sequences. Kuwait
+  // mobile numbers are 8 digits; 7-digit runs are almost always
+  // reference codes, order numbers, or prices. Catching them was a
+  // false-positive generator (caught by validators.test.ts 2026-04-21).
   /(?:^|[^a-z0-9])(?:call|اتصل|راسل|wa\.?me|whatsapp|واتس|واتساب)\s*[:.\-]?\s*\+?\d/i,
 ];
 
@@ -84,7 +87,7 @@ export function containsCounterfeitTerm(text: string): boolean {
 const DISCRIMINATORY_PATTERNS: ReadonlyArray<RegExp> = [
   // English — nationality / ethnicity / religion: "only|no X" and "X only"
   /\b(only|no)\s+(arabs?|asians?|indians?|pakistan(i|is)|filipin(a|o|os)?|nepal(i|is)?|sri[- ]lankan|egyptians?|syrians?|iraqis?|lebanese|iranians?|africans?|muslims?|christians?|hindus?|sikhs?)\b/i,
-  /\b(arabs?|asians?|indians?|pakistani|filipino|nepali|sri[- ]lankan|egyptian|syrian|lebanese|iranian|african|muslim|christian|hindu|sikh)\s+only\b/i,
+  /\b(arabs?|asians?|indians?|pakistanis?|filipinos?|nepalis?|sri[- ]lankans?|egyptians?|syrians?|lebanese|iranians?|africans?|muslims?|christians?|hindus?|sikhs?)\s+only\b/i,
 
   // English — marital / family status: bachelors, singles, families, students, couples
   /\b(only|no)\s+(bachelors?|singles?|families|couples?|students?)\b/i,
