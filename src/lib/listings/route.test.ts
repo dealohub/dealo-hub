@@ -48,12 +48,24 @@ describe('listingDetailHref — real-estate subs', () => {
   });
 });
 
+describe('listingDetailHref — electronics subs', () => {
+  it.each([
+    'phones-tablets',
+    'laptops-computers',
+    'tvs-audio',
+    'gaming',
+    'smart-watches',
+    'cameras',
+  ])('%s → /tech', slug => {
+    expect(listingDetailHref('ar', 'demo', slug)).toBe('/ar/tech/demo');
+    expect(listingDetailHref('en', 42, slug)).toBe('/en/tech/42');
+  });
+});
+
 describe('listingDetailHref — everything else → generic /listings', () => {
   it.each([
     'womens-clothing',
     'mens-clothing',
-    'mobile-phones',
-    'laptops',
     'home-appliances',
     'furniture',
     'art-collectibles',
@@ -96,6 +108,11 @@ describe('listingDetailHrefFromParent', () => {
   it('real-estate parent → /properties', () => {
     expect(listingDetailHrefFromParent('en', 5, 'real-estate')).toBe(
       '/en/properties/5',
+    );
+  });
+  it('electronics parent → /tech', () => {
+    expect(listingDetailHrefFromParent('ar', 'iphone-15', 'electronics')).toBe(
+      '/ar/tech/iphone-15',
     );
   });
   it('fashion parent → /listings', () => {

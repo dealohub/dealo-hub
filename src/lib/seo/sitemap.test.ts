@@ -42,7 +42,7 @@ describe('static top-level routes', () => {
     const entries = await makeBuild([], []);
     const urls = entries.map(e => e.url);
 
-    for (const path of ['', '/categories', '/rides', '/properties', '/search', '/sell']) {
+    for (const path of ['', '/categories', '/rides', '/properties', '/tech', '/search', '/sell']) {
       for (const locale of ['ar', 'en'] as const) {
         const expected = `https://dealohub.com/${locale}${path}`;
         expect(urls).toContain(expected);
@@ -118,6 +118,25 @@ describe('per-listing detail pages — vertical routing', () => {
     );
     expect(entries.map(e => e.url)).toContain(
       'https://dealohub.com/en/rides/bmw-m5-001',
+    );
+  });
+
+  it('electronics parent → /tech URL', async () => {
+    const entries = await makeBuild(
+      [
+        {
+          slugOrId: 'iphone-15-pro-001',
+          updatedAt: '2024-04-30T10:00:00Z',
+          parentSlug: 'electronics',
+        },
+      ],
+      [],
+    );
+    expect(entries.map(e => e.url)).toContain(
+      'https://dealohub.com/ar/tech/iphone-15-pro-001',
+    );
+    expect(entries.map(e => e.url)).toContain(
+      'https://dealohub.com/en/tech/iphone-15-pro-001',
     );
   });
 
@@ -207,9 +226,9 @@ describe('listing language alternates', () => {
 // ---------------------------------------------------------------------------
 
 describe('aggregate sanity', () => {
-  it('returns 12 static entries (6 routes × 2 locales) when no listings/categories', async () => {
+  it('returns 14 static entries (7 routes × 2 locales) when no listings/categories', async () => {
     const entries = await makeBuild([], []);
-    expect(entries).toHaveLength(12);
+    expect(entries).toHaveLength(14);
   });
 
   it('grows by (categories × 2) + (listings × 2)', async () => {
@@ -223,7 +242,7 @@ describe('aggregate sanity', () => {
         { slug: 'furniture', updatedAt: '2024-01-01T00:00:00Z' },
       ],
     );
-    expect(entries).toHaveLength(12 + 4 + 4); // 20
+    expect(entries).toHaveLength(14 + 4 + 4); // 22
   });
 
   it('every URL is absolute (starts with https://)', async () => {

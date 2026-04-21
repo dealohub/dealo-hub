@@ -2,10 +2,11 @@
  * Listing → detail-page URL resolver.
  *
  * Central mapping from (category slug, listing id/slug) → the correct
- * detail-page route. Three destinations today:
+ * detail-page route. Four destinations today:
  *
  *   • automotive subs        → /rides/[id]
  *   • real-estate subs       → /properties/[id]
+ *   • electronics subs       → /tech/[id]       (Phase 7c)
  *   • everything else        → /listings/[id]   (generic detail page)
  *
  * The previous behaviour ("return `/{locale}/`" for non-vertical
@@ -16,8 +17,9 @@
  * Pure function. No I/O. Used by:
  *   • publishListing() — the post-insert redirect target.
  *   • SearchResultCard — href computation for hit cards.
- *   • Future consumers (notifications, share-link builders) can
- *     import from here to stay consistent.
+ *   • Sitemap composer — emits canonical URLs.
+ *   • Future consumers (notifications, share-link builders) import
+ *     from here to stay consistent.
  */
 
 const AUTOMOTIVE_SUBS = new Set([
@@ -45,6 +47,15 @@ const REAL_ESTATE_SUBS = new Set([
   'realestate-offices',
 ]);
 
+const ELECTRONICS_SUBS = new Set([
+  'phones-tablets',
+  'laptops-computers',
+  'tvs-audio',
+  'gaming',
+  'smart-watches',
+  'cameras',
+]);
+
 /**
  * Build the detail-page URL for a listing.
  *
@@ -65,6 +76,9 @@ export function listingDetailHref(
   if (categorySlug && REAL_ESTATE_SUBS.has(categorySlug)) {
     return `/${locale}/properties/${slugOrId}`;
   }
+  if (categorySlug && ELECTRONICS_SUBS.has(categorySlug)) {
+    return `/${locale}/tech/${slugOrId}`;
+  }
   return `/${locale}/listings/${slugOrId}`;
 }
 
@@ -80,5 +94,6 @@ export function listingDetailHrefFromParent(
 ): string {
   if (parentSlug === 'automotive') return `/${locale}/rides/${slugOrId}`;
   if (parentSlug === 'real-estate') return `/${locale}/properties/${slugOrId}`;
+  if (parentSlug === 'electronics') return `/${locale}/tech/${slugOrId}`;
   return `/${locale}/listings/${slugOrId}`;
 }
