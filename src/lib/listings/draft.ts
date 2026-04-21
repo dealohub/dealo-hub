@@ -53,6 +53,13 @@ export interface DraftState {
   has_receipt?: boolean;
   serial_number?: string | null;
 
+  // Category-specific structured fields (raw snake_case JSONB shape).
+  // Populated by vertical-branched variants of Step 3 — e.g. the
+  // Properties form writes PropertyFieldsRaw here (34 fields). Shape is
+  // validated by a per-vertical Zod schema at publish time; during
+  // editing it's a free-form object so the wizard can be progressive.
+  category_fields?: Record<string, unknown>;
+
   // Wizard nav
   current_step?: WizardStep;
 

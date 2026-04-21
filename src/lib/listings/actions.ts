@@ -7,7 +7,31 @@ import { moveDraftImagesToListing } from '@/lib/supabase/storage-listings';
 import { checkRateLimit } from '@/lib/rate-limit/check';
 import { generateListingEmbedding } from './embeddings';
 import { PublishSchema } from './validators';
+import { validatePropertyFieldsRaw } from '@/lib/properties/validators';
+import type { PropertyCategoryKey } from '@/lib/properties/types';
 import type { DraftState, WizardStep } from './draft';
+
+/** Sub-cat slugs recognized by the Properties vertical. Mirrors
+ *  `PropertyCategoryKey` in src/lib/properties/types.ts. Kept here to
+ *  avoid a circular import when narrowing the slug coming back from
+ *  the categories lookup. */
+const PROPERTY_SUBCAT_SLUGS: ReadonlyArray<PropertyCategoryKey> = [
+  'property-for-rent',
+  'property-for-sale',
+  'rooms-for-rent',
+  'land',
+  'property-for-exchange',
+  'international-property',
+  'property-management',
+  'realestate-offices',
+];
+
+function asPropertyCategoryKey(slug: string | null | undefined): PropertyCategoryKey | null {
+  if (!slug) return null;
+  return (PROPERTY_SUBCAT_SLUGS as ReadonlyArray<string>).includes(slug)
+    ? (slug as PropertyCategoryKey)
+    : null;
+}
 
 /**
  * Draft + publish server actions.
@@ -55,6 +79,7 @@ export async function saveDraft(state: DraftState): Promise<DraftActionResult> {
     serial_number: state.serial_number ?? null,
     image_urls: state.image_urls ?? [],
     video_url: state.video_url ?? null,
+    category_fields: state.category_fields ?? {},
     current_step: state.current_step ?? 'category',
   };
 
@@ -213,6 +238,7 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
     serial_number: draft.serial_number,
     image_urls: draft.image_urls,
     video_url: draft.video_url,
+    category_fields: draft.category_fields ?? {},
   });
 
   if (!parsed.success) {
@@ -225,6 +251,61 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
   }
 
   const v = parsed.data;
+
+  // ── Vertical routing + vertical-specific validation ─────────────────
+  // Resolve the category row + parent slug up-front. We need this twice:
+  //   (a) to pick the right per-vertical validator for category_fields
+  //       (real-estate → PropertyFields conditional-required checks)
+  //   (b) later, to redirect the seller to the correct detail page
+  //
+  // NOTE: two-step lookup — PostgREST's self-FK embed on
+  // `categories.parent_id → categories.id` is unreliable (same gotcha
+  // noted in landing/queries.ts + chat/queries.ts).
+  const { data: catRow } = await supabase
+    .from('categories')
+    .select('slug, parent_id')
+    .eq('id', v.category_id)
+    .maybeSingle();
+
+  let parentSlug: string | undefined;
+  const parentId = (catRow as any)?.parent_id as number | null | undefined;
+  if (typeof parentId === 'number') {
+    const { data: parentRow } = await supabase
+      .from('categories')
+      .select('slug')
+      .eq('id', parentId)
+      .maybeSingle();
+    parentSlug = (parentRow as any)?.slug as string | undefined;
+  }
+  const subCatSlug = ((catRow as any)?.slug as string | undefined) ?? null;
+
+  // Properties-specific validation: the 34-field PropertyFields shape
+  // plus conditional-required invariants (rent_period for rent,
+  // completion_status for sale, payment_plan for off-plan, etc.).
+  // Rejection UX: field errors surface in the preview step the same
+  // way PublishSchema errors do, keyed under `category_fields`.
+  if (parentSlug === 'real-estate') {
+    const propertySubCat = asPropertyCategoryKey(subCatSlug);
+    if (!propertySubCat) {
+      return {
+        ok: false,
+        error: 'validation_failed',
+        fieldErrors: { category_fields: 'property_sub_cat_required' },
+      };
+    }
+    const propertyResult = validatePropertyFieldsRaw(v.category_fields, propertySubCat);
+    if (!propertyResult.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of propertyResult.error.issues) {
+        // Flatten nested path (e.g. ['availability','min_stay_nights']) to
+        // a single dot key so the UI can lookup a single translation.
+        const key = issue.path.filter(p => typeof p === 'string' || typeof p === 'number').join('.');
+        const field = key || 'category_fields';
+        if (!(field in fieldErrors)) fieldErrors[field] = issue.message;
+      }
+      return { ok: false, error: 'validation_failed', fieldErrors };
+    }
+  }
 
   // Insert the listing with status='draft' until fraud pipeline lands in
   // BRIEF-007. Per the listings CHECK constraint, 'draft' is a valid initial
@@ -251,6 +332,7 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
       authenticity_confirmed: v.authenticity_confirmed,
       has_receipt: v.has_receipt,
       serial_number: v.serial_number ?? null,
+      category_fields: v.category_fields ?? {},
       // Publish immediately. BRIEF-007 will gate via `fraud_status`, not `status`.
       status: 'live',
       published_at: new Date().toISOString(),
@@ -310,27 +392,9 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
     console.error('[listings/actions] embedding generation failed:', (err as Error).message);
   }
 
-  // Resolve category to choose the right vertical detail path.
+  // `parentSlug` already resolved above (pre-validation). Use it for
+  // the vertical detail-page redirect.
   // Automotive → /rides/[slug], real-estate → /properties/[slug], else → home.
-  // NOTE: two-step lookup — PostgREST's self-FK embed on
-  // `categories.parent_id → categories.id` is unreliable (same gotcha
-  // noted in landing/queries.ts + chat/queries.ts).
-  const { data: catRow } = await supabase
-    .from('categories')
-    .select('slug, parent_id')
-    .eq('id', v.category_id)
-    .maybeSingle();
-
-  let parentSlug: string | undefined;
-  const parentId = (catRow as any)?.parent_id as number | null | undefined;
-  if (typeof parentId === 'number') {
-    const { data: parentRow } = await supabase
-      .from('categories')
-      .select('slug')
-      .eq('id', parentId)
-      .maybeSingle();
-    parentSlug = (parentRow as any)?.slug as string | undefined;
-  }
   // New listings don't have a slug assigned yet (only seeds do). Pull it.
   const { data: slugRow } = await supabase
     .from('listings')

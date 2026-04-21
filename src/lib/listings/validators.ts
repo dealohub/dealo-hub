@@ -338,5 +338,10 @@ export const PublishSchema = z.object({
   serial_number: z.string().trim().max(100).optional().nullable(),
   image_urls: z.array(ImageUrlSchema).min(5).max(10),
   video_url: z.string().url().optional().nullable(),
+  // Vertical-specific JSONB. Per-vertical shape enforced by
+  // `src/lib/properties/validators.ts :: validatePropertyFieldsRaw` (or
+  // future equivalents) at publish time — this layer just keeps it as
+  // a forward-compatible passthrough blob.
+  category_fields: z.record(z.unknown()).default({}),
 });
 export type PublishInput = z.infer<typeof PublishSchema>;

@@ -594,3 +594,33 @@ export function deriveOwnershipEligibility(
   // Default (unknown combinations): conservative — Kuwaiti-only
   return 'kuwaiti-only';
 }
+
+// ---------------------------------------------------------------------------
+// Draft-time partial schema (progressive wizard)
+// ---------------------------------------------------------------------------
+//
+// The /sell wizard edits PropertyFields over several UI interactions —
+// e.g., a seller can pick the property type before typing the area in
+// sq m. Forcing the full refined schema at draft-save time would reject
+// every intermediate state and the debounced saver would blow up.
+//
+// PropertyFieldsDraftSchema is `PropertyFieldsRaw.partial()` with two
+// tweaks: (a) `.passthrough()` is preserved so unknown keys don't break
+// forward-compat, and (b) defaulted fields keep their defaults so the
+// UI can round-trip booleans without surprise resets.
+//
+// Publish-time validation still calls `validatePropertyFieldsRaw(raw,
+// subCat)` — that's where conditional-required invariants are enforced.
+// The draft schema is lenient on purpose.
+
+export const PropertyFieldsDraftSchema = PropertyFieldsRaw.partial().passthrough();
+
+export type PropertyFieldsDraft = z.infer<typeof PropertyFieldsDraftSchema>;
+
+/** Detect whether a given category_fields blob is meaningful enough to
+ *  write to the draft row (avoids writing empty `{}` as a no-op). */
+export function isPropertyFieldsDraftNonEmpty(raw: unknown): boolean {
+  if (!raw || typeof raw !== 'object') return false;
+  const keys = Object.keys(raw as Record<string, unknown>);
+  return keys.length > 0;
+}
