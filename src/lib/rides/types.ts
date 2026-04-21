@@ -136,6 +136,12 @@ export interface RideCard {
   fuelType: string | null;
   mileageKm: number | null;
 
+  /**
+   * Sub-category slug (e.g. 'used-cars'). Used by the hub filter
+   * chips to match the active tab — avoids a join in the consumer.
+   */
+  subCategorySlug: string;
+
   /** Same derivation rule as RideDetail.catColor. */
   catColor: string;
 }

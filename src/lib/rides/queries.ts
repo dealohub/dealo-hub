@@ -320,6 +320,7 @@ function mapCard(row: RawCardRow, locale: 'ar' | 'en'): RideCard {
     bodyStyle,
     fuelType,
     mileageKm,
+    subCategorySlug: row.category?.slug ?? '',
     catColor: getRideCatColor(row.category?.slug),
   };
 }
@@ -430,4 +431,275 @@ export const getSimilarRides = cache(async function getSimilarRides(
     .slice(0, Math.max(0, limit));
 
   return sorted.map(({ row }) => mapCard(row, opts.locale));
+});
+
+// ---------------------------------------------------------------------------
+// Hub helpers — used by /rides page queries
+// ---------------------------------------------------------------------------
+
+/**
+ * Looks up the ids of all sub-categories under the `automotive` parent.
+ * Cached for the render pass so featured + grid + counts share one DB hit.
+ */
+const getAutomotiveSubCategoryIds = cache(async function getAutomotiveSubCategoryIds(): Promise<number[]> {
+  const supabase = createClient();
+
+  const { data: parent, error: parentErr } = await supabase
+    .from('categories')
+    .select('id')
+    .eq('slug', 'automotive')
+    .maybeSingle();
+
+  if (parentErr) {
+    console.error(
+      '[rides/queries] automotive parent lookup error:',
+      parentErr.message,
+    );
+    return [];
+  }
+  if (!parent) return [];
+
+  const { data: subs, error: subsErr } = await supabase
+    .from('categories')
+    .select('id')
+    .eq('parent_id', parent.id)
+    .eq('is_active', true);
+
+  if (subsErr) {
+    console.error(
+      '[rides/queries] automotive sub-cats lookup error:',
+      subsErr.message,
+    );
+    return [];
+  }
+  return (subs ?? []).map((c) => c.id);
+});
+
+// ---------------------------------------------------------------------------
+// /rides hub queries
+// ---------------------------------------------------------------------------
+
+/**
+ * Paid-placement listings for the `RidesFeaturedPremium` row.
+ * Fetches automotive listings where `is_featured = true`, sorted by
+ * hot-first then newest. Capped at `limit` (default 4 — matches the
+ * fixed 4-col grid).
+ */
+export const getFeaturedRides = cache(async function getFeaturedRides(
+  opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
+): Promise<RideCard[]> {
+  const limit = opts.limit ?? 4;
+  const subIds = await getAutomotiveSubCategoryIds();
+  if (subIds.length === 0) return [];
+
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('listings')
+    .select(CARD_SELECT)
+    .in('category_id', subIds)
+    .eq('is_featured', true)
+    .eq('status', 'live')
+    .not('fraud_status', 'in', '(held,rejected)')
+    .is('soft_deleted_at', null)
+    .order('is_hot', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('[rides/queries] getFeaturedRides error:', error.message);
+    return [];
+  }
+  if (!data) return [];
+
+  return (data as unknown as RawCardRow[]).map((row) =>
+    mapCard(row, opts.locale),
+  );
+});
+
+/**
+ * Sort keys accepted by the main browse grid.
+ *   - newest      → created_at DESC
+ *   - priceAsc    → price_minor_units ASC
+ *   - priceDesc   → price_minor_units DESC
+ *   - popular     → save_count DESC, view_count DESC
+ *   - relevance   → is_hot DESC, created_at DESC  (default)
+ */
+export type RidesGridSort =
+  | 'newest'
+  | 'priceAsc'
+  | 'priceDesc'
+  | 'popular'
+  | 'relevance';
+
+/**
+ * Main-grid listings with sort + optional sub-category filter.
+ *
+ * When `subCategorySlug` is omitted, excludes `is_featured=true` rows
+ * (the featured row already displays them). When a slug is provided,
+ * includes everything in that sub-cat — same behaviour as the
+ * seed-driven hub this replaces.
+ *
+ * Returns `total` via Supabase `count: 'exact'` so the progress bar
+ * stays accurate.
+ */
+export const getRidesForGrid = cache(async function getRidesForGrid(params: {
+  subCategorySlug?: string;
+  sortBy?: RidesGridSort;
+  limit: number;
+  offset: number;
+  locale: 'ar' | 'en';
+}): Promise<{ items: RideCard[]; total: number }> {
+  const supabase = createClient();
+  const sortBy = params.sortBy ?? 'relevance';
+
+  // Resolve the target category ids — either a single sub-cat or
+  // every automotive sub-cat.
+  let categoryIds: number[];
+  if (params.subCategorySlug) {
+    const { data: cat, error: catErr } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('slug', params.subCategorySlug)
+      .maybeSingle();
+    if (catErr) {
+      console.error(
+        '[rides/queries] getRidesForGrid sub-cat lookup error:',
+        catErr.message,
+      );
+      return { items: [], total: 0 };
+    }
+    if (!cat) return { items: [], total: 0 };
+    categoryIds = [cat.id];
+  } else {
+    categoryIds = await getAutomotiveSubCategoryIds();
+    if (categoryIds.length === 0) return { items: [], total: 0 };
+  }
+
+  let query = supabase
+    .from('listings')
+    .select(CARD_SELECT, { count: 'exact' })
+    .in('category_id', categoryIds)
+    .eq('status', 'live')
+    .not('fraud_status', 'in', '(held,rejected)')
+    .is('soft_deleted_at', null);
+
+  // "All" view excludes featured (shown above the grid separately).
+  if (!params.subCategorySlug) {
+    query = query.eq('is_featured', false);
+  }
+
+  switch (sortBy) {
+    case 'newest':
+      query = query.order('created_at', { ascending: false });
+      break;
+    case 'priceAsc':
+      query = query.order('price_minor_units', { ascending: true });
+      break;
+    case 'priceDesc':
+      query = query.order('price_minor_units', { ascending: false });
+      break;
+    case 'popular':
+      query = query
+        .order('save_count', { ascending: false })
+        .order('view_count', { ascending: false });
+      break;
+    case 'relevance':
+    default:
+      query = query
+        .order('is_hot', { ascending: false })
+        .order('created_at', { ascending: false });
+      break;
+  }
+
+  const start = Math.max(0, params.offset);
+  const end = start + Math.max(1, params.limit) - 1;
+  query = query.range(start, end);
+
+  const { data, count, error } = await query;
+  if (error) {
+    console.error('[rides/queries] getRidesForGrid error:', error.message);
+    return { items: [], total: 0 };
+  }
+  if (!data) return { items: [], total: count ?? 0 };
+
+  const items = (data as unknown as RawCardRow[]).map((row) =>
+    mapCard(row, params.locale),
+  );
+  return { items, total: count ?? items.length };
+});
+
+/**
+ * Live counts per automotive sub-category for the hub filter chips.
+ * Only sub-categories with `count > 0` are returned — the UI avoids
+ * rendering chips that lead to empty result sets.
+ */
+export const getRideTypeCounts = cache(async function getRideTypeCounts(
+  _opts: { locale?: 'ar' | 'en' } = {},
+): Promise<
+  Array<{ slug: string; nameAr: string; nameEn: string; count: number }>
+> {
+  const supabase = createClient();
+
+  const { data: parent, error: parentErr } = await supabase
+    .from('categories')
+    .select('id')
+    .eq('slug', 'automotive')
+    .maybeSingle();
+  if (parentErr) {
+    console.error(
+      '[rides/queries] getRideTypeCounts parent error:',
+      parentErr.message,
+    );
+    return [];
+  }
+  if (!parent) return [];
+
+  const { data: subs, error: subsErr } = await supabase
+    .from('categories')
+    .select('id, slug, name_ar, name_en, sort_order')
+    .eq('parent_id', parent.id)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true });
+  if (subsErr) {
+    console.error(
+      '[rides/queries] getRideTypeCounts subs error:',
+      subsErr.message,
+    );
+    return [];
+  }
+  if (!subs || subs.length === 0) return [];
+
+  const subIds = subs.map((s) => s.id);
+
+  // One query returns a category_id per live listing across all
+  // automotive sub-cats; we aggregate in JS. Cheaper than 15 parallel
+  // count(*) queries and avoids defining an RPC for V1.
+  const { data: listings, error: listingsErr } = await supabase
+    .from('listings')
+    .select('category_id')
+    .in('category_id', subIds)
+    .eq('status', 'live')
+    .not('fraud_status', 'in', '(held,rejected)')
+    .is('soft_deleted_at', null);
+  if (listingsErr) {
+    console.error(
+      '[rides/queries] getRideTypeCounts listings error:',
+      listingsErr.message,
+    );
+    return [];
+  }
+
+  const counts = new Map<number, number>();
+  for (const row of listings ?? []) {
+    counts.set(row.category_id, (counts.get(row.category_id) ?? 0) + 1);
+  }
+
+  return subs
+    .map((s) => ({
+      slug: s.slug,
+      nameAr: s.name_ar,
+      nameEn: s.name_en,
+      count: counts.get(s.id) ?? 0,
+    }))
+    .filter((x) => x.count > 0);
 });
