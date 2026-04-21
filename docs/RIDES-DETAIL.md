@@ -338,7 +338,7 @@ Landed in **Phase 3b.6** (2026-04-20). No seed, no synthesis, no adapter.
 
 - **Claude Design** built the landing page at `/[locale]/`.
 - **Claude Code** (this author, across several sessions) built everything else on the rides vertical end-to-end — header, gallery, purchase panel, key info, features, description, similar, mobile action bar, and the iterations that trimmed out the accordions / performance / AI sections.
-- The planning docs (`planning/BUILD-STATE.md`, `planning/MASTER-PLAN.md`, `planning/DECISIONS.md`, `DESIGN.md`) predate the rides vertical and still assume a single generic `/listings/[id]` path. This doc is the authoritative record for the rides vertical specifically and should be updated alongside any structural change to `/rides/[id]`.
+- The planning docs (`planning/MASTER-PLAN.md`, `planning/DECISIONS.md`, `DESIGN.md`) predate the rides vertical and still assume a single generic `/listings/[id]` path. This doc is the authoritative record for the rides vertical specifically and should be updated alongside any structural change to `/rides/[id]`.
 
 ---
 
