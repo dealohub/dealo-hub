@@ -1639,6 +1639,15 @@
           "periodYearly": "/yr",
           "chequesN": "{n} cheques",
           "sqmShort": "m²"
+        },
+        "liveFeed": {
+          "eyebrow": "Live · last 24h",
+          "title": "Just listed in Kuwait",
+          "subline": "Fresh listings updated in real time. Tap any card to see the full detail.",
+          "eventNew": "New",
+          "eventPriceDrop": "Price drop",
+          "eventInspected": "Inspected",
+          "eventFeatured": "Featured"
         }
       }
     }

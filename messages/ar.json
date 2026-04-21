@@ -1639,6 +1639,15 @@
           "periodYearly": "/سنة",
           "chequesN": "{n} شيكات",
           "sqmShort": "م²"
+        },
+        "liveFeed": {
+          "eyebrow": "مباشر · آخر 24 ساعة",
+          "title": "أحدث ما أُدرج في الكويت",
+          "subline": "إعلانات جديدة تُحدّث في الوقت الحقيقي. اضغط على أي بطاقة لرؤية التفاصيل.",
+          "eventNew": "جديد",
+          "eventPriceDrop": "تخفيض سعر",
+          "eventInspected": "مفحوص",
+          "eventFeatured": "مميّز"
         }
       }
     }

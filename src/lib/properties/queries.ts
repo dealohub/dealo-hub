@@ -4,6 +4,7 @@ import {
   validatePropertyFieldsRaw,
   toPropertyFields,
   deriveOwnershipEligibility,
+  type PropertyFields,
 } from './validators';
 import type {
   PropertyDetail,
@@ -699,6 +700,124 @@ export const getPropertyTypeCounts = cache(
       if (type) counts[type] = (counts[type] ?? 0) + 1;
     }
     return counts;
+  },
+);
+
+// ---------------------------------------------------------------------------
+// Live feed — Phase 5b+ addition (founder-flagged gap on /properties)
+// ---------------------------------------------------------------------------
+
+/**
+ * Recent property activity for the /properties hub "Live activity" strip.
+ *
+ * Returns up to N most-recent live real-estate listings, mapped to a
+ * compact PropertyActivityItem shape with a synthetic event type
+ * derived from the listing's flags (new / price-drop / inspected /
+ * featured). The "live" nature is a rotation on the client — each item
+ * surfaces one at a time with a relative timestamp.
+ *
+ * No separate "events" table in V1 — the feed is built from listings
+ * themselves. When a chat + offers system lands (Phase 5c / Phase 6),
+ * that layer can emit richer event types (e.g., "just booked", "offer
+ * accepted").
+ */
+
+export interface PropertyActivityItem {
+  id: number;
+  slug: string;
+  title: string;
+  cover: string | null;
+  cityName: string;
+  priceMinorUnits: number;
+  currencyCode: 'KWD' | 'USD' | 'AED' | 'SAR';
+  rentPeriod: PropertyFields['rentPeriod'] | null;
+  propertyType: PropertyFields['propertyType'];
+  verificationTier: VerificationTier;
+  event: 'new' | 'price_drop' | 'inspected' | 'featured';
+  createdAt: string;
+}
+
+export const getRecentPropertyActivity = cache(
+  async function getRecentPropertyActivity(
+    opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
+  ): Promise<PropertyActivityItem[]> {
+    const limit = opts.limit ?? 12;
+    const supabase = createClient();
+
+    const parent = await supabase
+      .from('categories')
+      .select('id')
+      .eq('slug', 'real-estate')
+      .single();
+    if (!parent.data?.id) return [];
+
+    const kids = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', parent.data.id);
+    const categoryIds = (kids.data ?? []).map((c: any) => c.id);
+    if (categoryIds.length === 0) return [];
+
+    const { data, error } = await supabase
+      .from('listings')
+      .select(CARD_SELECT + ', is_hot, old_price_minor_units')
+      .in('category_id', categoryIds)
+      .eq('status', 'live')
+      .not('fraud_status', 'in', '(held,rejected)')
+      .is('soft_deleted_at', null)
+      .order('published_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error(
+        '[properties/queries] getRecentPropertyActivity error:',
+        error.message,
+      );
+      return [];
+    }
+    if (!data) return [];
+
+    return (data as unknown as (RawCardRow & { is_hot?: boolean; old_price_minor_units?: number | string | null })[])
+      .map(row => {
+        const subCatSlug = row.category?.slug;
+        if (!isPropertySubCat(subCatSlug)) return null;
+        const validation = validatePropertyFieldsRaw(row.category_fields, subCatSlug);
+        if (!validation.success) return null;
+        const f = toPropertyFields(validation.data);
+
+        const cover =
+          (row.listing_images ?? [])
+            .slice()
+            .sort((a, b) => a.position - b.position)[0]?.url ?? null;
+
+        // Derive event type — precedence:
+        //   price_drop (has old_price_minor_units) > inspected (dealo_inspected tier)
+        //   > featured (is_featured) > new (default).
+        const hasPriceDrop = row.old_price_minor_units != null;
+        const event: PropertyActivityItem['event'] = hasPriceDrop
+          ? 'price_drop'
+          : row.verification_tier === 'dealo_inspected'
+          ? 'inspected'
+          : row.is_featured
+          ? 'featured'
+          : 'new';
+
+        return {
+          id: row.id,
+          slug: row.slug,
+          title: pickTitle(row, opts.locale),
+          cover,
+          cityName: pickCityName(row.city, opts.locale),
+          priceMinorUnits: Number(row.price_minor_units),
+          currencyCode: row.currency_code as PropertyActivityItem['currencyCode'],
+          rentPeriod: f.rentPeriod ?? null,
+          propertyType: f.propertyType,
+          verificationTier: row.verification_tier,
+          event,
+          createdAt: row.created_at,
+        } as PropertyActivityItem;
+      })
+      .filter((x): x is PropertyActivityItem => x !== null);
   },
 );
 

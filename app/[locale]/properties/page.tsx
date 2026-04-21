@@ -7,10 +7,12 @@ import {
   getFeaturedProperties,
   getPropertiesForGrid,
   getPropertyTypeCounts,
+  getRecentPropertyActivity,
 } from '@/lib/properties/queries';
 
 import PropertiesHeroSplit from '@/components/shadcnblocks/properties-hero-split';
 import PropertiesBrowseByType from '@/components/shadcnblocks/properties-browse-by-type';
+import PropertiesLiveFeed from '@/components/shadcnblocks/properties-live-feed';
 import PropertiesFeaturedPremium from '@/components/shadcnblocks/properties-featured-premium';
 import PropertiesTrustStrip from '@/components/shadcnblocks/properties-trust-strip';
 import PropertiesMainGrid from '@/components/shadcnblocks/properties-main-grid';
@@ -67,10 +69,11 @@ export default async function PropertiesHubPage({
 }: {
   params: { locale: 'ar' | 'en' };
 }) {
-  const [featured, allCards, typeCounts] = await Promise.all([
+  const [featured, allCards, typeCounts, activity] = await Promise.all([
     getFeaturedProperties({ limit: 6, locale: params.locale }),
     getPropertiesForGrid({ limit: 24, locale: params.locale }),
     getPropertyTypeCounts(),
+    getRecentPropertyActivity({ limit: 12, locale: params.locale }),
   ]);
 
   const inspectedCount = allCards.filter(
@@ -91,6 +94,8 @@ export default async function PropertiesHubPage({
       <PropertiesBrowseByType counts={typeCounts} locale={params.locale} />
 
       <PropertiesFeaturedPremium featured={featured} locale={params.locale} />
+
+      <PropertiesLiveFeed items={activity} />
 
       <PropertiesTrustStrip />
 
