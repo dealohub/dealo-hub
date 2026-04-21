@@ -3,61 +3,118 @@
 import { useMemo, useState, Fragment } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, LayoutGrid, List, ArrowRight } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ListingCardRides } from './listing-card-rides';
-import {
-  RIDE_LISTINGS,
-  VEHICLE_TYPES,
-  VEHICLE_COLORS,
-  type VehicleType,
-} from './rides-data';
+import type { RideCard } from '@/lib/rides/types';
 
 /**
  * RidesMainGrid — the main browse grid.
  *
  * Uniform 4-col grid (Baymard: uniform > bento for comparative shopping).
- * Sort controls + sub-type chips + active filter display above.
- * Load-more pagination (not infinite scroll).
+ * Sort controls + sub-category chips + active filter display above.
+ * Load-more pagination (client-side slicing for V1 given small inventory).
+ *
+ * Data flow (Phase 3c):
+ *   Page (server) fetches all live automotive non-featured listings +
+ *   the per-sub-category counts, then passes both down as props. This
+ *   component stays client-side so filter / sort / load-more remain
+ *   snappy without a round-trip per interaction. Once inventory grows
+ *   past one page of realistic volume, we'll swap to true server-side
+ *   pagination via a server action (tracked for Phase 4+).
  */
 
 type SortKey = 'relevance' | 'priceAsc' | 'priceDesc' | 'newest' | 'popular';
 
+interface TypeCount {
+  slug: string;
+  nameAr: string;
+  nameEn: string;
+  count: number;
+}
+
+interface Props {
+  items: RideCard[];
+  typeCounts: TypeCount[];
+}
+
 const INITIAL = 12;
 const PAGE = 8;
 
-export const RidesMainGrid = () => {
-  const t = useTranslations('marketplace.rides.main');
-  const tTypes = useTranslations('marketplace.rides.types');
+/**
+ * Small emoji map per automotive sub-category slug, kept UI-side
+ * since emojis are design decoration, not data.
+ */
+const SUB_CAT_EMOJI: Record<string, string> = {
+  'used-cars': '🚗',
+  'new-cars': '🆕',
+  'classic-cars': '🏎️',
+  'junk-cars': '🔧',
+  'wanted-cars': '🔍',
+  motorcycles: '🏍️',
+  watercraft: '🚤',
+  cmvs: '🚚',
+  'auto-spare-parts': '⚙️',
+  'auto-accessories': '🎨',
+  'auto-services': '🛠️',
+  dealerships: '🏢',
+  'car-garages': '🏚️',
+  'car-rental-business': '🚙',
+  'food-trucks': '🍔',
+};
 
-  const [activeType, setActiveType] = useState<VehicleType | 'all'>('all');
+/** Visual accent per sub-category slug. Mirrors getRideCatColor. */
+const SUB_CAT_ACCENT: Record<string, string> = {
+  motorcycles: '#f59e0b',
+  watercraft: '#0ea5e9',
+  cmvs: '#78716c',
+  'food-trucks': '#78716c',
+};
+const DEFAULT_ACCENT = '#ef4444';
+const accentFor = (slug: string): string =>
+  SUB_CAT_ACCENT[slug] ?? DEFAULT_ACCENT;
+
+export const RidesMainGrid = ({ items, typeCounts }: Props) => {
+  const t = useTranslations('marketplace.rides.main');
+  const locale = useLocale() as 'ar' | 'en';
+
+  const [activeSlug, setActiveSlug] = useState<string | 'all'>('all');
   const [sortKey, setSortKey] = useState<SortKey>('relevance');
   const [visibleCount, setVisibleCount] = useState(INITIAL);
 
   const filtered = useMemo(() => {
-    // 1. filter by sub-type
-    let items =
-      activeType === 'all'
-        ? RIDE_LISTINGS.filter((l) => !l.featured) // exclude the paid ones shown in featured row
-        : RIDE_LISTINGS.filter((l) => l.type === activeType);
+    // 1. filter by sub-category slug
+    let filtered =
+      activeSlug === 'all'
+        ? items
+        : items.filter((l) => l.subCategorySlug === activeSlug);
 
-    // 2. sort
-    const num = (p: string) => Number(p.replace(/[^0-9]/g, ''));
+    // 2. sort. 'popular' falls through to relevance since RideCard is
+    // shallow — the server-side relevance order (is_hot first, then
+    // newest) is the best approximation available client-side.
     switch (sortKey) {
       case 'priceAsc':
-        items = [...items].sort((a, b) => num(a.price) - num(b.price));
+        filtered = [...filtered].sort(
+          (a, b) => a.priceMinorUnits - b.priceMinorUnits,
+        );
         break;
       case 'priceDesc':
-        items = [...items].sort((a, b) => num(b.price) - num(a.price));
+        filtered = [...filtered].sort(
+          (a, b) => b.priceMinorUnits - a.priceMinorUnits,
+        );
         break;
       case 'newest':
-        items = [...items].sort((a, b) => b.year - a.year);
+        filtered = [...filtered].sort(
+          (a, b) => (b.year ?? 0) - (a.year ?? 0),
+        );
         break;
       case 'popular':
-        items = [...items].sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0));
+      case 'relevance':
+      default:
+        // Preserve the server's is_hot DESC + created_at DESC order
         break;
     }
-    return items;
-  }, [activeType, sortKey]);
+    return filtered;
+  }, [items, activeSlug, sortKey]);
 
   const visible = filtered.slice(0, visibleCount);
 
@@ -71,7 +128,10 @@ export const RidesMainGrid = () => {
               {t('title')}
             </h2>
             <p className="mt-1 text-[13px] text-foreground/55">
-              {t('showingOf', { shown: visible.length, total: filtered.length })}
+              {t('showingOf', {
+                shown: visible.length,
+                total: filtered.length,
+              })}
             </p>
           </div>
 
@@ -89,20 +149,26 @@ export const RidesMainGrid = () => {
           </div>
         </div>
 
-        {/* Sub-type chips */}
+        {/* Sub-category chips */}
         <div className="mb-6 flex flex-wrap gap-2">
-          <Chip active={activeType === 'all'} onClick={() => setActiveType('all')}>
+          <Chip
+            active={activeSlug === 'all'}
+            onClick={() => setActiveSlug('all')}
+          >
             {t('sortAllTypes')}
           </Chip>
-          {VEHICLE_TYPES.map(({ key, emoji }) => (
+          {typeCounts.map((tc) => (
             <Chip
-              key={key}
-              active={activeType === key}
-              onClick={() => setActiveType(key)}
-              accent={VEHICLE_COLORS[key]}
+              key={tc.slug}
+              active={activeSlug === tc.slug}
+              onClick={() => setActiveSlug(tc.slug)}
+              accent={accentFor(tc.slug)}
             >
-              <span>{emoji}</span>
-              <span>{tTypes(key)}</span>
+              <span>{SUB_CAT_EMOJI[tc.slug] ?? '•'}</span>
+              <span>{locale === 'ar' ? tc.nameAr : tc.nameEn}</span>
+              <span className="tabular-nums text-[10.5px] opacity-70">
+                {tc.count}
+              </span>
             </Chip>
           ))}
         </div>
@@ -124,16 +190,21 @@ export const RidesMainGrid = () => {
               </AnimatePresence>
             </div>
 
-            {/* Pagination footer: progress bar + load-more */}
+            {/* Pagination footer */}
             <div className="mt-12 flex flex-col items-center gap-4">
-              {/* Progress bar */}
               <div className="flex w-full max-w-md flex-col items-center gap-2">
                 <div className="flex w-full items-center justify-between text-[11px] text-foreground/50">
                   <span>
-                    {t('showingOf', { shown: visible.length, total: filtered.length })}
+                    {t('showingOf', {
+                      shown: visible.length,
+                      total: filtered.length,
+                    })}
                   </span>
                   <span className="tabular-nums">
-                    {Math.round((visible.length / Math.max(filtered.length, 1)) * 100)}%
+                    {Math.round(
+                      (visible.length / Math.max(filtered.length, 1)) * 100,
+                    )}
+                    %
                   </span>
                 </div>
                 <div className="h-1 w-full overflow-hidden rounded-full bg-foreground/10">
@@ -172,6 +243,8 @@ export const RidesMainGrid = () => {
     </section>
   );
 };
+
+// ─── Subcomponents (unchanged, but kept local) ──────────────────────────
 
 const SortSelect = ({
   value,
@@ -249,7 +322,11 @@ const Chip = ({
         ? 'border-foreground/40 bg-foreground text-background'
         : 'border-foreground/10 bg-foreground/[0.03] text-foreground/75 hover:border-foreground/25 hover:bg-foreground/[0.06]')
     }
-    style={active && accent ? { borderColor: accent, background: accent, color: 'white' } : undefined}
+    style={
+      active && accent
+        ? { borderColor: accent, background: accent, color: 'white' }
+        : undefined
+    }
   >
     {children}
   </button>
@@ -305,14 +382,25 @@ const EmptyState = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-foreground/15 bg-foreground/[0.02] px-6 py-20 text-center">
       <div className="grid size-12 place-items-center rounded-full bg-foreground/[0.05] text-foreground/50">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <circle cx="11" cy="11" r="8" />
           <path d="m21 21-4.3-4.3" />
         </svg>
       </div>
       <div>
         <h3 className="text-base font-semibold text-foreground">{t('title')}</h3>
-        <p className="mt-1 max-w-sm text-sm text-foreground/55">{t('subtitle')}</p>
+        <p className="mt-1 max-w-sm text-sm text-foreground/55">
+          {t('subtitle')}
+        </p>
       </div>
     </div>
   );

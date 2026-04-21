@@ -12,26 +12,57 @@ import RidesMainGrid from '@/components/shadcnblocks/rides-main-grid';
 import RidesFinanceBanner from '@/components/shadcnblocks/rides-finance-banner';
 import RidesArticlesStrip from '@/components/shadcnblocks/rides-articles-strip';
 import RidesDealerSpotlight from '@/components/shadcnblocks/rides-dealer-spotlight';
+import {
+  getFeaturedRides,
+  getRidesForGrid,
+  getRideTypeCounts,
+} from '@/lib/rides/queries';
 
 /**
  * /rides — unified vehicle marketplace hub.
  *
  * Sections (top → bottom):
  *   1. Navbar
- *   2. Hero split (search card + sponsored dealer spotlight)
- *   3. Shop by Style (circular type tiles)
- *   4. Native ad banner (Dealo Pro sponsored)
- *   5. Best Rides of 2026 (editorial award block)
- *   6. Featured Premium listings (paid dealer placements, 4-card row)
- *   7. Main browse grid (sort + sub-type chips + uniform grid + load more)
- *   8. Latest from our experts (articles strip)
- *   9. Top verified dealers (directory)
- *   10. Footer
+ *   2. Hero split (search card + sponsored dealer spotlight) — editorial
+ *   3. Brand partners marquee — editorial
+ *   4. Shop by Style (circular type tiles) — editorial
+ *   5. Native ad banner (Dealo Pro sponsored) — editorial
+ *   6. Best Rides of 2026 (editorial award block) — editorial
+ *   7. Featured Premium — DB-backed (getFeaturedRides)
+ *   8. Main browse grid — DB-backed (getRidesForGrid + getRideTypeCounts)
+ *   9. Latest from our experts (articles strip) — editorial
+ *  10. Top verified dealers (directory) — editorial
+ *  11. Footer
  *
- * Server component — client bits (state, interactivity) live inside
- * each section component, all marked 'use client' where needed.
+ * The hub's dynamic sections are pre-fetched server-side and passed
+ * down as props. The main grid stays client-side for filter / sort /
+ * load-more interactivity (client-side slicing of the pre-fetched set,
+ * which is fine for V1 inventory volume).
+ *
+ * ISR: reuse the detail-page default — 60s cache on the rendered HTML.
  */
-export default function RidesPage() {
+export const revalidate = 60;
+
+export default async function RidesPage({
+  params,
+}: {
+  params: { locale: 'ar' | 'en' };
+}) {
+  const locale = params.locale;
+
+  const [featured, grid, typeCounts] = await Promise.all([
+    getFeaturedRides({ limit: 4, locale }),
+    // V1: fetch all non-featured listings up to a safe ceiling for client
+    // filtering. Swap to server-side pagination when volume grows.
+    getRidesForGrid({
+      sortBy: 'relevance',
+      limit: 200,
+      offset: 0,
+      locale,
+    }),
+    getRideTypeCounts({ locale }),
+  ]);
+
   return (
     <>
       <EcommerceNavbar1 />
@@ -40,8 +71,8 @@ export default function RidesPage() {
       <RidesShopByStyle />
       <RidesAdBanner />
       <RidesBestOf2026 />
-      <RidesFeaturedPremium />
-      <RidesMainGrid />
+      <RidesFeaturedPremium items={featured} />
+      <RidesMainGrid items={grid.items} typeCounts={typeCounts} />
       <RidesFinanceBanner />
       <RidesArticlesStrip />
       <RidesDealerSpotlight />

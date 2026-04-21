@@ -2,18 +2,25 @@
 
 import { useTranslations } from 'next-intl';
 import { ListingCardRides } from './listing-card-rides';
-import { RIDE_LISTINGS } from './rides-data';
+import type { RideCard } from '@/lib/rides/types';
 
 /**
  * RidesFeaturedPremium — 4 paid-placement listings in a dedicated row,
  * clearly labeled "Featured" with gold accents. Separate from the main
  * grid so ranking integrity stays intact.
+ *
+ * Data is pre-fetched by the page via `getFeaturedRides` and passed in.
+ * Component renders nothing when the list is empty.
  */
 
-export const RidesFeaturedPremium = () => {
+interface Props {
+  items: RideCard[];
+}
+
+export const RidesFeaturedPremium = ({ items }: Props) => {
   const t = useTranslations('marketplace.rides.featured');
-  // Pick the first 4 featured listings from seed data
-  const picks = RIDE_LISTINGS.filter((l) => l.featured).slice(0, 4);
+
+  if (items.length === 0) return null;
 
   return (
     <section className="relative w-full bg-background">
@@ -43,14 +50,10 @@ export const RidesFeaturedPremium = () => {
 
         {/* 4-col uniform grid */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {picks.map((p) => (
+          {items.map((p) => (
             <ListingCardRides key={p.id} item={p} premium />
           ))}
         </div>
-
-        <p className="mt-4 text-center text-[10.5px] text-foreground/40">
-          {t('disclosure')}
-        </p>
       </div>
     </section>
   );
