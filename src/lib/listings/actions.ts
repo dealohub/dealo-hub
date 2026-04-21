@@ -9,6 +9,12 @@ import { generateListingEmbedding } from './embeddings';
 import { PublishSchema } from './validators';
 import { validatePropertyFieldsRaw } from '@/lib/properties/validators';
 import type { PropertyCategoryKey } from '@/lib/properties/types';
+import { validateElectronicsFieldsRaw } from '@/lib/electronics/validators';
+import {
+  ELECTRONICS_SUB_CATS,
+  type ElectronicsCategoryKey,
+} from '@/lib/electronics/types';
+import { containsCounterfeitTerm } from './validators';
 import { listingDetailHrefFromParent } from './route';
 import type { DraftState, WizardStep } from './draft';
 
@@ -31,6 +37,15 @@ function asPropertyCategoryKey(slug: string | null | undefined): PropertyCategor
   if (!slug) return null;
   return (PROPERTY_SUBCAT_SLUGS as ReadonlyArray<string>).includes(slug)
     ? (slug as PropertyCategoryKey)
+    : null;
+}
+
+function asElectronicsCategoryKey(
+  slug: string | null | undefined,
+): ElectronicsCategoryKey | null {
+  if (!slug) return null;
+  return (ELECTRONICS_SUB_CATS as ReadonlyArray<string>).includes(slug)
+    ? (slug as ElectronicsCategoryKey)
     : null;
 }
 
@@ -305,6 +320,58 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
         if (!(field in fieldErrors)) fieldErrors[field] = issue.message;
       }
       return { ok: false, error: 'validation_failed', fieldErrors };
+    }
+  }
+
+  // Electronics-specific validation (Phase 7a — P1/P3/P4/P5):
+  //   • 28-field ElectronicsFieldsRaw shape
+  //   • Sub-cat conditional invariants (phones need IMEI, laptops need
+  //     CPU+RAM, smart-watches need battery_health, etc.)
+  //   • Filter B widened (P2 — counterfeit) — was previously only
+  //     enforced inside Step3DetailsLuxurySchema (and that path is
+  //     currently bypassed by PublishSchema). Apply at the publish gate.
+  if (parentSlug === 'electronics') {
+    const electronicsSubCat = asElectronicsCategoryKey(subCatSlug);
+    if (!electronicsSubCat) {
+      return {
+        ok: false,
+        error: 'validation_failed',
+        fieldErrors: { category_fields: 'electronics_sub_cat_required' },
+      };
+    }
+    const electronicsResult = validateElectronicsFieldsRaw(
+      v.category_fields,
+      electronicsSubCat,
+    );
+    if (!electronicsResult.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of electronicsResult.error.issues) {
+        const key = issue.path
+          .filter(p => typeof p === 'string' || typeof p === 'number')
+          .join('.');
+        const field = key || 'category_fields';
+        if (!(field in fieldErrors)) fieldErrors[field] = issue.message;
+      }
+      return { ok: false, error: 'validation_failed', fieldErrors };
+    }
+  }
+
+  // Filter B (counterfeit) gate — applied to luxury OR electronics
+  // parents. Brand+model are usually where bad actors hide "1st copy"
+  // / "ماستر كوبي" terms; combine all the seller-typed text.
+  if (parentSlug === 'electronics' || parentSlug === 'luxury') {
+    const combined = [
+      v.title,
+      v.description,
+      v.brand ?? '',
+      v.model ?? '',
+    ].join(' ');
+    if (containsCounterfeitTerm(combined)) {
+      return {
+        ok: false,
+        error: 'validation_failed',
+        fieldErrors: { description: 'counterfeit_term_not_allowed' },
+      };
     }
   }
 
