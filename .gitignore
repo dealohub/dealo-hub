@@ -74,3 +74,6 @@ logs/
 
 # playwright-mcp dev artifacts
 .playwright-mcp/
+
+# Local dev screenshots + scratch files
+tmp/
