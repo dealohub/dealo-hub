@@ -13,8 +13,9 @@
 |------|-----------------|-------|
 | Landing page | `/[locale]/` | Built by Claude Design. Hero, brands strip, AI protection, live feed, featured partners, footer. Dark + light + RTL. |
 | Rides vertical — grid | `/[locale]/rides` | Bento grid of 20 seed listings across 6 vehicle types (cars, bikes, boats, trucks, campers, bicycles). |
-| Rides vertical — detail | `/[locale]/rides/[id]` | Premium detail page, 8 components (header, gallery, key info, features, description, similar, purchase panel, mobile action bar). See `docs/RIDES-DETAIL.md`. |
-| Supabase backend | 14 migrations, 18 tables | Profiles, listings, images/videos/drafts, categories (64), geo (countries/cities/areas), social, AI layer, waitlist. RLS on every table. |
+| Rides vertical — detail | `/[locale]/rides/[id]` | Premium detail page, 8 components (header, gallery, key info, features, description, similar, purchase panel, mobile action bar). **Fully DB-backed** via `getRideById` / `getSimilarRides`. See `docs/RIDES-DETAIL.md`. |
+| Rides DB wiring (Phase 3b) | `listings.category_fields` JSONB + related columns | Schema extensions: `category_fields`, `slug`, `is_featured`, `is_hot`, `old_price_minor_units`, `listing_images.category`, profiles dealer fields. 5 used-cars seeded with full detail data. `buildRideSpecs` + `buildRideGallery` synthesis engines retired. |
+| Supabase backend | 22 migrations, 18 tables | Profiles, listings (with category_fields JSONB + slug + badges), images (with category)/videos/drafts, categories (80: 10 original + automotive parent + 15 automotive sub-cats), geo (countries/cities/areas), social, AI layer, waitlist. RLS on every table. |
 | Server actions / queries | 27 files in `src/lib/` | Listings, auth, profile, favorites, search (hybrid keyword + pgvector), embeddings, storage. |
 | i18n | AR (default) + EN | 16 namespaces under `messages/{ar,en}.json`. |
 | Design system | CSS vars + Tailwind + fonts | Bricolage (LTR display), Geist (LTR body), Cairo (RTL). Warm stone palette. `.dark` class flip. See `DESIGN.md`. |
@@ -27,8 +28,8 @@ _(currently none — awaiting next decision)_
 
 | Priority | Item | Depends on |
 |----------|------|-----------|
-| 🔴 High | Seller dashboard shell | Where price-AI / performance moves once we wire real listings |
-| 🔴 High | `/rides/[id]` → Supabase wiring | Extend `listings` schema for vehicle-specific fields, or use `extras` JSONB |
+| 🔴 High | Seller dashboard shell | Where price-AI / performance moves for private seller insights |
+| 🟠 Mid | `/rides` hub wiring (Phase 3c) | Swap `RIDE_LISTINGS` seed for `getFeaturedRides` / `getRidesForGrid` / `getRideTypeCounts` |
 | 🟠 Mid | Compare bar + `/rides/compare` | Stand-alone, can start any time |
 | 🟠 Mid | Browse: `/[locale]/categories` (all 10) | Planning doc's original "next step" |
 | 🟠 Mid | Generic `/[locale]/listings/[id]` | Applies rides detail patterns to non-vehicle categories |
@@ -43,7 +44,7 @@ Rides was the first vertical. The pattern (see `docs/RIDES-DETAIL.md §7`) is re
 
 | Vertical | Status | Notes |
 |----------|--------|-------|
-| Rides (vehicles) | ✅ Prototype done, Supabase wiring pending | Covers 6 sub-types in one codebase |
+| Rides (vehicles) | ✅ Prototype done · detail page DB-wired (Phase 3b) · hub wiring pending (Phase 3c) | Covers 6 sub-types in one codebase |
 | Properties | ⬜ Planned | Different data shape (bedrooms, area m², amenities) |
 | Tech | ⬜ Planned | Phones, laptops, cameras — condition-heavy |
 | Jobs | ⬜ Planned | Different CTA model (apply, not buy) |
@@ -55,8 +56,9 @@ Rides was the first vertical. The pattern (see `docs/RIDES-DETAIL.md §7`) is re
 
 | # | Issue | Impact | Planned fix |
 |---|-------|--------|-------------|
-| 1 | `src/lib/browse/queries.ts` imports the deleted `@/components/listings/ListingCard` | `tsc --noEmit` fails with one error; `next dev` + `next build` tolerate | Replace when the browse page is built (pick a card variant in context) |
-| 2 | Rides page uses seed data, not Supabase | Can't publish / favourite / report real vehicles yet | After seller dashboard shape lands |
+| 1 | ~~`src/lib/browse/queries.ts` imports the deleted `ListingCard`~~ | — | **Fixed 2026-04-20** in Phase 3b.1 — `ListingCardData` canonicalised to `src/lib/browse/types.ts` |
+| 2 | ~~Rides detail page uses seed data, not Supabase~~ | — | **Fixed 2026-04-20** in Phase 3b.6 — `/rides/[id]` fully DB-backed |
+| 3 | `/rides` hub still uses `RIDE_LISTINGS` seed | Hub→detail links will break for listings not in seed (IDs ≥ 7) | Phase 3c — swap hub components to `getRidesForGrid` / `getFeaturedRides` |
 
 ## 6. Deprecations / removed from surface
 
@@ -64,6 +66,7 @@ Rides was the first vertical. The pattern (see `docs/RIDES-DETAIL.md §7`) is re
 |------|--------|--------|
 | `RideDetailAccordions` (service history, factory packages) | Data was synthetic and not verifiable. | **Deleted 2026-04-20** (pre-Supabase cleanup) |
 | `RideDetailPerformance` (HP, torque, 0-100…) | Not a decision factor for Kuwaiti buyers. | **Deleted 2026-04-20** (pre-Supabase cleanup) |
+| `build-ride-specs.ts` + `build-ride-gallery.ts` (hash-deterministic synthesis engines) | Components now read real specs from `listings.category_fields` (Zod-parsed) and real images from `listing_images`. Synthesis obsolete. | **Deleted 2026-04-20** in Phase 3b.7 |
 | AI Insights section (price verdict + AI Q&A) on public detail page | Hostile to sellers. Moves to seller dashboard (private) instead. | Removed from page composition earlier |
 | Sponsored ad slot in detail-page header | Visually unbalanced. May come back in a dedicated placement. | Removed from page composition earlier |
 | Icon action column inside detail header | Visually disconnected from price. Moved into purchase panel. | Refactored earlier |

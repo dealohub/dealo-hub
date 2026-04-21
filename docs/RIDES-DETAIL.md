@@ -53,29 +53,76 @@
 
 ## 3. Data model
 
-### 3.1 Seed listings — `RIDE_LISTINGS`
-- Location: `src/components/shadcnblocks/rides-data.ts`
-- Shape: `RideListing[]` — id, type, title, price, year, location, dealer, image, photoCount, featured, hot, verifiedListing, bentoSize
-- Types: `cars · bikes · boats · trucks · campers · bicycles` (the rides vertical covers all six)
-- Per-type accent: `VEHICLE_COLORS` map drives badges, chips, ambient glow
-- Coverage: ~20 listings, spread across all types
+### 3.1 Source — Supabase (DB-backed)
 
-### 3.2 Spec synthesis — `buildRideSpecs(listing)`
-- Location: `src/components/shadcnblocks/build-ride-specs.ts`
-- Purpose: seed data is lean (title + price + specA/specB) — the detail page needs **50+ fields**. This function fills them out deterministically.
-- Pattern: `hash(listing.id)` + bit-shifts → stable pseudo-random → realistic specs
-- Returns: `RideSpecs` (mileage, body type, colors, engine, transmission, drivetrain, fuel, warranty, VIN, market context, performance, features Set)
-- **Idempotent**: same listing ID → same specs, every render, every refresh. Enables visual regression testing.
+Every field the detail page renders comes from the database. No
+synthesis, no seed fallback. The sub-tables that power one page:
 
-**Why this matters:** every other vertical (properties, tech, jobs) will need the same pattern — lean seed + a `buildXSpecs` synthesis engine.
+| Table | Role |
+|-------|------|
+| `listings` | Core row: id, slug, title, description, brand, model, color, price, lifecycle, `is_featured`, `is_hot`, `old_price_minor_units`, counters (`view_count`, `save_count`, `chat_initiation_count`), and **`category_fields` JSONB** for vertical-specific data. |
+| `listing_images` | Cover + gallery, ordered by `position`. Each row carries a `category` (`exterior` / `interior` / `engine` / `wheels` / `details`) that drives the filter pills. |
+| `profiles` | Seller mini-card — `display_name`, `handle`, `avatar_url`, `is_dealer`, `dealer_name`, `dealer_verified_at`, `rating_avg`, `rating_count`, `created_at` (for years-active). |
+| `cities` / `categories` | Join for `cityName` (locale-aware) and category breadcrumb labels. |
+
+### 3.2 Vertical-specific fields — `listings.category_fields` (JSONB)
+
+Automotive listings carry a Zod-validated shape under this column.
+The full contract lives in `src/lib/rides/validators.ts`. Keys as of
+Phase 3b:
+
+```
+make, model, year, mileage_km, transmission, fuel_type, vin,
+accident_history, engine_cc, horsepower, torque_nm, cylinders,
+doors, seats, body_style, drivetrain, exterior_color, interior_color,
+service_history_status, region_spec, warranty_active,
+warranty_remaining_months, registration_ref, trim_level, features[]
+```
+
+Values are stored in snake_case; the Zod `.transform()` emits
+`UsedCarFields` (camelCase) to the app layer — consumers never see
+snake_case.
+
+### 3.3 App-facing types
+
+- `RideDetail` (`src/lib/rides/types.ts`) — full detail shape that
+  every `ride-detail-*` component consumes. Includes nested `specs:
+  UsedCarFields`, `images: RideImage[]`, `seller: RideSeller`,
+  `category: { id, slug, nameAr, nameEn }`, and a derived
+  `catColor` for display tints.
+- `RideCard` — shallow shape used by grids and the similar-vehicles
+  carousel (id, slug, title, brand, model, price, cover, city, year,
+  body style, fuel, mileage, catColor).
+
+### 3.4 Query surface — `src/lib/rides/queries.ts`
+
+```
+getRideById(idOrSlug, { locale }): RideDetail | null
+getSimilarRides(listingId, limit, { locale }): RideCard[]
+getRideCatColor(subCategorySlug): string
+```
+
+Both queries filter by the public RLS scope: `status='live'` AND
+`fraud_status NOT IN ('held','rejected')` AND `soft_deleted_at IS
+NULL`. They log errors and return `null` / `[]` instead of throwing,
+so Server Components can render `notFound()` cleanly.
+
+### 3.5 Retired synthesis
+
+The Phase-3a seed shape + the `buildRideSpecs` and `buildRideGallery`
+synthesis engines are **gone** as of Phase 3b.7. Components no longer
+carry hash-based pseudo-random generators for rating / reviews /
+watching / phone — those now come from real counters, real seller
+profiles, and (for phone) are never exposed per Decision 2.
 
 ---
 
 ## 4. Component catalogue
 
-Each component lives in `src/components/shadcnblocks/ride-detail-*.tsx` and is a
-client component (`'use client'`) with `{ listing: RideListing }` as its only
-prop.
+Each component lives in `src/components/shadcnblocks/ride-detail-*.tsx`
+and is a client component (`'use client'`). Most take `{ listing:
+RideDetail }`; a few accept extra context props (`locale`, `similar`,
+`catColor`) set by the page.
 
 ### 4.1 `RideDetailHeader`
 - **Role:** centered editorial hero — the visual anchor of the page.
@@ -306,3 +353,4 @@ supports real listings:
 |------|--------|
 | 2026-04-20 | Initial comprehensive doc — captures every decision across the rides-detail build sessions to date (header through similar carousel, action relocation, removed sections, bilingual description, purchase panel sticky, ad-slot experiment and rollback, centered hero pivot). |
 | 2026-04-20 | Pre-Supabase cleanup: deleted `ride-detail-performance.tsx` and `ride-detail-accordions.tsx` (deactivated, no imports). §5 and §8 updated. |
+| 2026-04-20 | Phase 3b wiring complete. All 8 components + page now read `RideDetail` from Supabase via `getRideById` / `getSimilarRides`. `buildRideSpecs` + `buildRideGallery` synthesis engines retired and deleted. §3 rewritten around the DB-backed model (category_fields JSONB, Zod transform, query surface). |
