@@ -85,6 +85,26 @@ CREATE INDEX IF NOT EXISTS idx_listings_verification_tier
   ON listings (verification_tier)
   WHERE status = 'live' AND soft_deleted_at IS NULL;
 
+-- ── 6. Extend listing_images.category CHECK — 8 new property values ─────────
+-- Drop the automotive-only constraint and recreate with the union (shared enum,
+-- not a fork — see PHASE-4A-AUDIT.md §8). No data migration needed; existing
+-- rows have values in the old subset.
+
+ALTER TABLE listing_images
+  DROP CONSTRAINT IF EXISTS listing_images_category_check;
+
+ALTER TABLE listing_images
+  ADD CONSTRAINT listing_images_category_check
+  CHECK (
+    category IS NULL OR category = ANY (ARRAY[
+      -- Automotive (existing)
+      'exterior', 'interior', 'engine', 'wheels', 'details',
+      -- Properties (new — Phase 4a)
+      'building_exterior', 'living_room', 'bedroom', 'kitchen', 'bathroom',
+      'floor_plan', 'view', 'diwaniya_room'
+    ]::text[])
+  );
+
 -- ── 6. Sanity check ─────────────────────────────────────────────────────────
 
 DO $$
