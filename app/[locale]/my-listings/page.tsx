@@ -10,6 +10,8 @@ import LocaleToggle from '@/components/locale-toggle';
 import { createClient } from '@/lib/supabase/server';
 import { getMyListings } from '@/lib/account/queries';
 import SearchResultCard from '@/components/search/search-result-card';
+import ListingActionsMenu from '@/components/my-listings/listing-actions-menu';
+import type { ListingStatus } from '@/lib/listings/manage-transitions';
 
 export async function generateMetadata({
   params,
@@ -113,12 +115,16 @@ function Section({
             <div key={c.id} className="relative">
               <span
                 className={
-                  'absolute end-3 top-3 z-10 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ' +
+                  'absolute start-3 top-3 z-10 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ' +
                   (STATUS_TINT[c.status] ?? 'bg-foreground/5 text-foreground/60')
                 }
               >
                 {c.status}
               </span>
+              <ListingActionsMenu
+                listingId={c.id}
+                status={c.status as ListingStatus}
+              />
               <SearchResultCard card={c} locale="ar" />
             </div>
           ))}

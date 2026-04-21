@@ -292,7 +292,24 @@
       "title": "إعلاناتي",
       "signedInAs": "أنت مسجّل باسم {name}.",
       "placeholder": "إعلاناتك راح تظهر هنا بعد إطلاق تدفق إنشاء الإعلانات (BRIEF-004).",
-      "viewProfile": "عرض ملفي"
+      "viewProfile": "عرض ملفي",
+      "manage": {
+        "menuLabel": "إجراءات الإعلان",
+        "confirmDelete": "اضغط مرة ثانية للتأكيد",
+        "action": {
+          "mark_sold": "علّم كمباع",
+          "archive": "أرشفة (إخفاء)",
+          "republish": "إعادة نشر",
+          "soft_delete": "حذف"
+        },
+        "error": {
+          "not_authenticated": "يرجى تسجيل الدخول مرة ثانية.",
+          "not_owner": "هذا الإعلان مو لك.",
+          "not_found": "الإعلان غير موجود.",
+          "invalid_state": "هذا الإجراء غير متاح حالياً لهذا الإعلان.",
+          "update_failed": "ما قدرنا نحدّث — جرّب مرة ثانية."
+        }
+      }
     },
     "errors": {
       "generic": "صار خطأ. حاول مرة ثانية.",

@@ -292,7 +292,24 @@
       "title": "My listings",
       "signedInAs": "Signed in as {name}.",
       "placeholder": "Your listings will show here once the listing creation flow ships (BRIEF-004).",
-      "viewProfile": "View my profile"
+      "viewProfile": "View my profile",
+      "manage": {
+        "menuLabel": "Listing actions",
+        "confirmDelete": "Tap again to confirm delete",
+        "action": {
+          "mark_sold": "Mark as sold",
+          "archive": "Archive (hide)",
+          "republish": "Republish",
+          "soft_delete": "Delete"
+        },
+        "error": {
+          "not_authenticated": "Please sign in again.",
+          "not_owner": "You don't own this listing.",
+          "not_found": "Listing not found.",
+          "invalid_state": "That action isn't available for this listing right now.",
+          "update_failed": "Couldn't update — please try again."
+        }
+      }
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",
