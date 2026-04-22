@@ -404,3 +404,60 @@ Three parallel research tracks ran before any code:
 ---
 
 *End of addendum §10. Written after commit `6e4730a`.*
+
+---
+
+## 11. Chapter close — Phase 8a shipped + smoke-tested + documented
+
+After §10 wrote up, Fawzi directed "كمل على نغلق هذا القسم" (close this section). This §11 records the closing activities.
+
+### 11.1 Final two commits
+
+**`07cf2ec` — Services images + chapter close.** Smoke-test caught one last bug (same class as Electronics 0035→0036): services listings had no rows in `listing_images`, so `listing_images!inner` in `landing/queries.ts` was filtering all 12 services out of the hero pool. Migration 0040 extends the `listing_images.category` CHECK with 4 service-specific buckets (before / after / tools / portfolio) and seeds 27 Unsplash-backed image rows across the 12 listings. After reload, DOM inspection confirmed the hero renders a 6-slot mix: 2 cars + 2 properties + 1 tech + **1 service** (Maryam's deep-clean listing, linking to `/ar/services/maryam-premium-deep-clean`). Round-robin `pickBalancedHero` working across all 4 live verticals.
+
+Additionally verified on this commit:
+- Navbar top-level `SERVICES` entry renders (DOM text extracted confirms between `TECH` and `وظائف`)
+- `/ar/categories/services` → 308 → `/ar/services` lands on the hub
+- `/ar/search?q=xyznothingfound` NoResults shows 5 chips: `/categories` + `/rides` + `/properties` + `/tech` + **`/services`**
+- No regression on `/ar/rides`, `/ar/properties`, `/ar/tech` (existing verticals untouched)
+- 715/715 tests still green, typecheck clean
+
+### 11.2 `docs/PHASE-8A-HOME-SERVICES-DELIVERY.md`
+
+Created a dedicated handoff document for Phase 8a (same role that `docs/RIDES-DETAIL.md` plays for the rides vertical). 11 sections cover: why the phase exists, what shipped (8 commits table), the 10 pillars + 8 founder decisions, a 5-minute tour for poking it, database state + seeded providers table, what works end-to-end (no stubs), what's explicitly deferred to 8b-e, test coverage, 5 bugs found+fixed during smoke-test, 5 open questions for cowork, and the entry points for picking up fresh.
+
+### 11.3 Commits summary — full session (2026-04-22)
+
+This day alone landed **14 commits** spanning two phases:
+
+| Phase | # | SHA | Summary |
+|---|---|---|---|
+| **P7 v2 polish** | 1 | `7319afb` | Electronics integration (navbar + redirect + articles + mobile bar) |
+| | 2 | `1652ac7` | Tech feed + hero routing |
+| | 3 | `5d63df3` | Landing bucket + deriveMeta |
+| | 4 | `a30a38f` | STATUS refresh |
+| | 5 | `6f00149` | Progress report (body) |
+| | 6 | `6d4f271` | Electronics images + balanced hero |
+| | 7 | `7c3f3ed` | published_at ordering + !inner |
+| | 8 | `c95f8f6` | Progress §9 addendum |
+| **P8a Services** | 9 | `f423121` | Foundation (doctrine + schema + 67 tests) |
+| | 10 | `75fe473` | Hub + seeds + listing card |
+| | 11 | `2363046` | Detail page + reviews + similar |
+| | 12 | `503cfdc` | Discovery integration |
+| | 13 | `d506070` | Quote flow + chat primitives |
+| | 14 | `6e4730a` | Sell wizard |
+| **Docs/close** | 15 | `383b3db` | STATUS + §10 addendum |
+| | 16 | `07cf2ec` | Services images + smoke-test close |
+
+### 11.4 End-of-day state
+
+- **4 verticals** live end-to-end (Rides + Properties + Tech + **Services**). Each has hub, detail, sell wizard, seed data, and is integrated across navbar / categories / landing / search / sitemap.
+- **715/715 tests** green. Typecheck clean. 40 migrations applied.
+- **74 commits ahead of `origin/master`.** No push until Fawzi's explicit OK per the standing rule.
+- Phase 8b (quote composer UI + fan-out matchmaking + area-filter) is the next natural step; doctrine is ready and queued at `planning/PHASE-8A-HOME-SERVICES.md §6`.
+
+This session marked a **chapter close** via the `ccd_session__mark_chapter` tool: *"Phase 8a Services — SHIPPED. Home Services vertical end-to-end: doctrine + 5 migrations + 8 commits + visually verified + 715/715 tests. Four verticals now live."*
+
+---
+
+*End of report. Total addendum weight: §9 (smoke-test fixes), §10 (Phase 8a delivery), §11 (chapter close). Ready for cowork handoff.*
