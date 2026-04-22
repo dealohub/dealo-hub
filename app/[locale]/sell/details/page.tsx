@@ -6,6 +6,7 @@ import WizardShell from '@/components/sell/wizard-shell';
 import DetailsForm from '@/components/sell/details-form';
 import PropertyDetailsForm from '@/components/sell/property-details-form';
 import ElectronicsDetailsForm from '@/components/sell/electronics-details-form';
+import ServicesDetailsForm from '@/components/sell/services-details-form';
 import type { Condition } from '@/lib/listings/validators';
 import type { PropertyCategoryKey } from '@/lib/properties/types';
 import {
@@ -113,6 +114,7 @@ export default async function SellDetailsPage({
 
   const isRealEstate = parentSlug === 'real-estate';
   const isElectronics = parentSlug === 'electronics';
+  const isServices = parentSlug === 'services';
   const propertySubCatSlug = asPropertySubCat((catRow as any)?.slug ?? null);
   const electronicsSubCatSlug = asElectronicsSubCat((catRow as any)?.slug ?? null);
 
@@ -142,6 +144,18 @@ export default async function SellDetailsPage({
             model: draft.model,
             fields: (draft.category_fields as Record<string, unknown>) ?? null,
             subCatSlug: electronicsSubCatSlug,
+          }}
+        />
+      ) : isServices ? (
+        <ServicesDetailsForm
+          locale={params.locale}
+          initial={{
+            title: draft.title,
+            description: draft.description,
+            condition: draft.condition as Condition | null,
+            brand: draft.brand,
+            model: draft.model,
+            fields: (draft.category_fields as Record<string, unknown>) ?? null,
           }}
         />
       ) : (
