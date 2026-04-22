@@ -2149,5 +2149,40 @@
         "ariaUnread": "{n} unread messages"
       }
     }
+  },
+  "servicesHub": {
+    "heroEyebrow": "Home Services",
+    "heroTitle": "Verified providers. Real quotes. No spam calls.",
+    "heroSubtitle": "Cleaning + handyman tasks from identity-verified individual providers. Transparent prices, chat-only contact, reviews after the job is done.",
+    "heroStatListings": "live listings",
+    "heroStatProviders": "verified providers",
+    "heroStatCompleted": "jobs done",
+    "browseTitle": "Browse by task",
+    "browseSubtitle": "Live counts",
+    "trustTitle": "Why Dealo for home services",
+    "trust1Title": "Provider identity verification",
+    "trust1Body": "Every provider passes civil-ID + phone OTP. Higher tier for MOCI-licensed businesses.",
+    "trust2Title": "Chat-only contact",
+    "trust2Body": "No phone number ever exposed. All quotes, bookings, and messaging stay inside Dealo.",
+    "trust3Title": "Reviews only after completion",
+    "trust3Body": "Both sides must confirm the job is done before a review can be left. No spam stars.",
+    "trust4Title": "Dealo Guarantee up to KD 200",
+    "trust4Body": "If the whole booking stays in Dealo chat, we stand behind it with a KD 200 capped guarantee on disputes.",
+    "featuredEyebrow": "Featured",
+    "featuredTitle": "Top-rated providers",
+    "gridTitle": "All home services",
+    "gridCount": "results",
+    "emptyState": "No services available yet.",
+    "card": {
+      "hour": "hr",
+      "fixed": "fixed",
+      "fromPrice": "or fixed offer",
+      "priceOnRequest": "Price on request",
+      "reviews": "reviews",
+      "newProvider": "New provider",
+      "completed": "jobs completed",
+      "viewDetails": "Details"
+    },
+    "cardListings": "listings"
   }
 }
