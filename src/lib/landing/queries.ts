@@ -250,9 +250,12 @@ function mapFeedRow(row: RawFeedRow, locale: 'ar' | 'en'): FeedListing | null {
  * a negative `drop` percent.
  *
  * @example
- *   const feed = await getLiveFeedListings({ limit: 12, locale: 'ar' });
- *   const heroImages = feed.slice(0, 6).map(...);   // for Feature283
- *   const initialFeed = feed.slice(0, 8);           // for LiveFeed
+ *   // Over-fetch so pickBalancedHero can keep the hero cross-vertical
+ *   // even if a single vertical has a recent seed burst. See the
+ *   // 2026-04-22 regression docstring on pickBalancedHero for history.
+ *   const feed = await getLiveFeedListings({ limit: 18, locale: 'ar' });
+ *   const heroImages = pickBalancedHero(feed, 6).map(...); // Feature283
+ *   const initialFeed = feed.slice(0, 8);                  // LiveFeed
  */
 export const getLiveFeedListings = cache(
   async function getLiveFeedListings(
@@ -284,3 +287,8 @@ export const getLiveFeedListings = cache(
       .filter((x): x is FeedListing => x !== null);
   },
 );
+
+// pickBalancedHero has moved to ./types (pure-function file, no React
+// cache() dependency — lets vitest import it without the server-side
+// supabase transitive dep). Re-exported here for consumer convenience.
+export { pickBalancedHero } from './types';
