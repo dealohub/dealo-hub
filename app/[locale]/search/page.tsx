@@ -172,6 +172,12 @@ function NoResults({
         >
           /properties
         </Link>
+        <Link
+          href={`/${locale}/tech`}
+          className="rounded-lg bg-foreground/5 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-foreground/10"
+        >
+          /tech
+        </Link>
       </div>
     </div>
   );

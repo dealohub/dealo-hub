@@ -21,8 +21,16 @@ describe('verticalPathForFeedCat', () => {
     );
   });
 
+  it('routes tech to /tech (Phase 7 v2)', () => {
+    expect(verticalPathForFeedCat('ar', 'tech', 'iphone-99')).toBe(
+      '/ar/tech/iphone-99',
+    );
+    expect(verticalPathForFeedCat('en', 'tech', 'iphone-99')).toBe(
+      '/en/tech/iphone-99',
+    );
+  });
+
   it('routes unknown categories to locale root (safe fallback)', () => {
-    expect(verticalPathForFeedCat('ar', 'tech', 'iphone-99')).toBe('/ar/');
     expect(verticalPathForFeedCat('ar', 'jobs', 'barista-12')).toBe('/ar/');
   });
 

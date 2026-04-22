@@ -67,6 +67,7 @@ export interface HeroImage {
  * so we route by it:
  *   'cars'     → /rides/<slug>
  *   'property' → /properties/<slug>
+ *   'tech'     → /tech/<slug>            (Phase 7 v2)
  *   other      → landing (safe fallback until each vertical ships
  *                 its own detail page)
  */
@@ -77,5 +78,6 @@ export function verticalPathForFeedCat(
 ): string {
   if (cat === 'cars') return `/${locale}/rides/${slug}`;
   if (cat === 'property') return `/${locale}/properties/${slug}`;
+  if (cat === 'tech') return `/${locale}/tech/${slug}`;
   return `/${locale}/`;
 }
