@@ -281,6 +281,31 @@ const MENU: MenuItem[] = [
     },
   },
   {
+    id: 'services', label: 'Services', href: '/services',
+    megaMenu: {
+      sections: [
+        {
+          label: 'Home Services', href: '/services', id: 'home-services',
+          imageSrc: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&auto=format&fit=crop',
+          items: [
+            { label: 'One-off cleaning', href: '/services' },
+            { label: 'Weekly / recurring cleaning', href: '/services' },
+            { label: 'IKEA assembly', href: '/services' },
+            { label: 'TV mounting', href: '/services' },
+            { label: 'Shelf hanging', href: '/services' },
+            { label: 'In-home furniture moving', href: '/services' },
+            { label: 'Basic painting', href: '/services' },
+            { label: 'Handyman (other)', href: '/services' },
+          ],
+        },
+      ],
+      featuredItems: [
+        { imageSrc: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&auto=format&fit=crop', href: '/services', label: 'Verified providers' },
+        { imageSrc: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&auto=format&fit=crop', href: '/services', label: 'Post-completion reviews' },
+      ],
+    },
+  },
+  {
     id: 'jobs', label: 'Careers', href: '#',
     megaMenu: {
       sections: [

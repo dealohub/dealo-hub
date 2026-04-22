@@ -14,7 +14,7 @@
  * (Decision 2 — chat-only contact).
  */
 
-export type FeedCategoryKey = 'cars' | 'property' | 'tech' | 'jobs';
+export type FeedCategoryKey = 'cars' | 'property' | 'tech' | 'services' | 'jobs';
 
 export interface FeedListing {
   kind: 'listing' | 'pricedrop';
@@ -68,6 +68,7 @@ export interface HeroImage {
  *   'cars'     → /rides/<slug>
  *   'property' → /properties/<slug>
  *   'tech'     → /tech/<slug>            (Phase 7 v2)
+ *   'services' → /services/<slug>        (Phase 8a)
  *   other      → landing (safe fallback until each vertical ships
  *                 its own detail page)
  */
@@ -79,6 +80,7 @@ export function verticalPathForFeedCat(
   if (cat === 'cars') return `/${locale}/rides/${slug}`;
   if (cat === 'property') return `/${locale}/properties/${slug}`;
   if (cat === 'tech') return `/${locale}/tech/${slug}`;
+  if (cat === 'services') return `/${locale}/services/${slug}`;
   return `/${locale}/`;
 }
 
@@ -123,7 +125,8 @@ const HERO_BUCKET_PRIORITY: Record<FeedCategoryKey, number> = {
   cars: 0,
   property: 1,
   tech: 2,
-  jobs: 3,
+  services: 3,
+  jobs: 4,
 };
 
 export function pickBalancedHero(

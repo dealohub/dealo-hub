@@ -48,6 +48,7 @@ const STATIC_TOP_ROUTES: Array<{
   { path: '/rides', changeFrequency: 'daily', priority: 0.9 },
   { path: '/properties', changeFrequency: 'daily', priority: 0.9 },
   { path: '/tech', changeFrequency: 'daily', priority: 0.9 },
+  { path: '/services', changeFrequency: 'daily', priority: 0.9 },
   { path: '/search', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/sell', changeFrequency: 'monthly', priority: 0.4 },
 ];

@@ -40,6 +40,7 @@ const VERTICAL_REDIRECTS: Record<string, string> = {
   automotive: 'rides',
   'real-estate': 'properties',
   electronics: 'tech',
+  services: 'services',
 };
 
 const VALID_SORTS: SortOption[] = ['newest', 'price_asc', 'price_desc', 'most_saved'];

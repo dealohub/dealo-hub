@@ -226,9 +226,9 @@ describe('listing language alternates', () => {
 // ---------------------------------------------------------------------------
 
 describe('aggregate sanity', () => {
-  it('returns 14 static entries (7 routes × 2 locales) when no listings/categories', async () => {
+  it('returns 16 static entries (8 routes × 2 locales) when no listings/categories', async () => {
     const entries = await makeBuild([], []);
-    expect(entries).toHaveLength(14);
+    expect(entries).toHaveLength(16);
   });
 
   it('grows by (categories × 2) + (listings × 2)', async () => {
@@ -242,7 +242,7 @@ describe('aggregate sanity', () => {
         { slug: 'furniture', updatedAt: '2024-01-01T00:00:00Z' },
       ],
     );
-    expect(entries).toHaveLength(14 + 4 + 4); // 22
+    expect(entries).toHaveLength(16 + 4 + 4); // 24
   });
 
   it('every URL is absolute (starts with https://)', async () => {

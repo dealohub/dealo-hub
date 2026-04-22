@@ -72,6 +72,8 @@ const SUB_CAT_TO_BUCKET: Readonly<Record<string, FeedCategoryKey>> = {
   gaming: 'tech',
   'smart-watches': 'tech',
   cameras: 'tech',
+  // Services family (Phase 8a) — 1 sub-cat today; 8b-8e add more.
+  'home-services': 'services',
   // Future: jobs sub-cats — add when seeded.
 };
 
@@ -128,6 +130,20 @@ function deriveMeta(fields: unknown): string | undefined {
     f.battery_health_pct <= 100
   ) {
     parts.push(`${f.battery_health_pct}%`);
+  }
+
+  // Services signals — hourly rate + min_hours, or fixed price, or
+  // just rating if the provider has one. Kept minimal — the card's
+  // main value-prop is the star rating, which is on the card body.
+  if (typeof f.hourly_rate_minor_units === 'number' && f.hourly_rate_minor_units > 0) {
+    const kwd = (f.hourly_rate_minor_units / 1000).toFixed(f.hourly_rate_minor_units % 1000 === 0 ? 0 : 2);
+    parts.push(`${kwd} KD/hr`);
+  } else if (typeof f.fixed_price_minor_units === 'number' && f.fixed_price_minor_units > 0) {
+    const kwd = (f.fixed_price_minor_units / 1000).toFixed(f.fixed_price_minor_units % 1000 === 0 ? 0 : 2);
+    parts.push(`${kwd} KD`);
+  }
+  if (typeof f.rating_avg === 'number' && typeof f.rating_count === 'number' && f.rating_count > 0) {
+    parts.push(`★ ${f.rating_avg.toFixed(1)}`);
   }
 
   return parts.length > 0 ? parts.join(' · ') : undefined;

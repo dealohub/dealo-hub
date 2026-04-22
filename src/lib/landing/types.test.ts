@@ -31,6 +31,15 @@ describe('verticalPathForFeedCat', () => {
     );
   });
 
+  it('routes services to /services (Phase 8a)', () => {
+    expect(verticalPathForFeedCat('ar', 'services', 'maryam-clean')).toBe(
+      '/ar/services/maryam-clean',
+    );
+    expect(verticalPathForFeedCat('en', 'services', 'maryam-clean')).toBe(
+      '/en/services/maryam-clean',
+    );
+  });
+
   it('routes unknown categories to locale root (safe fallback)', () => {
     expect(verticalPathForFeedCat('ar', 'jobs', 'barista-12')).toBe('/ar/');
   });

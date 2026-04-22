@@ -56,6 +56,10 @@ const ELECTRONICS_SUBS = new Set([
   'cameras',
 ]);
 
+const SERVICES_SUBS = new Set([
+  'home-services',
+]);
+
 /**
  * Build the detail-page URL for a listing.
  *
@@ -79,6 +83,9 @@ export function listingDetailHref(
   if (categorySlug && ELECTRONICS_SUBS.has(categorySlug)) {
     return `/${locale}/tech/${slugOrId}`;
   }
+  if (categorySlug && SERVICES_SUBS.has(categorySlug)) {
+    return `/${locale}/services/${slugOrId}`;
+  }
   return `/${locale}/listings/${slugOrId}`;
 }
 
@@ -95,5 +102,6 @@ export function listingDetailHrefFromParent(
   if (parentSlug === 'automotive') return `/${locale}/rides/${slugOrId}`;
   if (parentSlug === 'real-estate') return `/${locale}/properties/${slugOrId}`;
   if (parentSlug === 'electronics') return `/${locale}/tech/${slugOrId}`;
+  if (parentSlug === 'services') return `/${locale}/services/${slugOrId}`;
   return `/${locale}/listings/${slugOrId}`;
 }
