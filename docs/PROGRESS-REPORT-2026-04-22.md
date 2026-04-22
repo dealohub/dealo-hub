@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-22
 **Author:** Fawzi Al-Ibrahim
-**Scope:** Phase 7 v2 Electronics vertical — integration layer (post-build) + discovery-surface polish + documentation refresh
+**Scope:** Phase 7 v2 Electronics vertical — integration layer (post-build) + discovery-surface polish + documentation refresh + **smoke-test gate + 3 post-smoke-test fixes (addendum §9)**
 **Audience:** engineering collaborator / technical co-worker
 **Prior report:** `docs/PROGRESS-REPORT-2026-04-21.md` (covers Block A completion, Phase 6 AI-Negotiator, Properties sell-wizard, Phase 7 v1→v2 rebuild build-phase)
 
@@ -22,9 +22,9 @@ The Electronics vertical now sits at genuine parity with Properties and Rides ac
 - sitemap already carried `/tech` (verified)
 - seller publish redirect already routed to `/tech/[slug]` via `listingDetailHrefFromParent` (verified)
 
-**Test health:** 639/639 unit assertions green (was 638; +1 from the new tech-locale routing test). TypeScript clean aside from 3 pre-existing unused-var warnings. No production code path regressions.
+**Test health:** 647/647 unit assertions green (was 638 at session start; +1 from the new tech-locale routing test, +8 from `pickBalancedHero` round-robin regression tests). TypeScript clean aside from 3 pre-existing unused-var warnings. No production code path regressions.
 
-**Push status:** 61 local commits ahead of `origin/master`, still held per the standing rule that design + polish + tests must all be green together before push. The remaining gate is **visual validation** — I have not smoke-tested any of today's work in a real browser. That's the next step before push becomes appropriate.
+**Push status:** 64 local commits ahead of `origin/master`, still held per the standing rule that design + polish + tests must all be green together before push. The smoke-test gate is **partially open** — Fawzi visually validated the landing hero + `/tech` hub + `/tech/[slug]` detail flows and caught two real production bugs that shipped earlier in the session passed review + tests but failed in the browser. Both are now fixed with commits `6d4f271` and `7c3f3ed` (covered in §9). The remaining 5 smoke-test surfaces (mobile viewport, RTL, `/categories/electronics` redirect, navbar Tech menu, `/search` NoResults chip) have not yet been visually validated.
 
 ---
 
@@ -240,4 +240,85 @@ Total change footprint: 339 lines added, 13 removed across 11 source/doc files a
 
 ---
 
-*End of report. I'll wait on the smoke-test step before doing anything else.*
+*End of original report body. See §9 below for the smoke-test addendum.*
+
+---
+
+## 9. Smoke-test addendum — three bugs the integration commits didn't catch
+
+After the original report was written, Fawzi ran the dev server and clicked through `/tech` + `/tech/[slug]` + `/`. Three production bugs surfaced that tests + typecheck + code review had all missed. All three are now fixed; the process is itself a lesson.
+
+### 9.1 Commit `6d4f271` — missing listing_images + broken hero balance
+
+**Bug #1: zero images on electronics cards.** Migration 0035 (Phase 7 v2 seeds) correctly inserted 8 `listings` rows + 8 `electronics_imei_registry` rows, but never inserted into `listing_images`. Every electronics card on `/tech` (hub grid, featured strip, LiveFeed), and the gallery on `/tech/[slug]`, rendered the "لا توجد صورة" placeholder. Worse: the landing feed's `coverUrl()` mapper drops rows without a cover, so all 8 electronics listings were silently filtered out of the landing hero + LiveFeed too — invisible from the most important marketing surface.
+
+**Bug #2: hero swept by electronics after images were seeded.** Once Bug #1 was fixed via `migration 0036` (extended the `listing_images.category` CHECK constraint to admit 4 electronics buckets — `power_on_screen`, `imei_screen`, `battery_health_screen`, `serial_label` — and inserted 4 images × 8 listings = 32 rows), a second-order bug surfaced: the landing page hero now showed **six electronics and zero cars/properties**. Root cause: all 8 electronics seeds had the same recent `published_at`, so when `app/[locale]/page.tsx` called `feed.slice(0, 6)` on the newest-first feed, electronics swept every slot.
+
+**Fix:** new pure function `pickBalancedHero(feed, n)` in `src/lib/landing/types.ts`. Round-robins across `['cars', 'property', 'tech', 'jobs']` using a `Record<FeedCategoryKey, number>` priority map — the type-level record means adding a new vertical forces a compile-time update to the balancer (exactly the kind of drift that caused Bug #2 in the first place). Caller bumped to `limit: 18` (3× headroom over the 6-slot hero) and `feed.slice(0, 6) → pickBalancedHero(feed, 6)`. LiveFeed's `.slice(0, 8)` untouched — the activity strip is correctly newest-first regardless of vertical.
+
+**Process note:** a code-reviewer agent flagged 4 polish items before commit — all applied: exhaustiveness via `Record<>`, tightened `limit: 18` headroom comment, explicit `BEGIN/COMMIT` on the migration, refreshed stale JSDoc example in `queries.ts`. 8 new regression tests lock the round-robin semantics, including the exact 2026-04-22 scenario (8 tech + 2 cars + 2 property → tech capped at 2 of 6).
+
+### 9.2 Commit `7c3f3ed` — hero still missing cars, deeper root cause
+
+After 9.1 landed and Fawzi reloaded, the hero **still had zero cars**. Direct DB inspection told the real story:
+
+```
+SELECT category_slug, MAX(created_at), MAX(published_at)
+FROM listings ... WHERE status='live' GROUP BY parent_vertical;
+
+electronics: created_at = 2026-04-22 (today — migration 0035 apply time)
+properties:  created_at = 2026-04-21 (yesterday — migration 0027 apply time)
+cars:        created_at = 2026-04-20 (older — migration 0022 apply time)
+```
+
+`getLiveFeedListings` ordered by `created_at DESC` + `LIMIT 18`. The top 18 was 8 electronics + 10 properties + **zero cars**. `pickBalancedHero` can't round-robin listings the query never handed it.
+
+**The deeper issue:** `created_at` reflects **row-insert time**, not **story time**. When a seed migration is re-run on a fresh day, `created_at` lies — says "this listing was added today" when really it's an old demo seed. `published_at`, by contrast, is set via `NOW() - INTERVAL '…'` in the seeds so it reflects the narrative date the seed is telling.
+
+**Fix:** two lines in `src/lib/landing/queries.ts`:
+
+1. `.order('created_at', { ascending: false })` → `.order('published_at', { ascending: false, nullsFirst: false })`
+2. `listing_images (url, position)` → `listing_images!inner (url, position)` in `FEED_SELECT`
+
+The second change moves the "has at least one image" filter from post-fetch (inside `mapFeedRow`) to SQL-level (`INNER JOIN`). Before, `LIMIT 18` could return 18 rows where several had no cover, then those got silently dropped by `coverUrl()` in the mapper — leaving fewer than 18 renderable rows and biasing the distribution. After, `LIMIT 18` returns 18 genuinely renderable rows.
+
+Post-fix simulation (verified via direct `execute_sql`):
+```
+top 18 ordered by published_at DESC, listing_images!inner:
+  10 properties + 6 cars + 2 electronics
+  → pickBalancedHero(feed, 6) cleanly returns 2 from each bucket.
+```
+
+Fawzi confirmed the visual ("احسنت") after refresh.
+
+### 9.3 Lessons from the smoke-test gate
+
+Three observations worth capturing for future work:
+
+**a. The unit-test net has a hole: seeded-data integrity.** Bug #1 (zero images) was unit-testable if anyone had written a "seed smoke test" — `describe('electronics seeds: every listing has ≥1 image')`. None of the ~650 tests in the suite asserted seeded-row invariants. That's a category gap, not a specific bug. Queue item: add a minimal `supabase/tests/seed-integrity.sql` or equivalent that runs in CI against a fresh `supabase db reset`.
+
+**b. `created_at` vs `published_at` is a category trap.** Two different systems will semantically want these distinguished — query paths that surface "newest" to users should always use `published_at` (story time), never `created_at` (row time). Our current codebase mixes them. Worth a sweep: grep `order.*created_at` across all queries and decide per call site.
+
+**c. Migration-apply time leaking into user-facing ordering is a seed-environment problem.** In production the mismatch goes away because real listings are `INSERT`'d with `published_at = created_at = NOW()` at publish time. But seed environments (our primary demo surface for the next few weeks) will keep tripping this until fix 9.2 is canonical for all feeds. Consider auditing `rides/queries.ts`, `properties/queries.ts`, `electronics/queries.ts` for the same pattern.
+
+### 9.4 Commit summary addendum
+
+| # | SHA | Category | Summary |
+|---|-----|----------|---------|
+| 5 | `6f00149` | docs | progress report for 2026-04-22 session (this file, original body) |
+| 6 | `6d4f271` | fix | electronics images + balanced hero scatters (migration 0036 + `pickBalancedHero` + 8 tests) |
+| 7 | `7c3f3ed` | fix | order feed by published_at + require images at SQL level |
+
+Total for this session: **7 commits**, 647/647 tests, 64 commits ahead of `origin/master`, smoke-test gate partially open (landing + hub + detail render flows validated; mobile viewport + RTL + redirect + navbar + search NoResults still untested).
+
+### 9.5 What's next
+
+Two options Fawzi can choose between:
+
+**(a) Finish the smoke-test gate.** Click through the 5 remaining surfaces listed in §3. If nothing else breaks, the push gate is fully open. Estimated: under 5 minutes of clicking.
+
+**(b) Ship the low-risk portion + tackle the seed-integrity CI gap.** The 5 remaining surfaces are lower-probability regression sites than what we already hit (mobile bar is a self-contained component; RTL follows CSS; the redirect is a one-line map; navbar is HTML; `/search` NoResults is a single new link). Could push now and patch forward. My vote: still (a). We've been burned twice today by "it passed tests, must be fine"; a 5-minute click-through is cheap insurance.
+
+---
+
+*End of addendum. Written immediately after commit `7c3f3ed`. Awaiting Fawzi's call on §9.5.*
