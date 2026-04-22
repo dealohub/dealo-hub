@@ -461,3 +461,83 @@ This session marked a **chapter close** via the `ccd_session__mark_chapter` tool
 ---
 
 *End of report. Total addendum weight: §9 (smoke-test fixes), §10 (Phase 8a delivery), §11 (chapter close). Ready for cowork handoff.*
+
+---
+
+## 12. Phase 8b (partial) — Live Feed bento redesign + Arabic localization fix
+
+Late in the day Fawzi pivoted to the landing page's "Fresh from our partners" section. The previous LiveFeed design was a vertical strip of filter-pilled listing cards — good for density, but Fawzi wanted a **bento treatment** so the section could eventually host a mix of content types (live feed, featured listing of the day, verified-partners row, price-drop tile, trending tile, etc.).
+
+### 12.1 Pulling Feature 261 from shadcnblocks
+
+Direction: use the shadcnblocks Pro registry (key already in `.env.local`) to fetch a reference bento and swap one tile for the live feed.
+
+Steps:
+1. Created `components.json` at the repo root — the shadcn CLI needs this to resolve registry aliases. Contains the standard aliases (`@/components`, `@/lib`, etc.) + a `registries` entry for `@shadcnblocks` pointing at `https://www.shadcnblocks.com/r/{name}.json` with an `Authorization: Bearer ${SHADCNBLOCKS_API_KEY}` header. The env-var interpolation means the key never enters the repo.
+2. Ran `npx shadcn@latest add @shadcnblocks/feature261`. This pulled `src/components/feature261.tsx` (157 lines — 8-tile bento with one big hero image, one big text card, a 95% stat card, a $299 CTA card, an avatar-cluster 300+ card, two placeholder image tiles, and a Rapid-Development card with a Clock icon) plus 3 transitive shadcn primitives: `src/components/ui/avatar.tsx`, `src/components/ui/button.tsx`, `src/components/ui/card.tsx`. The avatar primitive required a new dep `@radix-ui/react-avatar@^1.1.11` which `npm` added to both `package.json` and `package-lock.json`.
+3. Built a standalone preview at `experiments/feature261-live/index.html` replacing the first hero image with a live-feed mock (6 compact rows: time dot, thumbnail, category chip, title, city, price). Kept the other 7 tiles as-is. Used this to sanity-check the proportions before touching production code.
+
+### 12.2 Swap into production `live-feed.tsx`
+
+After Fawzi approved the experiment ("موافق ولكن بحذر انت المهندس"), transplanted the bento into `src/components/shadcnblocks/live-feed.tsx`. The section now renders:
+
+- **`LiveStatusBar`** and **`FeedHeader`** (kept — rotation logic + count-up metrics + sparkline + centered eyebrow/headline/subline still work as-is).
+- **8-tile bento grid** below the header, using the same `lg:col-span-{n}` + `md:col-span-{n}` + `row-span-{n}` coordinates as the shadcnblocks source so the layout reads identically.
+- **Tile 1** (top-left big): the live feed itself. Custom `LiveFeedRow` component — pulse dot (on for fresh items) + 10×10 thumbnail + category chip + city OR price-drop flag + title + price. Shows up to 6 rows. Header strip reads "LIVE ● أحدث N" at the top, footer reads "يُحدَّث كل 8 ثوانٍ · شاهد الكل ←" at the bottom. `bg-muted` + border so the tile is visible against the dark background (earlier iteration with `bg-card` faded into the page).
+- **Tiles 2–8**: Feature 261 editorial placeholders kept verbatim — `$299`, 95% stat, 300+ developer avatars, Rapid Development card, two placeholder SVGs. These will be rewritten per Fawzi's plan (each tile dedicated to a marketplace purpose — featured listing of the day, market stats, verified partners, biggest price drop, trending-now, etc.) but explicit direction was "ليس الان" (not now), so they stay as-is.
+
+Removed from the old LiveFeed: `filter` state, `FilterPills`, `AnimatePresence`, `SignalRow`, `ListingCardTimeline` (the old filter-pill + big-listing-card layout is no longer the presentation — rotation signals still feed `LiveStatusBar` stats via the internal `feed` state, they just don't render as rows).
+
+### 12.3 Arabic/English mixing — the late-session bug
+
+After the swap landed, Fawzi took a viewport screenshot and flagged that the live feed tile was **mixing Arabic and English** on the `/ar` locale:
+- chip said `PROPERTY` instead of `عقارات`
+- time column said `Now`, `1m`, `3m` instead of `الآن`, `1د`, `3د`
+- header pill said `LIVE` instead of `مباشر`
+- city column said `Hawalli` (stale cache — actually already correct on latest build)
+- prices looked fine (they come from `formatPrice(locale)` which was already locale-aware)
+
+Root causes, two of them:
+
+1. **Static English category label.** `LiveFeedRow` was importing the static `CAT_LABEL` constant from `live-feed-parts.tsx` (`{ cars: 'Cars', property: 'Property', ... }`) instead of the `useCatLabels()` hook that already existed and wraps `useTranslations('marketplace.feed.filters')`. Swapped the import + usage — chip now renders `عقارات` / `سيارات` / `إلكترونيات`.
+
+2. **Static English relative-time.** The existing `useRelativeTime` hook returned hardcoded strings like `Just now` / `${sec}s ago` / `${min}m ago`. Bento rows couldn't localize those. Added a sibling hook `useShortRelativeTime` that returns `{ short, isFresh }` using translations: `الآن` / `${sec}ث` / `${min}د` / `${hr}س` / `${d}ي` on AR, `Now` / `${sec}s` / `${min}m` / `${hr}h` / `${d}d` on EN. New translation keys appended to `marketplace.feed.card`: `now`, `secondsShort`, `minutesShort`, `hoursShort`, `daysShort` (AR + EN mirrored). Kept the original `useRelativeTime` untouched — still used by the old `ListingCard` and `SignalRow` components which remain exported for any downstream consumer (or in case the old layout gets reinstated).
+
+Also replaced the one hardcoded `Live` label in the bento tile header with `{tBar('live')}` (the `marketplace.liveBar.live` key — "مباشر" — already existed for the global status bar).
+
+Verification pass via chrome-devtools MCP:
+```text
+chips:    ["عقارات", "عقارات", ...]
+times:    ["الآن", "1د", "3د", "5د", "7د", "9د"]
+rows:     ["الآن | عقارات | محافظة حولي | شقة في السالمية | ‏450.000 د.ك.‏", ...]
+liveChip: "مباشر"
+header:   "مباشر\nأحدث 7"
+```
+
+All five mixing surfaces (chip + time + LIVE + city + price) now render 100% Arabic on `/ar`. English locale unchanged — verified translation keys resolve correctly on both sides.
+
+### 12.4 State at session end
+
+- Bento layout live on `/` (both locales). 1 tile wired to real data (live feed), 7 tiles still Feature 261 placeholders.
+- Arabic localization complete for the live-feed tile. Remaining English in the section (`$299`, `95%`, `Delighted developers`, `Rapid Development`) is inside placeholder tiles — known + explicitly deferred.
+- Typecheck clean. No new warnings from this session (still the same 3 pre-existing unused-var warnings noted in §1).
+- Not committed at time of §12 write-up — Fawzi will review the bento screenshot then direct the commit scope.
+
+### 12.5 Queued work on this section
+
+Per Fawzi's direction ("كل بطاقة سوف تكون مخصص لشيء"), the 7 placeholder tiles should each map to a marketplace purpose:
+- Tile 2 (4×2): featured listing of the day (hero image + prominent price)
+- Tile 3 (2×1): market stat "247 new listings today" + sparkline
+- Tile 4 (2×1): Dealo verified-badge count or partner-of-the-hour logo
+- Tile 5 (4×1): biggest price drop now (listing thumb + old→new price)
+- Tile 6 (3×1): verified-partner logos strip (Emaar / Gargash / Damac / ...)
+- Tile 7 (5×1): company listings / featured-partner-of-the-hour
+- Tile 8 (4×1): most-trending listing + watcher count
+
+Also on the list: resolve the KWD 3-decimal price format confusion (`185,000.000` reads as billions at a glance). Options include switching to a 0-decimal display when the fractional part is `.000`, or introducing a locale-aware `formatPriceCompact` variant. Not blocking the current section but worth a design pass before the tiles populate with real data.
+
+Before the merge to master: run `/ultrareview` on the Phase 8b branch for multi-agent bug verification (Fawzi has 3 free Max-plan runs through 2026-05-05 — ideal gate for a substantial UI + state + i18n change like this).
+
+---
+
+*End of report. §12 appended as partial — Phase 8b bento foundation + Arabic fix shipped, 7-tile customization queued. Ready for cowork handoff or continuation.*

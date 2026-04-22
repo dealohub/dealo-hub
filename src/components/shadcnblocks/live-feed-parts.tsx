@@ -54,6 +54,27 @@ export const useRelativeTime = (ts: number) => {
   return `${d}d ago`;
 };
 
+// Localized compact relative time used by the bento live-feed tile.
+// Returns { short, isFresh } where `short` is like "الآن" / "16ث" / "1د".
+export const useShortRelativeTime = (ts: number) => {
+  const [, tick] = useReducer((x: number) => x + 1, 0);
+  useEffect(() => {
+    const id = setInterval(tick, 30_000);
+    return () => clearInterval(id);
+  }, []);
+  const t = useTranslations('marketplace.feed.card');
+  const diff = Math.max(0, Date.now() - ts);
+  const sec = Math.floor(diff / 1000);
+  if (sec < 10) return { short: t('now'), isFresh: true };
+  if (sec < 60) return { short: `${sec}${t('secondsShort')}`, isFresh: false };
+  const min = Math.floor(sec / 60);
+  if (min < 60) return { short: `${min}${t('minutesShort')}`, isFresh: false };
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return { short: `${hr}${t('hoursShort')}`, isFresh: false };
+  const d = Math.floor(hr / 24);
+  return { short: `${d}${t('daysShort')}`, isFresh: false };
+};
+
 // ─── Category color dots ─────────────────────────────────────
 export const CAT_COLORS: Record<CategoryKey, string> = {
   cars: '#ef4444',
