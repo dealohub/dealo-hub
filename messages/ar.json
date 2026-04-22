@@ -2184,5 +2184,54 @@
       "viewDetails": "التفاصيل"
     },
     "cardListings": "إعلان"
+  },
+  "servicesDetail": {
+    "aboutTitle": "عن الخدمة",
+    "header": {
+      "home": "الرئيسية",
+      "services": "الخدمات",
+      "featured": "مميّز",
+      "hot": "رائج",
+      "reviews": "مراجعة",
+      "jobsDone": "مهمة منجزة",
+      "yearsExperience": "سنوات خبرة"
+    },
+    "provider": {
+      "title": "معلومات المزوّد",
+      "teamSize": "حجم الفريق",
+      "experience": "الخبرة",
+      "years": "سنوات",
+      "availability": "التوفّر",
+      "supplies": "مواد التنظيف",
+      "suppliesIncluded": "مشمولة",
+      "suppliesExtra": "على العميل",
+      "languages": "اللغات",
+      "serviceAreas": "مناطق الخدمة",
+      "attestationsTitle": "إقرارات المزوّد",
+      "attestationsBody": "أقرّ المزوّد بالامتثال لقانون الكويت 68/2015 (العمل المنزلي) + تفويض تقديم الخدمة. هذه إقرارات ذاتية؛ Dealo ليست جهة ترخيص."
+    },
+    "reviews": {
+      "title": "مراجعات العملاء",
+      "reviews": "مراجعة",
+      "emptyTitle": "لا توجد مراجعات بعد",
+      "emptyBody": "المراجعات تُفتح فقط بعد أن يؤكّد الطرفان إنجاز الخدمة. مزوّد جديد = لا توجد مهام مكتملة بعد."
+    },
+    "purchase": {
+      "priceLabel": "السعر",
+      "hour": "ساعة",
+      "minHours": "حد أدنى {hours} ساعات",
+      "minHoursShort": "حد أدنى {hours}س",
+      "fixedPrice": "سعر ثابت",
+      "fixedAlt": "كباقة شاملة",
+      "contactCta": "تواصل مع المزوّد",
+      "quoteFlowTitle": "قريباً: اطلب ٣ عروض أسعار",
+      "quoteFlowBody": "قادم في التحديث القادم — أجب ٤ أسئلة سريعة، وثلاثة مزوّدين يرسلون عرضاً هيكلياً خلال ٢٤ ساعة.",
+      "guaranteeTitle": "ضمان Dealo حتى 200 د.ك",
+      "guaranteeBody": "إذا بقيت كل المحادثة داخل Dealo، نغطيك في النزاعات بحد أقصى 200 د.ك.",
+      "chatOnlyNote": "لن يظهر رقم الهاتف أو البريد. كل التواصل يبقى داخل المحادثة الآمنة."
+    },
+    "similar": {
+      "title": "خدمات مشابهة"
+    }
   }
 }

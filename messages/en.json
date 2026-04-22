@@ -2184,5 +2184,54 @@
       "viewDetails": "Details"
     },
     "cardListings": "listings"
+  },
+  "servicesDetail": {
+    "aboutTitle": "About this service",
+    "header": {
+      "home": "Home",
+      "services": "Services",
+      "featured": "Featured",
+      "hot": "Hot",
+      "reviews": "reviews",
+      "jobsDone": "jobs done",
+      "yearsExperience": "yrs experience"
+    },
+    "provider": {
+      "title": "About the provider",
+      "teamSize": "Team size",
+      "experience": "Experience",
+      "years": "years",
+      "availability": "Availability",
+      "supplies": "Cleaning supplies",
+      "suppliesIncluded": "Included",
+      "suppliesExtra": "Client provides",
+      "languages": "Languages",
+      "serviceAreas": "Service areas",
+      "attestationsTitle": "Provider attestations",
+      "attestationsBody": "Provider attested compliance with Kuwait Law 68/2015 (domestic labor) + authorization to offer the service. These are self-attestations — Dealo is not a licensing body."
+    },
+    "reviews": {
+      "title": "Customer reviews",
+      "reviews": "reviews",
+      "emptyTitle": "No reviews yet",
+      "emptyBody": "Reviews only unlock after both sides confirm the job is done. A new provider means no completed jobs yet."
+    },
+    "purchase": {
+      "priceLabel": "Price",
+      "hour": "hr",
+      "minHours": "Minimum {hours} hours",
+      "minHoursShort": "min {hours}h",
+      "fixedPrice": "fixed price",
+      "fixedAlt": "as a package",
+      "contactCta": "Contact provider",
+      "quoteFlowTitle": "Coming soon: get 3 quotes",
+      "quoteFlowBody": "Next update — answer 4 quick questions and 3 providers send structured quotes within 24 hours.",
+      "guaranteeTitle": "Dealo Guarantee up to KD 200",
+      "guaranteeBody": "Keep the conversation inside Dealo and we stand behind disputes up to KD 200.",
+      "chatOnlyNote": "Phone number + email never shown. All contact stays inside the secure chat."
+    },
+    "similar": {
+      "title": "Similar services"
+    }
   }
 }

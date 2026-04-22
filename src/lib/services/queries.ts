@@ -486,5 +486,50 @@ export const getReviewsForProvider = cache(
   },
 );
 
+export const getSimilarServices = cache(
+  async function getSimilarServices(
+    listingId: number,
+    taskType: TaskType,
+    limit: number,
+    opts: { locale: 'ar' | 'en' } = { locale: 'ar' },
+  ): Promise<ServiceCard[]> {
+    const supabase = createClient();
+
+    // Step 1 — same task_type (tight match)
+    const { data: tight } = await supabase
+      .from('listings')
+      .select(CARD_SELECT)
+      .eq('status', 'live')
+      .not('fraud_status', 'in', '(held,rejected)')
+      .is('soft_deleted_at', null)
+      .neq('id', listingId)
+      .filter('category_fields->>task_type', 'eq', taskType)
+      .order('published_at', { ascending: false, nullsFirst: false })
+      .limit(limit);
+
+    let rows = (tight as any[]) ?? [];
+
+    // Step 2 — same family (cleaning OR handyman) if tight pool undersized
+    if (rows.length < limit) {
+      const family = taskType.startsWith('home_cleaning_') ? 'home_cleaning_' : 'handyman_';
+      const { data: fb } = await supabase
+        .from('listings')
+        .select(CARD_SELECT)
+        .eq('status', 'live')
+        .not('fraud_status', 'in', '(held,rejected)')
+        .is('soft_deleted_at', null)
+        .neq('id', listingId)
+        .filter('category_fields->>task_type', 'like', `${family}%`)
+        .order('published_at', { ascending: false, nullsFirst: false })
+        .limit(limit);
+      rows = (fb as any[]) ?? rows;
+    }
+
+    return rows
+      .map((r) => mapCard(r, opts.locale))
+      .filter((x): x is ServiceCard => x !== null);
+  },
+);
+
 // Re-export so the sub-cat set is importable from a single place.
 export { SERVICE_SUB_CATS };
