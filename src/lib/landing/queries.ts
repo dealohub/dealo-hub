@@ -139,13 +139,13 @@ function deriveMeta(fields: unknown): string | undefined {
 
 const FEED_SELECT = `
   id, slug, title, price_minor_units, currency_code, old_price_minor_units,
-  is_featured, created_at, category_fields,
+  is_featured, created_at, published_at, category_fields,
   seller:profiles!listings_seller_id_fkey (
     display_name, dealer_name, is_dealer, dealer_verified_at
   ),
   city:cities!listings_city_id_fkey (name_ar, name_en),
   category:categories!listings_category_id_fkey (slug),
-  listing_images (url, position)
+  listing_images!inner (url, position)
 ` as const;
 
 interface RawFeedRow {
@@ -157,6 +157,7 @@ interface RawFeedRow {
   old_price_minor_units: number | string | null;
   is_featured: boolean;
   created_at: string;
+  published_at: string | null;
   category_fields: unknown;
   seller: {
     display_name: string;
@@ -264,13 +265,20 @@ export const getLiveFeedListings = cache(
     const limit = opts.limit ?? 12;
     const supabase = createClient();
 
+    // Order by published_at (story-time), not created_at (row-insert
+    // time). Before 2026-04-22 these were nearly identical so ordering
+    // by either worked; that day, migration 0035 re-seeded 8 electronics
+    // listings at NOW() and the `created_at` order swept the top 18,
+    // dropping every car out of the landing feed + hero pool. `published_at`
+    // reflects the INTERVAL offsets the seeds intentionally spread across,
+    // which is the semantic we actually want for "newest listings".
     const { data, error } = await supabase
       .from('listings')
       .select(FEED_SELECT)
       .eq('status', 'live')
       .not('fraud_status', 'in', '(held,rejected)')
       .is('soft_deleted_at', null)
-      .order('created_at', { ascending: false })
+      .order('published_at', { ascending: false, nullsFirst: false })
       .limit(limit);
 
     if (error) {
