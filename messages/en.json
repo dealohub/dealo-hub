@@ -223,6 +223,16 @@
       }
     },
     "trustFootnote": "Dealo doesn't ship counterfeit. Sixteen trigger terms (Arabic + English) are rejected at submit.",
+    "liveFeed": {
+      "eyebrow": "Live · last 24h",
+      "title": "Happening now",
+      "subline": "Fresh listings, price drops, and trade-in offers from across the GCC.",
+      "eventNew": "New",
+      "eventPriceDrop": "Price drop",
+      "eventInspected": "Inspected",
+      "eventFeatured": "Featured",
+      "eventTrade": "Trade"
+    },
     "gridTitle": "All tech",
     "viewAll": "View all in /categories",
     "emptyTitle": "No tech listings yet",

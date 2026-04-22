@@ -21,10 +21,12 @@ import SiteFooter from '@/components/shadcnblocks/site-footer';
 import ThemeToggle from '@/components/theme-toggle';
 import LocaleToggle from '@/components/locale-toggle';
 import ListingCardElectronics from '@/components/shadcnblocks/listing-card-electronics';
+import ElectronicsLiveFeed from '@/components/shadcnblocks/electronics-live-feed';
 import {
   getFeaturedElectronics,
   getElectronicsForGrid,
   getElectronicsSubCatCounts,
+  getRecentElectronicsActivity,
 } from '@/lib/electronics/queries';
 import type { ElectronicsCategoryKey } from '@/lib/electronics/types';
 
@@ -100,10 +102,11 @@ export default async function ElectronicsHubPage({
     namespace: 'electronicsHub',
   });
 
-  const [featured, grid, counts] = await Promise.all([
+  const [featured, grid, counts, activity] = await Promise.all([
     getFeaturedElectronics({ locale: params.locale, limit: 6 }),
     getElectronicsForGrid({ locale: params.locale, limit: 24 }),
     getElectronicsSubCatCounts(),
+    getRecentElectronicsActivity({ locale: params.locale, limit: 12 }),
   ]);
 
   const totalLive = SUB_CATS.reduce((sum, k) => sum + counts[k], 0);
@@ -115,7 +118,8 @@ export default async function ElectronicsHubPage({
     <>
       <EcommerceNavbar1 />
 
-      <main className="mx-auto max-w-7xl px-6 pb-16 pt-10">
+      <main className="pb-16 pt-10">
+        <div className="mx-auto max-w-7xl px-6">
         {/* ── 1. Hero ── */}
         <section className="mb-12 grid gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-end">
           <div className="space-y-4">
@@ -175,7 +179,12 @@ export default async function ElectronicsHubPage({
             </div>
           </aside>
         </section>
+        </div>
 
+        {/* ── 1.5 LiveFeed — full-width banner ── */}
+        {activity.length > 0 && <ElectronicsLiveFeed items={activity} />}
+
+        <div className="mx-auto max-w-7xl px-6 pt-12">
         {/* ── 2. Browse by type ── */}
         <section className="mb-12 space-y-4">
           <header>
@@ -318,6 +327,7 @@ export default async function ElectronicsHubPage({
             </div>
           )}
         </section>
+        </div>
       </main>
 
       <SiteFooter />

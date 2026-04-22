@@ -536,6 +536,135 @@ export const getElectronicsForGrid = cache(
   },
 );
 
+// ---------------------------------------------------------------------------
+// Recent activity — LiveFeed strip on the hub
+// ---------------------------------------------------------------------------
+//
+// Mirrors getRecentPropertyActivity. Returns the latest N published
+// electronics listings with a synthetic `event` label so the LiveFeed
+// component can render a mix of "new / inspected / price_drop / trade"
+// pills without needing a real event stream.
+//
+// Event derivation precedence (same as Properties):
+//   price_drop (old_price_minor_units set)
+//   → inspected (dealo_inspected tier)
+//   → trade (accepts_trade true — surfaces P8 badal at discovery)
+//   → featured (is_featured)
+//   → new (default)
+
+export interface ElectronicsActivityItem {
+  id: number;
+  slug: string;
+  title: string;
+  cover: string | null;
+  cityName: string;
+  areaName: string | null;
+  priceMinorUnits: number;
+  currencyCode: 'KWD' | 'USD' | 'AED' | 'SAR';
+  brand: string;
+  model: string;
+  deviceKind: DeviceKind;
+  storageGb: number | null;
+  batteryHealthPct: number | null;
+  acceptsTrade: boolean;
+  subCat: ElectronicsCategoryKey;
+  verificationTier: VerificationTier;
+  event: 'new' | 'price_drop' | 'inspected' | 'featured' | 'trade';
+  createdAt: string;
+}
+
+export const getRecentElectronicsActivity = cache(
+  async function getRecentElectronicsActivity(
+    opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
+  ): Promise<ElectronicsActivityItem[]> {
+    const limit = opts.limit ?? 12;
+    const supabase = createClient();
+
+    const parent = await supabase
+      .from('categories')
+      .select('id')
+      .eq('slug', 'electronics')
+      .single();
+    if (!parent.data?.id) return [];
+
+    const kids = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', parent.data.id);
+    const ids = (kids.data ?? []).map((c: any) => c.id);
+    if (ids.length === 0) return [];
+
+    const { data, error } = await supabase
+      .from('listings')
+      .select(CARD_SELECT + ', is_hot, old_price_minor_units')
+      .in('category_id', ids)
+      .eq('status', 'live')
+      .not('fraud_status', 'in', '(held,rejected)')
+      .is('soft_deleted_at', null)
+      .order('published_at', { ascending: false })
+      .limit(limit);
+
+    if (error || !data) {
+      if (error)
+        console.error(
+          '[electronics/queries] getRecentElectronicsActivity error:',
+          error.message,
+        );
+      return [];
+    }
+
+    return (data as any[])
+      .map(row => {
+        const subCatSlug = row.category?.slug;
+        if (!isElectronicsSubCat(subCatSlug)) return null;
+        const validation = validateElectronicsFieldsRawV2(
+          row.category_fields,
+          subCatSlug,
+        );
+        if (!validation.success) return null;
+        const f = toElectronicsFields(validation.data);
+
+        const cover =
+          (row.listing_images ?? [])
+            .slice()
+            .sort((a: any, b: any) => a.position - b.position)[0]?.url ?? null;
+
+        const hasPriceDrop = row.old_price_minor_units != null;
+        const event: ElectronicsActivityItem['event'] = hasPriceDrop
+          ? 'price_drop'
+          : row.verification_tier === 'dealo_inspected'
+            ? 'inspected'
+            : f.acceptsTrade
+              ? 'trade'
+              : row.is_featured
+                ? 'featured'
+                : 'new';
+
+        return {
+          id: row.id as number,
+          slug: row.slug as string,
+          title: pickTitle(row, opts.locale),
+          cover,
+          cityName: pickLocalised(row.city, opts.locale),
+          areaName: row.area ? pickLocalised(row.area, opts.locale) : null,
+          priceMinorUnits: Number(row.price_minor_units),
+          currencyCode: row.currency_code as ElectronicsActivityItem['currencyCode'],
+          brand: f.brand,
+          model: f.model,
+          deviceKind: f.deviceKind,
+          storageGb: f.storageGb ?? null,
+          batteryHealthPct: f.batteryHealthPct ?? null,
+          acceptsTrade: !!f.acceptsTrade,
+          subCat: subCatSlug,
+          verificationTier: row.verification_tier as VerificationTier,
+          event,
+          createdAt: row.created_at as string,
+        } satisfies ElectronicsActivityItem;
+      })
+      .filter((x): x is ElectronicsActivityItem => x !== null);
+  },
+);
+
 export async function getElectronicsSubCatCounts(): Promise<
   Record<ElectronicsCategoryKey, number>
 > {
