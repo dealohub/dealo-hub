@@ -322,3 +322,85 @@ Two options Fawzi can choose between:
 ---
 
 *End of addendum. Written immediately after commit `7c3f3ed`. Awaiting Fawzi's call on §9.5.*
+
+---
+
+## 10. Phase 8a — Home Services vertical (shipped same-day)
+
+After the Electronics smoke-test fixes landed, Fawzi greenlit Phase 8 (Services vertical) with the same doctrine-first methodology the Electronics v2 rebuild proved. What shipped today, in order.
+
+### 10.1 Research — three tracks + synthesis + doctrine
+
+Three parallel research tracks ran before any code:
+
+- `planning/research-8a-home-services/01-GCC-LIVE-DOM.md` — live Chrome DevTools MCP navigation of Dubizzle Kuwait's /services section (1,708 total ads, 6 under Domestic, most mislabeled) and Q84Sale/4Sale's cleaning-services page (171 ads, district filters, a **"Get Quotes" button that 500s** at probe time — the Thumbtack moat visible and unclaimed locally). Captured with 6 screenshots saved under the same folder.
+- `planning/research-8a-home-services/02-GLOBAL-SOTA.md` — 770-word agent-produced analysis of Thumbtack, TaskRabbit, and Bark. Captured the "5-max quote cap" primitive, the "Happiness Pledge only for platform bookings" anti-disintermediation lever, and the pay-per-lead / broadcast-phone failure modes to reject.
+- `planning/research-8a-home-services/03-KUWAIT-CONTEXT.md` — 858-word agent-produced regulatory + cultural map. Critical: Law 68/2015 + kafala make sponsored-worker moonlighting an **immigration offense** (up to 6 months + KD 600). No Kuwait platform-intermediary safe-harbor — Dealo inherits merchant-side duties.
+- `planning/research-8a-home-services/00-SYNTHESIS.md` — 1,700-word cross-cut distillation that derived the 10 doctrine pillars and flagged 8 open-design questions for founder sign-off.
+- `planning/PHASE-8A-HOME-SERVICES.md` — 10 pillars, 14-field schema, 4 chat-primitive extensions, explicit Phase 8a/b/c/d/e roadmap. Founder delegated all 8 open-design questions with "ابدأ" — each decision recorded inline in §8 of the doctrine with rationale.
+
+### 10.2 Code — six chunks, one session
+
+| # | SHA | Scope |
+|---|-----|-------|
+| 1 | `f423121` | **Foundation** — doctrine + 2 migrations (taxonomy + 3 tables + RLS + messages.kind enum) + src/lib/services/ types + validators + 67 tests |
+| 2 | `75fe473` | **Hub + seeds** — queries layer + migration 0039a/b (5 providers + 12 listings + 14 served-areas + display-name trigger-override fix) + listing-card-services + /services hub page + 26 i18n keys |
+| 3 | `2363046` | **Detail page** — 5 components (header + provider card + reviews + purchase panel + similar) + getSimilarServices query + 8 bookings + 16 reviews seed + 28 i18n keys |
+| 4 | `503cfdc` | **Discovery integration** — navbar Services mega-menu + /categories/services redirect + landing feed bucket + verticalPathForFeedCat + HERO_BUCKET_PRIORITY + sitemap + route resolver + /search NoResults chip |
+| 5 | `d506070` | **Quote flow + chat primitives** — 4 server actions with typed errors (sendQuoteRequest / respondWithQuote / proposeBooking / markCompletion) + ChatMessage.kind + payload plumbing through queries → types → MessageBubble dispatcher + 4 distinct chat cards per kind + 18 i18n keys |
+| 6 | `6e4730a` | **Sell wizard** — 7-section ServicesDetailsForm wired into /sell/details branch + 40 i18n keys including the 2 P9 attestation texts verbatim from doctrine |
+
+### 10.3 Numbers
+
+- **Tests** — 715/715 green (was 647 at Phase 8a start; +67 for the new validators suite and +1 for the tech-bucket routing assertion from the pickBalancedHero change).
+- **Migrations applied** — 4 (0037 services taxonomy + 3 tables + profile extensions, 0038 messages.kind + payload, 0039a/b/c providers + listings + bookings).
+- **Screenshots** — 12 verification screenshots saved under `planning/research-8a-home-services/screenshots/` covering Dubizzle + Q84Sale live DOM + Dealo hub at viewport-native size + hub with correct Arabic names + detail page header + reviews section + similar strip.
+- **Chat primitives** — 4 new message kinds writable via server actions + renderable in existing /messages/[id] thread with per-kind color coding (sky / emerald / indigo / emerald-pill).
+- **Commits this phase** — 6 (listed in §10.2).
+
+### 10.4 What works end-to-end today
+
+1. A buyer browses `/ar/services`, sees hero + 8 task-type browse tiles + 4-pillar trust strip + 6 featured providers + full 12-listing grid.
+2. Clicks any card → lands on `/ar/services/[slug]` detail page with provider card (tier + languages + governorates + attestations card) + reviews (keyed to completed bookings, 3-tag chips) + sticky purchase panel (transparent pricing per P7, Dealo Guarantee callout per P8, chat-only note per DECISIONS #2).
+3. Hits "تواصل مع المزوّد" → existing chat flow opens (ContactSellerButton, unchanged since Phase 5c).
+4. In the thread, the 4 new structured message kinds are writable via server actions + renderable as cards.
+5. From the navbar, Services mega-menu is discoverable. `/categories/services` 308s to `/services`. `/search` with zero results offers `/services` alongside the other verticals. The landing feed's pickBalancedHero round-robin now covers cars + property + tech + services.
+
+### 10.5 What's explicitly NOT in Phase 8a
+
+- **Composer UI** for the quote primitives (the buyer-facing "request 3 quotes" card and the provider's quote-response form) — data layer is ready; UI form ships in 8b.
+- **Fan-out matchmaking** (one quote_request → N provider conversations) — needs real provider inventory scale; phase 8b.
+- **Dealo Guarantee claim filing** — schema ready (`service_bookings.guarantee_applies`); admin UI + arbitration workflow is its own phase.
+- **Phase 8b-e sub-cats** — moving-storage / event-services / photography (Thumbtack family extensions), beauty + tutoring (Mindbody family), plumbing/electrical (MOCI-licensed trades family). Each gets its own doctrine.
+- **Rate limits on quote submissions** — Phase 5g's rate_limits table is ready; 1-liner wire-up when the composer ships.
+
+### 10.6 Commits summary (updated)
+
+| # | SHA | Category | Summary |
+|---|-----|----------|---------|
+| 1 | `7319afb` | feat | Phase 7 v2 integration (navbar + redirect + articles + mobile bar) |
+| 2 | `1652ac7` | fix | tech feed + hero routing |
+| 3 | `5d63df3` | polish | landing bucket + deriveMeta |
+| 4 | `a30a38f` | docs | STATUS refresh (P7 v2 integration) |
+| 5 | `6f00149` | docs | this report (initial body) |
+| 6 | `6d4f271` | fix | electronics images + balanced hero scatters |
+| 7 | `7c3f3ed` | fix | published_at ordering + listing_images!inner |
+| 8 | `c95f8f6` | docs | addendum §9 |
+| 9 | `f423121` | feat | Phase 8a foundation |
+| 10 | `75fe473` | feat | Phase 8a hub + seeds |
+| 11 | `2363046` | feat | Phase 8a detail page |
+| 12 | `503cfdc` | feat | Phase 8a discovery integration |
+| 13 | `d506070` | feat | Phase 8a quote flow + chat primitives |
+| 14 | `6e4730a` | feat | Phase 8a sell wizard |
+
+71 commits ahead of `origin/master`. Still held per the rule.
+
+### 10.7 Immediate next candidates (founder's call)
+
+- **Visual smoke-test the remaining Phase 7 surfaces + the new /services + quote flow rendering.** 5-10 mins of clicking through.
+- **Phase 8b: quote-composer UI + fan-out matchmaking.** The data layer is ready; the UX to actually USE it is the main unfinished lever.
+- **Push the 71 commits.** Everything green; the only remaining gate is visual validation.
+
+---
+
+*End of addendum §10. Written after commit `6e4730a`.*
