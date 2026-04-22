@@ -183,15 +183,15 @@
   },
   "electronicsHub": {
     "metaTitle": "إلكترونيات وتقنية · ديلو",
-    "metaDescription": "بيع وشراء الموبايلات واللابتوبات والتلفزيونات والألعاب والساعات الذكية والكاميرات في الكويت — كل مواصفة موثّقة، وكل بطارية معلومة.",
-    "eyebrow": "إلكترونيات · الكويت",
-    "headline": "كل مواصفة موثّقة. كل بطارية معلومة.",
-    "subline": "أول سوق إلكترونيات بحماية ذكاء اصطناعي في الكويت. IMEI على كل موبايل، صحّة بطارية على كل جهاز، منطقة وقفل مشغّل على كل ورقة مواصفات — كلها أشياء دوبيزل و Q84Sale ما يفرضون الإفصاح عنها.",
+    "metaDescription": "اشترِ وبِع الموبايلات واللابتوبات والتلفزيونات وأجهزة الألعاب والساعات الذكية والكاميرات في دول الخليج — كل مواصفة موثّقة وكل بطارية معلنة.",
+    "eyebrow": "تقنية · الخليج",
+    "headline": "كل مواصفة موثّقة. كل بطارية معلنة.",
+    "subline": "سوق التقنية الموثوق في الخليج. موديلات مختارة من قائمة معتمدة، صحّة بطارية واضحة، مصدر الشراء موثّق، وبلا مقلّدات.",
     "statsListings": "إعلان مباشر",
     "statsInspected": "مفحوص ديلو",
-    "sellCta": "بيع جهازك ←",
+    "sellCta": "بِع جهازك ←",
     "typesTitle": "تصفّح حسب النوع",
-    "typesSubline": "6 عائلات أجهزة، مرتّبة حسب طريقة شراء أهل الكويت فعلاً.",
+    "typesSubline": "ست عائلات من الأجهزة. كلّها بيانات منظّمة، مو نصوص حرّة.",
     "listingsShort": "مباشر",
     "types": {
       "phones-tablets": "موبايلات وتابلت",
@@ -203,33 +203,33 @@
     },
     "featuredTitle": "اختيارات موثّقة",
     "featuredSubline": "أعلى الإعلانات تقييماً — موثّقة بالذكاء أو مفحوصة ديلو.",
-    "trustTitle": "ليش ديلو تك مختلفة",
+    "trustTitle": "لماذا ديلو للإلكترونيات مختلفة",
     "trust": {
+      "catalog": {
+        "title": "موديلات من قائمة معتمدة",
+        "body": "البائع يختار من قائمة أجهزة موحّدة. لا عناوين ملفّقة، ولا مساحات تخزين خاطئة."
+      },
       "imei": {
-        "title": "IMEI على كل موبايل",
-        "body": "آخر 4 أرقام بشكل مهيكل وظاهر. تحقّق منها مع زين/STC/Ooredoo قبل ما تدفع."
+        "title": "IMEI مسجّل",
+        "body": "كل جهاز له IMEI فريد في ديلو. الجهاز الذي بِيع مرّة لا يُنشر مجدداً إلا بعد تحرير البائع السابق."
       },
       "battery": {
-        "title": "صحّة البطارية، مهيكلة",
-        "body": "أخضر ≥ 85، كهرماني 70-84، أحمر أقل من 70. ما عاد فيه 'ممتاز' يخفي بطارية 71%."
+        "title": "صحّة البطارية مهيكلة",
+        "body": "أخضر ≥ 85%، كهرماني 70-84%، أحمر أقل من 70%. إلزامية للساعات الذكية ومُرغَّب بها للموبايلات واللابتوبات."
       },
-      "region": {
-        "title": "المنطقة وقفل المشغّل",
-        "body": "خليجي ضد أمريكي ضد ياباني، مفصح عنها. قفل المشغّل إلزامي للموبايلات — مو مفاجأة بعد الشراء."
-      },
-      "warranty": {
-        "title": "الضمان مرتبط بالبلد",
-        "body": "Apple الكويت ما تعتمد ضمان آيفون أمريكي. نعرض بلد الشراء + حالة الضمان جنب بعض."
+      "provenance": {
+        "title": "مصدر الشراء معروض",
+        "body": "Apple Store · X-cite · Eureka · Sharaf DG · Jarir · شركة اتصالات · مستورد — المشتري يعرف من وين الجهاز."
       }
     },
-    "trustFootnote": "ديلو ما تشحن المقلّد. فلتر B يرفض 'replica' / '1st copy' / 'ماستر كوبي' عند الإرسال.",
+    "trustFootnote": "ديلو لا تشحن المقلّد. ستّة عشر مصطلحاً (عربي + إنجليزي) يُرفَض عند الإرسال.",
     "gridTitle": "كل الإلكترونيات",
     "viewAll": "عرض الكل في /الفئات",
-    "emptyTitle": "ما في إعلانات إلكترونيات بعد",
-    "emptyBody": "كن أول بائع — إعلانك يصير ظاهر للمشترين في الكويت خلال ثواني.",
+    "emptyTitle": "لا توجد إعلانات إلكترونيات بعد",
+    "emptyBody": "كن أول بائع. إعلانك يظهر لكل المشترين خلال ثواني.",
     "emptyCta": "اعرض جهازك",
     "badgeAi": "موثّق بالذكاء",
-    "badgeInspected": "مفحوص"
+    "badgeInspected": "مفحوص ديلو"
   },
   "electronicsDetail": {
     "crumbHome": "الرئيسية",
@@ -239,30 +239,93 @@
     "tierAiVerified": "موثّق بالذكاء",
     "tierDealoInspected": "مفحوص ديلو",
     "originalPartsBadge": "كل القطع أصلية",
-    "tradeBadge": "مستعد للبدل",
+    "tradeBadge": "متاح للبدل",
+    "gradeBadge": {
+      "premium": "كالجديد",
+      "excellent": "أثر استعمال خفيف",
+      "good": "أثر استعمال واضح",
+      "fair": "استعمال شديد"
+    },
     "batteryHealthTitle": "صحّة البطارية",
-    "batteryCyclesLine": "دورات البطارية: {n}",
-    "batteryUndisclosed": "صحّة البطارية غير مفصح عنها. عادةً المشتري يطلبها قبل الدفع — اطلب سكرين شوت قبل ما تلتزم.",
+    "batteryHealthOf": "{pct}% من السعة الأصلية",
+    "batteryHealthStrong": "ممتازة — فوق 85%",
+    "batteryHealthFair": "متوسّطة — بين 70% و 85%",
+    "batteryHealthWeak": "منخفضة — أقل من 70%، ينصح باستبدالها",
+    "batteryUndisclosed": "صحّة البطارية غير معلنة. اطلب لقطة شاشة قبل الالتزام.",
     "specsTitle": "المواصفات",
-    "regionLockTitle": "المنطقة والمشغّل",
-    "imeiTitle": "التحقق",
+    "specsDeviceKind": "النوع",
+    "specsStorage": "التخزين",
+    "specsRam": "الذاكرة (RAM)",
+    "specsScreen": "الشاشة",
+    "specsResolution": "الدقّة",
+    "specsLensMount": "نوع العدسة",
+    "specsYearOfPurchase": "سنة الشراء",
+    "imeiTitle": "الجهاز مسجّل",
     "imeiLastDigits": "آخر 4 أرقام من IMEI / الرقم التسلسلي: {digits}",
-    "imeiHelp": "تقدر تتحقّق من الحالة مع المشغّل في أي فرع زين/STC/Ooredoo — أو مع Apple في فرع الافنيوز.",
-    "trustPanelTitle": "الضمان والفاتورة",
-    "yes": "نعم",
-    "repairHistoryTitle": "سجل الصيانة",
-    "accessoriesTitle": "الإكسسوارات المرفقة",
-    "descriptionTitle": "الوصف",
-    "tradeAcceptedTitle": "مستعد للبدل بـ",
+    "imeiHelp": "تحقّق من الرقم كاملاً عند الاستلام عبر أي مشغّل معتمد أو مركز خدمة.",
+    "imeiUniqueBadge": "فريد في ديلو — لا يوجد إعلان نشط آخر لنفس الجهاز.",
+    "trustPanelTitle": "لوحة الثقة",
+    "trustPanelWhere": "مصدر الشراء",
+    "trustPanelReceipt": "الفاتورة الأصلية مرفقة",
+    "trustPanelWarranty": "الضمان",
+    "trustPanelWarrantyActive": "ساري حتى {date}",
+    "trustPanelWarrantyExpired": "منتهٍ",
+    "trustPanelWarrantyNone": "بلا ضمان",
+    "trustPanelImported": "مستورد — الضمان المحلّي لا يشمله",
+    "purchaseSource": {
+      "apple_store": "Apple Store",
+      "xcite": "X-cite",
+      "eureka": "Eureka",
+      "yousifi": "بست اليوسفي",
+      "sharaf_dg": "شرف DG",
+      "jumbo": "Jumbo",
+      "jarir": "جرير",
+      "extra": "eXtra",
+      "virgin": "Virgin Megastore",
+      "carrier": "مشغّل اتصالات",
+      "online": "تسوّق إلكتروني (noon / Amazon / …)",
+      "imported": "مستورد",
+      "other": "آخر"
+    },
+    "repairTitle": "الإفصاح عن الصيانة",
+    "repairHint": "الإفصاح الصادق يبني الثقة. البائع يعلن لكل قطعة إن كانت أصلية أو مستبدلة.",
+    "repairComponent": {
+      "screen": "الشاشة",
+      "battery": "البطارية",
+      "back_glass": "الزجاج الخلفي",
+      "camera": "الكاميرا"
+    },
+    "repairState": {
+      "original": "أصلية",
+      "replaced": "مستبدلة",
+      "unknown": "غير معلنة"
+    },
+    "accessoriesTitle": "ما يشمله البيع",
+    "accessories": {
+      "original_box": "الكرتون الأصلي",
+      "charger": "الشاحن",
+      "cable": "الكيبل",
+      "earphones": "السمّاعات",
+      "case": "الجراب",
+      "stand": "الحامل",
+      "receipt": "الفاتورة الأصلية"
+    },
+    "descriptionTitle": "عن الجهاز",
+    "tradeAcceptedTitle": "متاح للبدل",
+    "tradeAcceptedBody": "البائع مستعدّ يبدله بـ: {models}",
+    "tradeAcceptedGeneric": "البائع مستعدّ لبدل جهاز بجهاز. قدّم جهازك في المحادثة.",
     "statViews": "مشاهدة",
     "statSaves": "حفظ",
     "statInquiries": "استفسار",
     "statPhotos": "صور",
-    "similarTitle": "إلكترونيات مشابهة قد تعجبك",
+    "similarTitle": "أجهزة مشابهة قد تعجبك",
     "priceLabel": "السعر",
     "negotiableBadge": "قابل للتفاوض",
     "privateSeller": "بائع خاص",
-    "dealerSeller": "معرض موثّق"
+    "dealerSeller": "معرض موثّق",
+    "makeOfferCta": "قدّم عرضاً",
+    "contactCta": "تواصل مع البائع",
+    "tradeCta": "اقترح بدلاً"
   },
   "listingDetail": {
     "crumbHome": "الرئيسية",
@@ -604,15 +667,134 @@
         "continue": "متابعة"
       },
       "electronics": {
-        "sectionIdentity": "هوية الجهاز",
-        "sectionVerification": "التحقق (IMEI / الرقم التسلسلي)",
-        "sectionSpecs": "المواصفات",
-        "sectionBattery": "حالة البطارية",
-        "sectionRegionLock": "المنطقة وقفل المشغّل",
-        "sectionCondition": "الحالة والصندوق",
-        "sectionWarranty": "الضمان والفاتورة",
-        "sectionTrade": "البدل",
-        "deviceKindLabel": "نوع الجهاز",
+        "q1": {
+          "title": "ماذا تبيع؟",
+          "subtitle": "اختر الموديل الدقيق من القائمة. بدون كتابة.",
+          "searchPlaceholder": "ابدأ الكتابة — مثلاً: آيفون 15 برو",
+          "emptyHint": "لا توجد نتيجة. اختر «أخرى» وصِف الجهاز في الخطوة التالية.",
+          "otherLabel": "موديلي غير موجود في القائمة",
+          "otherBrandLabel": "الماركة",
+          "otherModelLabel": "الموديل"
+        },
+        "q2": {
+          "title": "من أين اشتريته؟",
+          "subtitle": "مصدر الشراء يحدّد توقّع المشتري للضمان. اضغط واحداً.",
+          "dontKnow": "لا أتذكّر"
+        },
+        "q3": {
+          "title": "كيف يبدو الجهاز؟",
+          "subtitle": "اضغط البطاقة الأقرب لحالة جهازك اليوم.",
+          "grade": {
+            "premium": "كالجديد",
+            "excellent": "استعمال خفيف",
+            "good": "استعمال واضح",
+            "fair": "استعمال شديد"
+          },
+          "gradeDescription": {
+            "premium": "بلا خدوش ظاهرة، الشاشة سليمة تماماً.",
+            "excellent": "خدوش دقيقة، تبدو فقط من مسافة قريبة.",
+            "good": "خدوش تبدو على مسافة طبيعية، الشاشة نظيفة.",
+            "fair": "خدوش أو طبعات على الهيكل، الجهاز يعمل تماماً."
+          }
+        },
+        "q4": {
+          "title": "كيف البطارية؟",
+          "subtitle": "افتح الإعدادات وأدخل النسبة. نعرض شريطاً ملوّناً على الإعلان.",
+          "helpLabel": "كيف أجدها؟",
+          "helpIos": "آيفون: الإعدادات ← البطارية ← صحّة البطارية",
+          "helpAndroid": "سامسونج: Settings ← Device care ← Battery",
+          "helpLaptop": "macOS: System Information ← Power. ويندوز: powercfg /batteryreport.",
+          "helpWatch": "آبل ووتش: الإعدادات ← البطارية ← صحّة البطارية",
+          "placeholder": "مثال: 96",
+          "dontKnow": "لا أعرف",
+          "notApplicable": "هذا الجهاز بلا بطارية"
+        },
+        "q5": {
+          "title": "أي تصليح سابق؟",
+          "subtitle": "لكل قطعة، اختر الصحيح. الإفصاح الصادق يُكافَأ في ديلو.",
+          "componentLabel": {
+            "screen": "الشاشة",
+            "battery": "البطارية",
+            "back_glass": "الزجاج الخلفي",
+            "camera": "الكاميرا"
+          },
+          "stateLabel": {
+            "original": "أصلية",
+            "replaced": "مستبدلة",
+            "unknown": "لست متأكداً"
+          }
+        },
+        "q6": {
+          "title": "الضمان والفاتورة",
+          "subtitle": "اختيارية لكنها تعزّز ثقة المشتري بسرعة.",
+          "warrantyLabel": "هل الضمان ساري؟",
+          "warrantyYes": "نعم",
+          "warrantyNo": "لا",
+          "warrantyEndDate": "ينتهي الضمان في",
+          "receiptLabel": "هل لديك الفاتورة الأصلية؟",
+          "receiptUpload": "ارفع الفاتورة (اختياري)",
+          "receiptHint": "صورة أو PDF. يمكنك مشاركتها في المحادثة لاحقاً."
+        },
+        "q7": {
+          "title": "مستعدّ للبدل؟",
+          "subtitle": "بعض المشترين يفضّلون مبادلة جهازهم + فرق نقدي.",
+          "acceptsYes": "نعم، أقبل البدل",
+          "acceptsNo": "لا، بيع فقط",
+          "targetLabel": "بأي موديل مستعد تبدل؟",
+          "targetPlaceholder": "مثال: iPhone 16 Pro Max + فرق نقدي"
+        },
+        "imei": {
+          "label": "IMEI / الرقم التسلسلي — آخر 4 أرقام",
+          "placeholder": "4 خانات",
+          "helpTitle": "أين أجده؟",
+          "helpIphone": "آيفون: الإعدادات ← عام ← حول ← IMEI. أو اتصل بـ *#06#.",
+          "helpAndroid": "أندرويد: الإعدادات ← حول الهاتف ← IMEI. أو اتصل بـ *#06#.",
+          "helpLaptop": "لابتوب: الملصق أسفل الجهاز يحوي الرقم التسلسلي. أو About This Mac / System Info.",
+          "helpWatch": "آبل ووتش: الإعدادات ← عام ← حول ← الرقم التسلسلي.",
+          "privacyNote": "نخزّنه مشفّراً، ولا نحفظ الرقم كاملاً. المشتري يتحقّق عند الاستلام.",
+          "checking": "جاري التحقق…",
+          "checkClean": "نظيف — هذا الجهاز ليس له نسخة في ديلو.",
+          "checkBlocked": "الجهاز مُسجّل لدى بائع آخر. لا يمكن المتابعة.",
+          "checkOwnListing": "الجهاز مُسجّل على إعلانك القديم. احذف الإعلان القديم أولاً.",
+          "skip": "ليس لدي الرقم",
+          "skipWarning": "سنضيف ملاحظة «التحقّق معلّق» إلى إعلانك."
+        },
+        "photoHints": {
+          "title": "صور مقترحة",
+          "body": "ليست إلزامية — لكن المشتري يثق أكثر حين يراها.",
+          "phone": [
+            "الجهاز شغّال (الشاشة الرئيسية ظاهرة)",
+            "الإعدادات ← حول ← IMEI (اطمس الرقم الكامل)",
+            "لقطة صحّة البطارية",
+            "الخلف والجانبان"
+          ],
+          "laptop": [
+            "الجهاز شغّال (تسجيل الدخول أو سطح المكتب)",
+            "الملصق الأسفل والرقم التسلسلي",
+            "الجانب مع المنافذ",
+            "لوحة المفاتيح والشاشة"
+          ],
+          "tv": [
+            "الجهاز شغّال وتعرض مصدراً",
+            "اللوحة الخلفية مع ملصق الموديل",
+            "الريموت"
+          ],
+          "console": [
+            "الجهاز شغّال (القائمة ظاهرة)",
+            "ملصق الرقم التسلسلي",
+            "الأذرع والكيبلات المرفقة"
+          ],
+          "watch": [
+            "الساعة شغّالة (وجه الساعة ظاهر)",
+            "الخلف مع مستشعراتها",
+            "حالة السوار"
+          ],
+          "camera": [
+            "شاشة عدّ الشتر (إن توفّرت)",
+            "مقرّبة للحسّاس",
+            "أي عدسات مرفقة"
+          ]
+        },
         "deviceKind": {
           "phone": "موبايل",
           "tablet": "تابلت",
@@ -621,155 +803,37 @@
           "tv": "تلفزيون",
           "soundbar": "ساوند بار",
           "headphones": "سماعات رأس",
-          "speaker": "سبيكر",
-          "console": "كنسول",
-          "handheld_console": "كنسول محمول",
-          "accessory": "اكسسوار",
+          "speaker": "سمّاعة",
+          "console": "أجهزة ألعاب",
+          "handheld_console": "جهاز ألعاب محمول",
+          "accessory": "إكسسوار",
           "smart_watch": "ساعة ذكية",
-          "camera": "بدن كاميرا",
+          "camera": "كاميرا",
           "lens": "عدسة"
         },
-        "brandLabel": "الماركة",
-        "brandPlaceholder": "مثال: Apple, Samsung, Sony",
-        "modelLabel": "الموديل",
-        "modelPlaceholder": "مثال: iPhone 15 Pro Max, MacBook Pro M3",
-        "yearOfReleaseLabel": "سنة الإطلاق (اختياري)",
-        "imeiLabel": "IMEI / الرقم التسلسلي — آخر 4 أرقام",
-        "imeiHint": "المشتري يتحقّق منه عند الاستلام لدى المشغّل أو Apple. ما نخزّن الرقم الكامل.",
-        "storageGbLabel": "السعة (جيجا)",
-        "ramGbLabel": "الرام (جيجا)",
-        "cpuLabel": "المعالج",
-        "cpuPlaceholder": "مثال: Apple M3 Pro, Intel i7-13700H",
-        "gpuLabel": "كرت الشاشة (اختياري)",
-        "storageTypeLabel": "نوع التخزين",
-        "storageType": {
-          "ssd": "SSD",
-          "hdd": "HDD",
-          "nvme": "NVMe",
-          "hybrid": "هايبرد",
-          "emmc": "eMMC"
+        "purchaseSource": {
+          "apple_store": "Apple Store",
+          "xcite": "X-cite",
+          "eureka": "Eureka",
+          "yousifi": "بست اليوسفي",
+          "sharaf_dg": "شرف DG",
+          "jumbo": "Jumbo",
+          "jarir": "جرير",
+          "extra": "eXtra",
+          "virgin": "Virgin Megastore",
+          "carrier": "مشغّل اتصالات",
+          "online": "إلكتروني (noon / Amazon)",
+          "imported": "مستورد",
+          "other": "آخر"
         },
-        "screenSizeInchesLabel": "حجم الشاشة (إنش)",
-        "resolutionLabel": "الدقّة",
-        "resolution": {
-          "hd": "HD",
-          "fhd": "Full HD",
-          "2k": "2K / QHD",
-          "4k": "4K / UHD",
-          "8k": "8K"
+        "review": {
+          "title": "راجع وتابع",
+          "subtitle": "تحقّق من إجاباتك. يمكنك تعديل أي حقل."
         },
-        "lensMountLabel": "نوع التركيب (Mount)",
-        "lensMount": {
-          "canon_ef": "Canon EF",
-          "canon_rf": "Canon RF",
-          "sony_e": "Sony E",
-          "nikon_f": "Nikon F",
-          "nikon_z": "Nikon Z",
-          "m43": "Micro Four Thirds",
-          "leica_m": "Leica M",
-          "other": "غير ذلك"
-        },
-        "connectivityLabel": "الاتصال",
-        "connectivity": {
-          "wifi": "Wi-Fi",
-          "wifi6": "Wi-Fi 6",
-          "bluetooth": "بلوتوث",
-          "5g": "5G",
-          "lte": "LTE",
-          "ethernet": "إيثرنت",
-          "usb_c": "USB-C",
-          "thunderbolt": "Thunderbolt"
-        },
-        "batteryHealthPctLabel": "صحّة البطارية (%)",
-        "batteryUndisclosedWarning": "المشتري يحب يشوف هذا الرقم — الأجهزة بدونه تستلم عروض أقل.",
-        "batteryCyclesLabel": "دورات البطارية (لابتوبات فقط)",
-        "batteryCyclesHint": "ماك: System Information → Power. ويندوز: powercfg /batteryreport.",
-        "regionSpecLabel": "المنطقة (Region)",
-        "region": {
-          "gcc": "خليجي (الكويت/السعودية/الإمارات/قطر/البحرين/عُمان)",
-          "us": "أمريكي",
-          "eu": "أوروبي",
-          "jp": "ياباني",
-          "other": "غير ذلك"
-        },
-        "carrierLockLabel": "قفل المشغّل",
-        "carrier": {
-          "unlocked": "مفتوح",
-          "zain": "مقفول لـ زين",
-          "stc": "مقفول لـ STC",
-          "ooredoo": "مقفول لـ Ooredoo",
-          "other": "مقفول (آخر)"
-        },
-        "conditionGradeLabel": "تقييم الحالة",
-        "grade": {
-          "mint": "ممتاز جداً (Mint)",
-          "excellent": "ممتاز",
-          "good": "جيّد",
-          "fair": "مقبول",
-          "for_parts": "للقطع فقط"
-        },
-        "gradeDescription": {
-          "mint": "كأنه جديد — بلا أي أثر استعمال",
-          "excellent": "أثر استعمال خفيف جداً، يعمل بكامل وظائفه",
-          "good": "أثر استعمال ظاهر، يعمل بكامل وظائفه",
-          "fair": "أثر استعمال شديد، قد يعرض بعض المشاكل",
-          "for_parts": "لا يعمل — يُباع للقطع فقط"
-        },
-        "gradePickHint": "اختر التقييم اللي يطابق حالة الجهاز اليوم.",
-        "boxStatusLabel": "حالة الصندوق",
-        "box": {
-          "bnib": "جديد بالكرتون المغلق (BNIB)",
-          "open_box": "مفتوح من الكرتون",
-          "no_box": "بدون كرتون"
-        },
-        "originalPartsLabel": "قطع أصلية (أجهزة Apple)",
-        "originalPartsHelp": "كل القطع المستبدلة أصلية (Apple Genuine).",
-        "accessoriesIncludedLabel": "الإكسسوارات المرفقة",
-        "accessory": {
-          "charger": "شاحن",
-          "cable": "كيبل",
-          "earphones": "سماعات أذن",
-          "case": "كفر",
-          "stand": "حامل",
-          "box_only": "الكرتون الأصلي",
-          "original_packaging": "التغليف الأصلي"
-        },
-        "repairHistoryLabel": "سجل الصيانة",
-        "repair": {
-          "screen": "شاشة مستبدلة",
-          "battery": "بطارية مستبدلة",
-          "back_glass": "زجاج خلفي مستبدل",
-          "logic_board": "لوحة منطقية مُصلَّحة",
-          "sensor": "حساس مُصلَّح",
-          "none": "لا يوجد"
-        },
-        "repairHint": "الصراحة في الإفصاح تكسبك شارة 'كل القطع أصلية' — وثقة المشتري.",
-        "warrantyStatusLabel": "حالة الضمان",
-        "warranty": {
-          "active_kuwait": "ساري — ضمان كويتي",
-          "active_international": "ساري — ضمان دولي",
-          "expired": "منتهي",
-          "none": "لا يوجد"
-        },
-        "warrantyExpiresAtLabel": "تاريخ انتهاء الضمان",
-        "purchaseCountryLabel": "بلد الشراء",
-        "country": {
-          "kw": "الكويت",
-          "sa": "السعودية",
-          "ae": "الإمارات",
-          "qa": "قطر",
-          "bh": "البحرين",
-          "om": "عُمان",
-          "us": "أمريكا",
-          "eu": "أوروبا",
-          "jp": "اليابان",
-          "other": "غير ذلك"
-        },
-        "hasOriginalReceiptLabel": "الفاتورة الأصلية",
-        "hasOriginalReceiptHelp": "عندي الفاتورة الأصلية وأقدر أشاركها بشكل خاص بالشات.",
-        "acceptsTradeHelp": "مستعد للبدل — المشتري يقدر يقدّم جهاز + فلوس.",
-        "tradeForModelsLabel": "البدل بأي موديلات؟",
-        "tradeForModelsPlaceholder": "مثال: iPhone 15 Pro, MacBook Air M2 + فلوس"
+        "continue": "متابعة",
+        "back": "عودة",
+        "saving": "جاري الحفظ…",
+        "step": "خطوة {current} من {total}"
       },
       "property": {
         "propertyTypeLabel": "نوع العقار",

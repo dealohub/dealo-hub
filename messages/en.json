@@ -183,15 +183,15 @@
   },
   "electronicsHub": {
     "metaTitle": "Tech & Electronics · Dealo Hub",
-    "metaDescription": "Buy and sell phones, laptops, TVs, gaming, smart watches and cameras in Kuwait — every spec verified, every battery disclosed.",
-    "eyebrow": "Tech · Kuwait",
+    "metaDescription": "Buy and sell phones, laptops, TVs, gaming, smart watches, and cameras across the GCC — every spec verified, every battery disclosed, every device uniquely registered.",
+    "eyebrow": "Tech · GCC",
     "headline": "Every spec verified. Every battery disclosed.",
-    "subline": "Kuwait's first AI-protected tech marketplace. IMEI on every phone, battery health on every device, region and carrier-lock on every spec sheet — none of which Dubizzle and Q84Sale make you disclose.",
+    "subline": "The GCC's trust-first tech marketplace. Catalog-picked models, battery health disclosed, purchase source verified, no counterfeits.",
     "statsListings": "live listings",
-    "statsInspected": "Dealo Inspected",
-    "sellCta": "Sell your tech →",
+    "statsInspected": "Dealo-inspected",
+    "sellCta": "Sell your device →",
     "typesTitle": "Browse by type",
-    "typesSubline": "6 device families, mapped to how Kuwait actually shops.",
+    "typesSubline": "Six device families. Every one captured as structured data, not free-text chaos.",
     "listingsShort": "live",
     "types": {
       "phones-tablets": "Phones & tablets",
@@ -205,55 +205,115 @@
     "featuredSubline": "Top-tier listings — AI- or Dealo-verified.",
     "trustTitle": "Why Dealo Tech is different",
     "trust": {
+      "catalog": {
+        "title": "Catalog-picked models",
+        "body": "Sellers pick from a canonical device list. No made-up titles, no wrong storage sizes."
+      },
       "imei": {
-        "title": "IMEI on every phone",
-        "body": "Last-4 digits structured + visible. Verify against Zain/STC/Ooredoo before you pay."
+        "title": "IMEI registered",
+        "body": "Every device has a unique-on-Dealo serial. A device sold once can't be relisted without the prior seller releasing it."
       },
       "battery": {
         "title": "Battery health, structured",
-        "body": "Green ≥ 85, amber 70-84, red < 70. No more 'excellent' descriptions hiding a 71% battery."
+        "body": "Green ≥ 85%, amber 70-84%, red < 70%. Smart watches require it. Phones and laptops are nudged."
       },
-      "region": {
-        "title": "Region & carrier lock",
-        "body": "GCC vs US vs JP regions disclosed. Carrier-lock state required for phones — never a surprise on day one."
-      },
-      "warranty": {
-        "title": "Warranty is country-locked",
-        "body": "Apple Kuwait won't honour a US iPhone. We surface purchase country + warranty status side-by-side."
+      "provenance": {
+        "title": "Purchase source disclosed",
+        "body": "Apple Store · X-cite · Eureka · Sharaf DG · Jarir · carrier · imported. You see where it came from."
       }
     },
-    "trustFootnote": "Dealo doesn't ship counterfeit. Filter B blocks 'replica' / '1st copy' / 'ماستر كوبي' at submit.",
+    "trustFootnote": "Dealo doesn't ship counterfeit. Sixteen trigger terms (Arabic + English) are rejected at submit.",
     "gridTitle": "All tech",
     "viewAll": "View all in /categories",
     "emptyTitle": "No tech listings yet",
-    "emptyBody": "Be the first seller — your listing will be visible to buyers across Kuwait within seconds.",
+    "emptyBody": "Be the first seller. Your listing lands on every buyer's feed within seconds.",
     "emptyCta": "List your device",
-    "badgeAi": "AI verified",
-    "badgeInspected": "Inspected"
+    "badgeAi": "AI-verified",
+    "badgeInspected": "Dealo-inspected"
   },
   "electronicsDetail": {
     "crumbHome": "Home",
     "crumbTech": "Tech",
     "featured": "Featured",
     "noPhoto": "No photo available",
-    "tierAiVerified": "AI verified",
-    "tierDealoInspected": "Dealo inspected",
+    "tierAiVerified": "AI-verified",
+    "tierDealoInspected": "Dealo-inspected",
     "originalPartsBadge": "All original parts",
     "tradeBadge": "Open to trade",
+    "gradeBadge": {
+      "premium": "Like new",
+      "excellent": "Light wear",
+      "good": "Visible wear",
+      "fair": "Heavy wear"
+    },
     "batteryHealthTitle": "Battery health",
-    "batteryCyclesLine": "Battery cycles: {n}",
-    "batteryUndisclosed": "Battery health is not disclosed. Buyers usually ask before paying — request a screenshot before committing.",
+    "batteryHealthOf": "{pct}% of original capacity",
+    "batteryHealthStrong": "Excellent — above 85%",
+    "batteryHealthFair": "Fair — between 70% and 85%",
+    "batteryHealthWeak": "Low — below 70%, consider a replacement",
+    "batteryUndisclosed": "Battery health not disclosed. Request a screenshot before committing.",
     "specsTitle": "Specifications",
-    "regionLockTitle": "Region & carrier",
-    "imeiTitle": "Verification",
-    "imeiLastDigits": "IMEI / serial last 4: {digits}",
-    "imeiHelp": "You can verify status against the operator at any Zain/STC/Ooredoo branch — or against Apple at the Avenues store.",
-    "trustPanelTitle": "Warranty & receipt",
-    "yes": "Yes",
-    "repairHistoryTitle": "Repair history",
-    "accessoriesTitle": "Included accessories",
-    "descriptionTitle": "Description",
-    "tradeAcceptedTitle": "Open to trade for",
+    "specsDeviceKind": "Type",
+    "specsStorage": "Storage",
+    "specsRam": "RAM",
+    "specsScreen": "Screen",
+    "specsResolution": "Resolution",
+    "specsLensMount": "Lens mount",
+    "specsYearOfPurchase": "Year of purchase",
+    "imeiTitle": "Device registered",
+    "imeiLastDigits": "Last 4 of IMEI / serial: {digits}",
+    "imeiHelp": "Verify the full number at handover against any authorized operator or service centre.",
+    "imeiUniqueBadge": "Unique on Dealo — this device has no duplicate active listing.",
+    "trustPanelTitle": "Trust panel",
+    "trustPanelWhere": "Purchased from",
+    "trustPanelReceipt": "Original receipt attached",
+    "trustPanelWarranty": "Warranty",
+    "trustPanelWarrantyActive": "Active until {date}",
+    "trustPanelWarrantyExpired": "Expired",
+    "trustPanelWarrantyNone": "No warranty",
+    "trustPanelImported": "Imported / grey-market — local warranty does not apply",
+    "purchaseSource": {
+      "apple_store": "Apple Store",
+      "xcite": "X-cite",
+      "eureka": "Eureka",
+      "yousifi": "Best Al-Yousifi",
+      "sharaf_dg": "Sharaf DG",
+      "jumbo": "Jumbo",
+      "jarir": "Jarir",
+      "extra": "eXtra",
+      "virgin": "Virgin Megastore",
+      "carrier": "Telecom operator",
+      "online": "Online (noon / Amazon / etc.)",
+      "imported": "Imported",
+      "other": "Other"
+    },
+    "repairTitle": "Repair disclosure",
+    "repairHint": "Honest disclosure builds trust. Sellers can declare whether each component is original or replaced.",
+    "repairComponent": {
+      "screen": "Screen",
+      "battery": "Battery",
+      "back_glass": "Back glass",
+      "camera": "Camera"
+    },
+    "repairState": {
+      "original": "Original",
+      "replaced": "Replaced",
+      "unknown": "Not disclosed"
+    },
+    "accessoriesTitle": "What's included",
+    "accessories": {
+      "original_box": "Original box",
+      "charger": "Charger",
+      "cable": "Cable",
+      "earphones": "Earphones",
+      "case": "Case",
+      "stand": "Stand",
+      "receipt": "Original receipt"
+    },
+    "descriptionTitle": "About this device",
+    "tradeAcceptedTitle": "Open to trade",
+    "tradeAcceptedBody": "Looking to swap for: {models}",
+    "tradeAcceptedGeneric": "Seller is open to a device-for-device trade. Offer your device in chat.",
     "statViews": "views",
     "statSaves": "saved",
     "statInquiries": "inquiries",
@@ -262,7 +322,10 @@
     "priceLabel": "Price",
     "negotiableBadge": "Negotiable",
     "privateSeller": "Private seller",
-    "dealerSeller": "Verified dealer"
+    "dealerSeller": "Verified dealer",
+    "makeOfferCta": "Make offer",
+    "contactCta": "Contact seller",
+    "tradeCta": "Offer a trade"
   },
   "listingDetail": {
     "crumbHome": "Home",
@@ -604,15 +667,134 @@
         "continue": "Continue"
       },
       "electronics": {
-        "sectionIdentity": "Device identity",
-        "sectionVerification": "Verification (IMEI / serial)",
-        "sectionSpecs": "Specifications",
-        "sectionBattery": "Battery health",
-        "sectionRegionLock": "Region & carrier",
-        "sectionCondition": "Condition & box",
-        "sectionWarranty": "Warranty & receipt",
-        "sectionTrade": "Trade-in",
-        "deviceKindLabel": "Device kind",
+        "q1": {
+          "title": "What are you selling?",
+          "subtitle": "Pick your exact model from the catalog. No typing.",
+          "searchPlaceholder": "Start typing — e.g. iPhone 15 Pro",
+          "emptyHint": "No match. Don't worry — pick \"Other\" and describe it in the next step.",
+          "otherLabel": "My model isn't listed",
+          "otherBrandLabel": "Brand",
+          "otherModelLabel": "Model"
+        },
+        "q2": {
+          "title": "Where did you buy it?",
+          "subtitle": "The purchase source sets the buyer's warranty expectation. Tap one.",
+          "dontKnow": "I don't remember"
+        },
+        "q3": {
+          "title": "How does it look?",
+          "subtitle": "Tap the card that best matches your device today.",
+          "grade": {
+            "premium": "Like new",
+            "excellent": "Light wear",
+            "good": "Visible wear",
+            "fair": "Heavy wear"
+          },
+          "gradeDescription": {
+            "premium": "No visible scratches, screen pristine.",
+            "excellent": "Tiny micro-scratches, only visible close up.",
+            "good": "Scratches visible at arm's length, screen clean.",
+            "fair": "Dents or scratches on body, still fully functional."
+          }
+        },
+        "q4": {
+          "title": "How's the battery?",
+          "subtitle": "Open Settings and enter the percentage below. We'll show a colour bar on the listing.",
+          "helpLabel": "How do I find it?",
+          "helpIos": "iPhone: Settings → Battery → Battery Health",
+          "helpAndroid": "Samsung: Settings → Device care → Battery",
+          "helpLaptop": "macOS: System Information → Power. Windows: powercfg /batteryreport.",
+          "helpWatch": "Apple Watch: Settings → Battery → Battery Health",
+          "placeholder": "e.g. 96",
+          "dontKnow": "I don't know",
+          "notApplicable": "This device doesn't have a battery"
+        },
+        "q5": {
+          "title": "Any repairs?",
+          "subtitle": "For each part, pick what's true. Honest disclosure is rewarded on Dealo.",
+          "componentLabel": {
+            "screen": "Screen",
+            "battery": "Battery",
+            "back_glass": "Back glass",
+            "camera": "Camera"
+          },
+          "stateLabel": {
+            "original": "Original",
+            "replaced": "Replaced",
+            "unknown": "I'm not sure"
+          }
+        },
+        "q6": {
+          "title": "Warranty & receipt",
+          "subtitle": "These are optional but boost buyer trust fast.",
+          "warrantyLabel": "Does it still have warranty?",
+          "warrantyYes": "Yes",
+          "warrantyNo": "No",
+          "warrantyEndDate": "Warranty ends",
+          "receiptLabel": "Do you have the original receipt?",
+          "receiptUpload": "Upload receipt (optional)",
+          "receiptHint": "Image or PDF. You can share it privately in chat if you prefer."
+        },
+        "q7": {
+          "title": "Open to a trade?",
+          "subtitle": "Some buyers prefer to swap their device + cash difference.",
+          "acceptsYes": "Yes, I'd trade",
+          "acceptsNo": "No, sale only",
+          "targetLabel": "What would you trade for?",
+          "targetPlaceholder": "e.g. iPhone 16 Pro Max + cash"
+        },
+        "imei": {
+          "label": "IMEI / serial — last 4 digits",
+          "placeholder": "4 characters",
+          "helpTitle": "Where do I find this?",
+          "helpIphone": "iPhone: Settings → General → About → scroll to IMEI. Or dial *#06#.",
+          "helpAndroid": "Samsung/Android: Settings → About phone → IMEI. Or dial *#06#.",
+          "helpLaptop": "Laptop: the sticker on the bottom shows the serial. Or look in About This Mac / System Info.",
+          "helpWatch": "Apple Watch: Settings → General → About → Serial Number.",
+          "privacyNote": "We store it hashed, never the full number. Buyers verify in person at handover.",
+          "checking": "Checking…",
+          "checkClean": "Clean — this device has no duplicate on Dealo.",
+          "checkBlocked": "Already listed on Dealo by another seller. Can't proceed.",
+          "checkOwnListing": "You already have this device listed. Remove the old listing first.",
+          "skip": "I don't have it",
+          "skipWarning": "We'll add a \"verification pending\" note to your listing."
+        },
+        "photoHints": {
+          "title": "Suggested photos",
+          "body": "Not required — buyers just trust your listing more when they see these.",
+          "phone": [
+            "Device powered on (home screen visible)",
+            "Settings → About → IMEI (can blur the full number)",
+            "Battery Health screenshot",
+            "Back + both sides"
+          ],
+          "laptop": [
+            "Device powered on (login screen or desktop)",
+            "Sticker on the bottom showing serial",
+            "Port side close-up",
+            "Keyboard + screen"
+          ],
+          "tv": [
+            "Powered on showing a source",
+            "Back panel with model sticker",
+            "Remote control"
+          ],
+          "console": [
+            "Powered on (menu visible)",
+            "Serial sticker",
+            "Controllers + cables included"
+          ],
+          "watch": [
+            "Powered on (watch face visible)",
+            "Back with sensor cluster",
+            "Band condition"
+          ],
+          "camera": [
+            "Shutter count screen (if available)",
+            "Sensor close-up",
+            "Any included lenses"
+          ]
+        },
         "deviceKind": {
           "phone": "Phone",
           "tablet": "Tablet",
@@ -626,150 +808,32 @@
           "handheld_console": "Handheld console",
           "accessory": "Accessory",
           "smart_watch": "Smart watch",
-          "camera": "Camera body",
+          "camera": "Camera",
           "lens": "Lens"
         },
-        "brandLabel": "Brand",
-        "brandPlaceholder": "e.g. Apple, Samsung, Sony",
-        "modelLabel": "Model",
-        "modelPlaceholder": "e.g. iPhone 15 Pro Max, MacBook Pro M3",
-        "yearOfReleaseLabel": "Year of release (optional)",
-        "imeiLabel": "IMEI / serial — last 4 digits",
-        "imeiHint": "Buyers verify against the operator or Apple at pickup. We never store the full IMEI.",
-        "storageGbLabel": "Storage (GB)",
-        "ramGbLabel": "RAM (GB)",
-        "cpuLabel": "CPU",
-        "cpuPlaceholder": "e.g. Apple M3 Pro, Intel i7-13700H",
-        "gpuLabel": "GPU (optional)",
-        "storageTypeLabel": "Storage type",
-        "storageType": {
-          "ssd": "SSD",
-          "hdd": "HDD",
-          "nvme": "NVMe",
-          "hybrid": "Hybrid",
-          "emmc": "eMMC"
-        },
-        "screenSizeInchesLabel": "Screen size (inches)",
-        "resolutionLabel": "Resolution",
-        "resolution": {
-          "hd": "HD",
-          "fhd": "Full HD",
-          "2k": "2K / QHD",
-          "4k": "4K / UHD",
-          "8k": "8K"
-        },
-        "lensMountLabel": "Lens mount",
-        "lensMount": {
-          "canon_ef": "Canon EF",
-          "canon_rf": "Canon RF",
-          "sony_e": "Sony E",
-          "nikon_f": "Nikon F",
-          "nikon_z": "Nikon Z",
-          "m43": "Micro Four Thirds",
-          "leica_m": "Leica M",
+        "purchaseSource": {
+          "apple_store": "Apple Store",
+          "xcite": "X-cite",
+          "eureka": "Eureka",
+          "yousifi": "Best Al-Yousifi",
+          "sharaf_dg": "Sharaf DG",
+          "jumbo": "Jumbo",
+          "jarir": "Jarir",
+          "extra": "eXtra",
+          "virgin": "Virgin Megastore",
+          "carrier": "Telecom operator",
+          "online": "Online (noon / Amazon)",
+          "imported": "Imported / grey-market",
           "other": "Other"
         },
-        "connectivityLabel": "Connectivity",
-        "connectivity": {
-          "wifi": "Wi-Fi",
-          "wifi6": "Wi-Fi 6",
-          "bluetooth": "Bluetooth",
-          "5g": "5G",
-          "lte": "LTE",
-          "ethernet": "Ethernet",
-          "usb_c": "USB-C",
-          "thunderbolt": "Thunderbolt"
+        "review": {
+          "title": "Review & continue",
+          "subtitle": "Check your answers. You can still edit any field."
         },
-        "batteryHealthPctLabel": "Battery health (%)",
-        "batteryUndisclosedWarning": "Buyers prefer to see this number — devices without it get fewer offers.",
-        "batteryCyclesLabel": "Battery cycles (laptops only)",
-        "batteryCyclesHint": "macOS: System Information → Power. Windows: powercfg /batteryreport.",
-        "regionSpecLabel": "Region spec",
-        "region": {
-          "gcc": "GCC (Kuwait/Saudi/UAE/Qatar/Bahrain/Oman)",
-          "us": "United States",
-          "eu": "Europe",
-          "jp": "Japan",
-          "other": "Other"
-        },
-        "carrierLockLabel": "Carrier lock",
-        "carrier": {
-          "unlocked": "Unlocked",
-          "zain": "Locked to Zain",
-          "stc": "Locked to STC",
-          "ooredoo": "Locked to Ooredoo",
-          "other": "Locked (other)"
-        },
-        "conditionGradeLabel": "Condition grade",
-        "grade": {
-          "mint": "Mint",
-          "excellent": "Excellent",
-          "good": "Good",
-          "fair": "Fair",
-          "for_parts": "For parts"
-        },
-        "gradeDescription": {
-          "mint": "Like new — no visible wear",
-          "excellent": "Very light wear, fully functional",
-          "good": "Visible wear, fully functional",
-          "fair": "Heavy wear, may show issues",
-          "for_parts": "Not working — sold for parts only"
-        },
-        "gradePickHint": "Pick the grade that best matches the device today.",
-        "boxStatusLabel": "Box status",
-        "box": {
-          "bnib": "BNIB (brand new in sealed box)",
-          "open_box": "Open box",
-          "no_box": "No box"
-        },
-        "originalPartsLabel": "Original parts (Apple devices)",
-        "originalPartsHelp": "All replaced parts are original (Apple genuine).",
-        "accessoriesIncludedLabel": "Accessories included",
-        "accessory": {
-          "charger": "Charger",
-          "cable": "Cable",
-          "earphones": "Earphones",
-          "case": "Case",
-          "stand": "Stand",
-          "box_only": "Original box",
-          "original_packaging": "Original packaging"
-        },
-        "repairHistoryLabel": "Repair history",
-        "repair": {
-          "screen": "Screen replaced",
-          "battery": "Battery replaced",
-          "back_glass": "Back glass replaced",
-          "logic_board": "Logic board repaired",
-          "sensor": "Sensor repaired",
-          "none": "None"
-        },
-        "repairHint": "Honest disclosure earns the 'All original parts' badge — and trust.",
-        "warrantyStatusLabel": "Warranty status",
-        "warranty": {
-          "active_kuwait": "Active — Kuwait warranty",
-          "active_international": "Active — international warranty",
-          "expired": "Expired",
-          "none": "None"
-        },
-        "warrantyExpiresAtLabel": "Warranty expiry date",
-        "purchaseCountryLabel": "Purchase country",
-        "country": {
-          "kw": "Kuwait",
-          "sa": "Saudi Arabia",
-          "ae": "UAE",
-          "qa": "Qatar",
-          "bh": "Bahrain",
-          "om": "Oman",
-          "us": "United States",
-          "eu": "Europe",
-          "jp": "Japan",
-          "other": "Other"
-        },
-        "hasOriginalReceiptLabel": "Original receipt",
-        "hasOriginalReceiptHelp": "I have the original receipt and can share privately in chat.",
-        "acceptsTradeHelp": "I'm open to trade-in — buyer can offer device + cash.",
-        "tradeForModelsLabel": "Trade for which models?",
-        "tradeForModelsPlaceholder": "e.g. iPhone 15 Pro, MacBook Air M2 + cash"
+        "continue": "Continue",
+        "back": "Back",
+        "saving": "Saving…",
+        "step": "Step {current} of {total}"
       },
       "property": {
         "propertyTypeLabel": "Property type",

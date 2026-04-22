@@ -5,8 +5,13 @@ import { createClient } from '@/lib/supabase/server';
 import WizardShell from '@/components/sell/wizard-shell';
 import DetailsForm from '@/components/sell/details-form';
 import PropertyDetailsForm from '@/components/sell/property-details-form';
+import ElectronicsDetailsForm from '@/components/sell/electronics-details-form';
 import type { Condition } from '@/lib/listings/validators';
 import type { PropertyCategoryKey } from '@/lib/properties/types';
+import {
+  ELECTRONICS_SUB_CATS,
+  type ElectronicsCategoryKey,
+} from '@/lib/electronics/types';
 
 /**
  * /sell/details — Step 3 of the wizard.
@@ -42,6 +47,15 @@ function asPropertySubCat(slug: string | null | undefined): PropertyCategoryKey 
   if (!slug) return null;
   return (PROPERTY_SUBCATS as ReadonlyArray<string>).includes(slug)
     ? (slug as PropertyCategoryKey)
+    : null;
+}
+
+function asElectronicsSubCat(
+  slug: string | null | undefined,
+): ElectronicsCategoryKey | null {
+  if (!slug) return null;
+  return (ELECTRONICS_SUB_CATS as ReadonlyArray<string>).includes(slug)
+    ? (slug as ElectronicsCategoryKey)
     : null;
 }
 
@@ -98,11 +112,9 @@ export default async function SellDetailsPage({
   }
 
   const isRealEstate = parentSlug === 'real-estate';
+  const isElectronics = parentSlug === 'electronics';
   const propertySubCatSlug = asPropertySubCat((catRow as any)?.slug ?? null);
-
-  // Electronics branch is re-wired in Phase 7 v2 (Commit 2). Until
-  // then, electronics-parent categories fall through to DetailsForm —
-  // functional but missing the device-specific fields.
+  const electronicsSubCatSlug = asElectronicsSubCat((catRow as any)?.slug ?? null);
 
   return (
     <WizardShell locale={params.locale} step="details">
@@ -117,6 +129,19 @@ export default async function SellDetailsPage({
             model: draft.model,
             fields: (draft.category_fields as Record<string, unknown>) ?? null,
             subCatSlug: propertySubCatSlug,
+          }}
+        />
+      ) : isElectronics ? (
+        <ElectronicsDetailsForm
+          locale={params.locale}
+          initial={{
+            title: draft.title,
+            description: draft.description,
+            condition: draft.condition as Condition | null,
+            brand: draft.brand,
+            model: draft.model,
+            fields: (draft.category_fields as Record<string, unknown>) ?? null,
+            subCatSlug: electronicsSubCatSlug,
           }}
         />
       ) : (
