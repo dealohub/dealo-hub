@@ -233,6 +233,23 @@
       "eventFeatured": "Featured",
       "eventTrade": "Trade"
     },
+    "articles": {
+      "eyebrow": "Guides",
+      "title": "How to buy tech safely",
+      "viewAll": "View all guides",
+      "article1Tag": "Verification",
+      "article1Title": "How to verify an IMEI at handover",
+      "article1Excerpt": "Before you hand over cash, pull the phone's IMEI with *#06# and check it at any Zain, STC, Ooredoo, du, or Etisalat branch. Takes 2 minutes, saves you from a bricked device.",
+      "article1ReadTime": "3 min read",
+      "article2Tag": "Battery",
+      "article2Title": "Battery health — green, amber, or red?",
+      "article2Excerpt": "iPhone at 86% is strong. At 78% it's fine but aging. Below 70% you're looking at a near-term battery swap. Here's how to read the number — and when to walk away.",
+      "article2ReadTime": "4 min read",
+      "article3Tag": "Trade-in",
+      "article3Title": "Badal safely — the 5-step handshake",
+      "article3Excerpt": "Device-for-device trades are a GCC staple, but they're also where most scams happen. Use this 5-step checklist to protect both sides before money or devices change hands.",
+      "article3ReadTime": "5 min read"
+    },
     "gridTitle": "All tech",
     "viewAll": "View all in /categories",
     "emptyTitle": "No tech listings yet",

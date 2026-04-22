@@ -22,6 +22,7 @@ import ThemeToggle from '@/components/theme-toggle';
 import LocaleToggle from '@/components/locale-toggle';
 import ListingCardElectronics from '@/components/shadcnblocks/listing-card-electronics';
 import ElectronicsLiveFeed from '@/components/shadcnblocks/electronics-live-feed';
+import ElectronicsArticlesStrip from '@/components/shadcnblocks/electronics-articles-strip';
 import {
   getFeaturedElectronics,
   getElectronicsForGrid,
@@ -328,6 +329,9 @@ export default async function ElectronicsHubPage({
           )}
         </section>
         </div>
+
+        {/* ── 6. Articles strip — full-width editorial banner ── */}
+        <ElectronicsArticlesStrip />
       </main>
 
       <SiteFooter />

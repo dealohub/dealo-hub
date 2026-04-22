@@ -15,7 +15,8 @@ import { DEFAULT_PAGE_SIZE, type SortOption } from '@/lib/browse/types';
  *      dedicated vertical hub, which already has the chip filters,
  *      featured strip, etc. — no point duplicating UI).
  *   2. Slug matches `real-estate` → 308-redirect to `/properties`.
- *   3. Anything else → render a generic browse grid:
+ *   3. Slug matches `electronics` → 308-redirect to `/tech`.
+ *   4. Anything else → render a generic browse grid:
  *        • Heading + live count
  *        • Sub-category chip row (links to filtered URL)
  *        • Sort selector + paginated grid via getFilteredListings
@@ -38,6 +39,7 @@ export const revalidate = 60;
 const VERTICAL_REDIRECTS: Record<string, string> = {
   automotive: 'rides',
   'real-estate': 'properties',
+  electronics: 'tech',
 };
 
 const VALID_SORTS: SortOption[] = ['newest', 'price_asc', 'price_desc', 'most_saved'];

@@ -15,6 +15,7 @@ import ElectronicsDetailTrustCard from '@/components/shadcnblocks/electronics-de
 import ElectronicsDetailDescription from '@/components/shadcnblocks/electronics-detail-description';
 import ElectronicsDetailSimilar from '@/components/shadcnblocks/electronics-detail-similar';
 import ElectronicsDetailPurchasePanel from '@/components/shadcnblocks/electronics-detail-purchase-panel';
+import ElectronicsDetailMobileActionBar from '@/components/shadcnblocks/electronics-detail-mobile-actionbar';
 
 /**
  * /tech/[slug] — electronics detail page (Phase 7 v2).
@@ -123,6 +124,10 @@ export default async function ElectronicsDetailPage({
       </main>
 
       <SiteFooter />
+      <ElectronicsDetailMobileActionBar
+        listing={listing}
+        locale={params.locale}
+      />
       <ThemeToggle />
       <LocaleToggle />
     </>

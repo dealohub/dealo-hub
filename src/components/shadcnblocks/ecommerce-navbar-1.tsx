@@ -213,6 +213,74 @@ const MENU: MenuItem[] = [
     },
   },
   {
+    id: 'tech', label: 'Tech', href: '/tech',
+    megaMenu: {
+      sections: [
+        {
+          label: 'Phones & Tablets', href: '/categories/phones-tablets', id: 'phones-tablets',
+          imageSrc: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop',
+          items: [
+            { label: 'iPhone', href: '/categories/phones-tablets' },
+            { label: 'Samsung Galaxy', href: '/categories/phones-tablets' },
+            { label: 'iPad & Tablets', href: '/categories/phones-tablets' },
+          ],
+        },
+        {
+          label: 'Laptops & Computers', href: '/categories/laptops-computers', id: 'laptops-computers',
+          imageSrc: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop',
+          items: [
+            { label: 'MacBook', href: '/categories/laptops-computers' },
+            { label: 'Windows Laptops', href: '/categories/laptops-computers' },
+            { label: 'Desktops', href: '/categories/laptops-computers' },
+            { label: 'Monitors', href: '/categories/laptops-computers' },
+          ],
+        },
+        {
+          label: 'TVs & Audio', href: '/categories/tvs-audio', id: 'tvs-audio',
+          imageSrc: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&auto=format&fit=crop',
+          items: [
+            { label: 'OLED / QLED TVs', href: '/categories/tvs-audio' },
+            { label: 'Soundbars', href: '/categories/tvs-audio' },
+            { label: 'Headphones', href: '/categories/tvs-audio' },
+            { label: 'Speakers', href: '/categories/tvs-audio' },
+          ],
+        },
+        {
+          label: 'Gaming', href: '/categories/gaming', id: 'gaming',
+          imageSrc: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800&auto=format&fit=crop',
+          items: [
+            { label: 'PlayStation', href: '/categories/gaming' },
+            { label: 'Xbox', href: '/categories/gaming' },
+            { label: 'Nintendo Switch', href: '/categories/gaming' },
+            { label: 'Steam Deck / Handhelds', href: '/categories/gaming' },
+          ],
+        },
+        {
+          label: 'Smart Watches', href: '/categories/smart-watches', id: 'smart-watches',
+          imageSrc: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop',
+          items: [
+            { label: 'Apple Watch', href: '/categories/smart-watches' },
+            { label: 'Samsung Galaxy Watch', href: '/categories/smart-watches' },
+            { label: 'AirPods', href: '/categories/smart-watches' },
+          ],
+        },
+        {
+          label: 'Cameras', href: '/categories/cameras', id: 'cameras',
+          imageSrc: 'https://images.unsplash.com/photo-1606986601547-0daf2a6fa4f0?w=800&auto=format&fit=crop',
+          items: [
+            { label: 'Sony Alpha', href: '/categories/cameras' },
+            { label: 'Canon EOS R', href: '/categories/cameras' },
+            { label: 'Lenses', href: '/categories/cameras' },
+          ],
+        },
+      ],
+      featuredItems: [
+        { imageSrc: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop', href: '/tech', label: 'All tech listings' },
+        { imageSrc: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=800&auto=format&fit=crop', href: '/sell/category', label: 'Sell your device' },
+      ],
+    },
+  },
+  {
     id: 'jobs', label: 'Careers', href: '#',
     megaMenu: {
       sections: [
@@ -242,12 +310,12 @@ const MENU: MenuItem[] = [
     megaMenu: {
       sections: [
         {
-          label: 'Electronics', href: '#', id: 'electronics',
+          label: 'Electronics', href: '/tech', id: 'electronics',
           imageSrc: 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=800&auto=format&fit=crop',
           items: [
-            { label: 'Home Audio & Turntables', href: '#' },
-            { label: 'Televisions', href: '#' },
-            { label: 'DVD & Home Theater', href: '#' },
+            { label: 'Home Audio & Turntables', href: '/categories/tvs-audio' },
+            { label: 'Televisions', href: '/categories/tvs-audio' },
+            { label: 'DVD & Home Theater', href: '/categories/tvs-audio' },
             { label: 'Electronic Accessories', href: '#' },
             { label: 'Gadgets', href: '#' },
             { label: 'Car Electronics', href: '#' },
