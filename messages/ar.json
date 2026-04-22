@@ -2233,5 +2233,31 @@
     "similar": {
       "title": "خدمات مشابهة"
     }
+  },
+  "servicesChat": {
+    "quoteRequest": {
+      "title": "طلب عرض سعر",
+      "governorate": "المحافظة",
+      "dateWindow": "التاريخ",
+      "timeWindow": "الوقت",
+      "bedrooms": "غرف النوم",
+      "areaM2": "المساحة"
+    },
+    "quoteResponse": {
+      "title": "عرض سعر",
+      "hours": "ساعات",
+      "fixedPrice": "سعر ثابت",
+      "earliestSlot": "أقرب موعد:",
+      "expiresAt": "ينتهي في",
+      "includes": "يشمل"
+    },
+    "bookingProposal": {
+      "title": "اقتراح حجز",
+      "estimate": "التقدير",
+      "guarantee": "محمي بضمان Dealo ما دام التواصل كاملاً داخل Dealo."
+    },
+    "completionMark": {
+      "marked": "أكمل المهمة"
+    }
   }
 }

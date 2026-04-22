@@ -70,6 +70,8 @@ interface RawMessageRow {
   sent_as_offer: boolean;
   offer_amount_minor: number | string | null;
   offer_currency: string | null;
+  kind: string | null;
+  payload: Record<string, unknown> | null;
   read_at: string | null;
   created_at: string;
 }
@@ -124,6 +126,10 @@ function mapInbox(
 }
 
 function mapMessage(row: RawMessageRow): ChatMessage {
+  // Phase 8a: kind defaults to legacy inference if NULL (shouldn't happen
+  // after migration 0038 backfill, but defensive).
+  const kind = (row.kind ??
+    (row.sent_as_offer ? 'offer' : 'free_text')) as ChatMessage['kind'];
   return {
     id: row.id,
     conversationId: row.conversation_id,
@@ -134,6 +140,8 @@ function mapMessage(row: RawMessageRow): ChatMessage {
     sentAsOffer: row.sent_as_offer,
     offerAmountMinor: row.offer_amount_minor != null ? Number(row.offer_amount_minor) : null,
     offerCurrency: row.offer_currency,
+    kind,
+    payload: row.payload,
     readAt: row.read_at,
     createdAt: row.created_at,
   };
@@ -297,7 +305,7 @@ export const getThread = cache(async function getThread(
   const { data: msgs, error: msgsErr } = await supabase
     .from('messages')
     .select(
-      'id, conversation_id, sender_id, body, media_url, media_type, sent_as_offer, offer_amount_minor, offer_currency, read_at, created_at',
+      'id, conversation_id, sender_id, body, media_url, media_type, sent_as_offer, offer_amount_minor, offer_currency, kind, payload, read_at, created_at',
     )
     .eq('conversation_id', conversationId)
     .order('created_at', { ascending: true })

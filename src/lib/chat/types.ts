@@ -43,6 +43,18 @@ export interface InboxConversation {
   blocked: boolean;
 }
 
+/**
+ * Structured message kind — Phase 8a extensions (services vertical).
+ * Legacy `free_text` + `offer` remain; new kinds always carry a payload.
+ */
+export type ChatMessageKind =
+  | 'free_text'
+  | 'offer'
+  | 'quote_request'
+  | 'quote_response'
+  | 'booking_proposal'
+  | 'completion_mark';
+
 /** Single message in a thread. */
 export interface ChatMessage {
   id: MessageId;
@@ -54,6 +66,10 @@ export interface ChatMessage {
   sentAsOffer: boolean;
   offerAmountMinor: number | null;
   offerCurrency: string | null;
+  /** Phase 8a P4 — structured kind; defaults to 'free_text' for legacy rows. */
+  kind: ChatMessageKind;
+  /** Phase 8a P4 — structured JSON payload for quote/booking/completion kinds. */
+  payload: Record<string, unknown> | null;
   readAt: string | null;
   createdAt: string;
 }

@@ -2233,5 +2233,31 @@
     "similar": {
       "title": "Similar services"
     }
+  },
+  "servicesChat": {
+    "quoteRequest": {
+      "title": "Quote Request",
+      "governorate": "Governorate",
+      "dateWindow": "Date",
+      "timeWindow": "Time",
+      "bedrooms": "Bedrooms",
+      "areaM2": "Area"
+    },
+    "quoteResponse": {
+      "title": "Quote",
+      "hours": "hours",
+      "fixedPrice": "fixed price",
+      "earliestSlot": "Earliest slot:",
+      "expiresAt": "Expires",
+      "includes": "Includes"
+    },
+    "bookingProposal": {
+      "title": "Booking Proposal",
+      "estimate": "Estimate",
+      "guarantee": "Protected by Dealo Guarantee as long as all contact stays inside Dealo."
+    },
+    "completionMark": {
+      "marked": "Marked job complete"
+    }
   }
 }

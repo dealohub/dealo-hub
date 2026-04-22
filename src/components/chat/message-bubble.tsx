@@ -2,6 +2,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Target, Check, CheckCheck } from 'lucide-react';
 import type { ChatMessage } from '@/lib/chat/types';
 import { formatPrice } from '@/lib/format';
+import ServiceMessageCard from './service-message-cards';
 
 /**
  * MessageBubble — a single message in the thread view.
@@ -9,6 +10,10 @@ import { formatPrice } from '@/lib/format';
  * Alignment: own messages right (ltr) or left (rtl); other's messages
  * opposite. Offer messages get a distinctive amber bubble + badge.
  * Read receipts: ✓ sent, ✓✓ read (only shown for own messages).
+ *
+ * Phase 8a: structured services kinds (quote_request, quote_response,
+ * booking_proposal, completion_mark) are delegated to
+ * ServiceMessageCard — distinct visual treatment per kind.
  */
 
 interface Props {
@@ -16,6 +21,10 @@ interface Props {
   isOwn: boolean;
   currencyCode: 'KWD' | 'USD' | 'AED' | 'SAR';
 }
+
+const STRUCTURED_KINDS: ReadonlyArray<ChatMessage['kind']> = [
+  'quote_request', 'quote_response', 'booking_proposal', 'completion_mark',
+];
 
 function formatTime(iso: string, locale: 'ar' | 'en'): string {
   return new Date(iso).toLocaleTimeString(
@@ -33,6 +42,35 @@ export default function MessageBubble({ message, isOwn, currencyCode }: Props) {
   const locale = useLocale() as 'ar' | 'en';
 
   const m = message;
+
+  // Phase 8a — structured services kinds render via their own card
+  // component. Timestamp + read-receipt footer still rendered below
+  // the card for consistency with free_text/offer kinds.
+  if (STRUCTURED_KINDS.includes(m.kind)) {
+    return (
+      <div className={'flex ' + (isOwn ? 'justify-end' : 'justify-start')}>
+        <div className="flex w-full flex-col gap-0.5">
+          <ServiceMessageCard message={m} isOwn={isOwn} />
+          <div
+            className={
+              'flex items-center gap-1 text-[10px] text-foreground/50 ' +
+              (isOwn ? 'justify-end' : 'justify-start')
+            }
+          >
+            <span>{formatTime(m.createdAt, locale)}</span>
+            {isOwn && (
+              m.readAt ? (
+                <CheckCheck size={11} className="text-sky-500" />
+              ) : (
+                <Check size={11} />
+              )
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const isOffer = m.sentAsOffer;
 
   return (
