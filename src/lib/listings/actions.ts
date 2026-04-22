@@ -9,7 +9,10 @@ import { generateListingEmbedding } from './embeddings';
 import { PublishSchema } from './validators';
 import { validatePropertyFieldsRaw } from '@/lib/properties/validators';
 import type { PropertyCategoryKey } from '@/lib/properties/types';
-import { validateElectronicsFieldsRaw } from '@/lib/electronics/validators';
+import {
+  validateElectronicsFieldsRawV2,
+  containsElectronicsCounterfeitTerm,
+} from '@/lib/electronics/validators';
 import {
   ELECTRONICS_SUB_CATS,
   type ElectronicsCategoryKey,
@@ -323,13 +326,13 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
     }
   }
 
-  // Electronics-specific validation (Phase 7a — P1/P3/P4/P5):
-  //   • 28-field ElectronicsFieldsRaw shape
-  //   • Sub-cat conditional invariants (phones need IMEI, laptops need
-  //     CPU+RAM, smart-watches need battery_health, etc.)
-  //   • Filter B widened (P2 — counterfeit) — was previously only
-  //     enforced inside Step3DetailsLuxurySchema (and that path is
-  //     currently bypassed by PublishSchema). Apply at the publish gate.
+  // Electronics v2 validation — 14-field ElectronicsFields schema with
+  // sub-cat conditional requirements (phones need storage, laptops need
+  // CPU/RAM/screen, smart-watches need battery health, TVs need
+  // resolution + screen size, camera lenses need mount). Field-level
+  // errors flatten to dot-path keys the preview UI can i18n-lookup.
+  //
+  // Reference: planning/PHASE-7A-ELECTRONICS-V2.md §P1-P9.
   if (parentSlug === 'electronics') {
     const electronicsSubCat = asElectronicsCategoryKey(subCatSlug);
     if (!electronicsSubCat) {
@@ -339,13 +342,13 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
         fieldErrors: { category_fields: 'electronics_sub_cat_required' },
       };
     }
-    const electronicsResult = validateElectronicsFieldsRaw(
+    const r = validateElectronicsFieldsRawV2(
       v.category_fields,
       electronicsSubCat,
     );
-    if (!electronicsResult.success) {
+    if (!r.success) {
       const fieldErrors: Record<string, string> = {};
-      for (const issue of electronicsResult.error.issues) {
+      for (const issue of r.error.issues) {
         const key = issue.path
           .filter(p => typeof p === 'string' || typeof p === 'number')
           .join('.');
@@ -356,10 +359,27 @@ export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<Publis
     }
   }
 
-  // Filter B (counterfeit) gate — applied to luxury OR electronics
-  // parents. Brand+model are usually where bad actors hide "1st copy"
-  // / "ماستر كوبي" terms; combine all the seller-typed text.
-  if (parentSlug === 'electronics' || parentSlug === 'luxury') {
+  // Counterfeit gate — Filter D in Phase 7 v2 doctrine. Electronics uses
+  // the widened 16-term blocklist (EN + AR, harvested from live Gulf
+  // observation). Luxury uses the original 6-term list from Sprint 2.
+  // Both widen at publish time on combined title + description + brand +
+  // model text.
+  if (parentSlug === 'electronics') {
+    const combined = [
+      v.title,
+      v.description,
+      v.brand ?? '',
+      v.model ?? '',
+    ].join(' ');
+    if (containsElectronicsCounterfeitTerm(combined)) {
+      return {
+        ok: false,
+        error: 'validation_failed',
+        fieldErrors: { description: 'counterfeit_term_not_allowed' },
+      };
+    }
+  }
+  if (parentSlug === 'luxury') {
     const combined = [
       v.title,
       v.description,

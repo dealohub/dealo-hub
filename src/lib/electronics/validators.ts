@@ -3,27 +3,39 @@ import type { ElectronicsCategoryKey, DeviceKind } from './types';
 import { DEVICE_KIND_BY_SUB_CAT } from './types';
 
 /**
- * ElectronicsFields — Zod schema for the `listings.category_fields`
- * JSONB body of electronics listings.
+ * ElectronicsFields — Zod schema for `listings.category_fields` JSONB
+ * on electronics listings (v2).
  *
- * Design (mirrors src/lib/properties/validators.ts):
- *   - Raw schema matches DB JSONB exactly (snake_case + `.passthrough()`
- *     for forward-compat across schema revisions)
- *   - Conditional refinements via `validateElectronicsFieldsRaw(raw, subCat)`
- *     — the bare schema can't express "phones require IMEI" without
- *     the sub-cat context
- *   - `toElectronicsFields()` emits camelCase for the UI layer
+ * Design:
+ *   - Raw schema = snake_case (mirrors DB) + `.passthrough()` for
+ *     forward-compat
+ *   - `validateElectronicsFieldsRawV2(raw, subCat)` layers sub-cat
+ *     conditional requirements on top
+ *   - `toElectronicsFields()` emits camelCase for consumers
  *
- * 28 fields across 5 domains (per planning/PHASE-7A-ELECTRONICS.md §3):
- *   1. Identity         — device_kind, brand, model, year_of_release, serial_or_imei_last_4
- *   2. Specs            — storage_gb, ram_gb, cpu, gpu, storage_type,
- *                         screen_size_inches, resolution, connectivity[]
- *   3. Condition        — condition_grade, battery_health_pct, battery_cycles,
- *                         repair_history[], original_parts, box_status, accessories_included[]
- *   4. Warranty         — purchase_country, warranty_status,
- *                         warranty_expires_at, has_original_receipt
- *   5. Lock + trade     — region_spec, carrier_lock, accepts_trade,
- *                         trade_for_models, lens_mount (cameras only)
+ * **What changed from v1 (deleted Phase 7 iteration):**
+ *   - DROPPED `region_spec` enum — implicit via `purchase_source`
+ *     (imported → warranty warning; GCC retailer → local warranty)
+ *   - DROPPED `carrier_lock` enum — ≥95% of GCC phones are unlocked;
+ *     edge cases go in description
+ *   - DROPPED `installment_remaining_months` — unnecessary complexity
+ *   - DROPPED separate `battery_tier` enum — single `battery_health_pct`
+ *     number with UI-side band calculation (green/amber/red)
+ *   - ADDED 4-way repair disclosure PER COMPONENT (screen / battery /
+ *     back_glass / camera), each with 3 states: original / replaced /
+ *     unknown — mirrors how sellers on Q84Sale + OpenSooq actually
+ *     describe devices ("مبدل شاشة أصلية" vs "مبدل شاشة خارجية")
+ *   - ADDED `purchase_source` GCC-wide enum (13 entries) — single
+ *     field captures retailer provenance + warranty implication
+ *   - WIDENED counterfeit blocklist from 6 terms to 16 (EN + AR,
+ *     verified live on Gulf platforms)
+ *
+ * Schema is intentionally smaller than v1: 14 fields instead of 28,
+ * half optional. Focus on signals that move close-rate, not
+ * exhaustive cataloguing.
+ *
+ * Reference: planning/PHASE-7A-ELECTRONICS-V2.md (pillars P1-P9)
+ *            planning/research-7a-v2/00-SYNTHESIS.md
  */
 
 // ---------------------------------------------------------------------------
@@ -47,87 +59,71 @@ export const DeviceKindSchema = z.enum([
   'lens',
 ]);
 
-export const ConditionGradeSchema = z.enum([
-  'mint',
-  'excellent',
-  'good',
-  'fair',
-  'for_parts',
+/**
+ * Cosmetic grade — 4-way ladder copied from Swappa + Reebelo + Back
+ * Market (they've converged on this exact shape). Plain-language
+ * UX-facing labels live in i18n; schema uses the canonical slug.
+ */
+export const CosmeticGradeSchema = z.enum([
+  'premium', // "Like new — no visible wear"
+  'excellent', // "Very light wear, fully functional"
+  'good', // "Visible wear, fully functional"
+  'fair', // "Heavy wear, may show issues but works"
 ]);
 
-export const StorageTypeSchema = z.enum([
-  'ssd',
-  'hdd',
-  'nvme',
-  'hybrid',
-  'emmc',
+/**
+ * Per-component repair state. Mirrors the Gulf seller vocabulary
+ * where "مبدل شاشة" (screen replaced) is a meaningful disclosure.
+ * 3-way keeps UX simple — no need for the 4-tier "aftermarket-premium /
+ * aftermarket-generic" split (the buyer asks in chat if they care).
+ */
+export const RepairStateSchema = z.enum([
+  'original', // never touched / factory original
+  'replaced', // replaced (OEM or aftermarket — seller can elaborate)
+  'unknown', // seller doesn't know
 ]);
+
+export const StorageTypeSchema = z.enum(['ssd', 'hdd', 'nvme', 'hybrid', 'emmc']);
 
 export const ResolutionSchema = z.enum(['hd', 'fhd', '2k', '4k', '8k']);
 
-export const ConnectivitySchema = z.enum([
-  'wifi',
-  'wifi6',
-  'bluetooth',
-  '5g',
-  'lte',
-  'ethernet',
-  'usb_c',
-  'thunderbolt',
-]);
-
-export const RepairKindSchema = z.enum([
-  'screen',
-  'battery',
-  'back_glass',
-  'logic_board',
-  'sensor',
-  'none',
-]);
-
-export const BoxStatusSchema = z.enum(['bnib', 'open_box', 'no_box']);
-
+/** Accessories shipped with the device — multi-select. */
 export const AccessorySchema = z.enum([
+  'original_box',
   'charger',
   'cable',
   'earphones',
   'case',
   'stand',
-  'box_only',
-  'original_packaging',
+  'receipt', // original receipt included
 ]);
 
-export const PurchaseCountrySchema = z.enum([
-  'kw',
-  'sa',
-  'ae',
-  'qa',
-  'bh',
-  'om',
-  'us',
-  'eu',
-  'jp',
-  'other',
+/**
+ * Purchase source — GCC-wide retailer enum. Covers the top 12
+ * purchase channels across Kuwait / UAE / Saudi / Qatar / Bahrain /
+ * Oman. `imported` is a first-class value because grey-market imports
+ * are the single biggest warranty-risk signal (Track C §6).
+ *
+ * Seller-facing UX: grid of logos in the wizard; sellers pick one.
+ * No free-text typing — eliminates misspellings + provenance ambiguity.
+ */
+export const PurchaseSourceSchema = z.enum([
+  'apple_store', // Apple Store Avenues KW / Mall of Emirates UAE / Kingdom KSA etc.
+  'xcite', // X-cite KW (Alghanim)
+  'eureka', // Eureka KW
+  'yousifi', // Best Al-Yousifi KW
+  'sharaf_dg', // Sharaf DG (UAE / KW)
+  'jumbo', // Jumbo Electronics UAE
+  'jarir', // Jarir KSA / KW / Qatar
+  'extra', // eXtra KSA
+  'virgin', // Virgin Megastore UAE / Qatar
+  'carrier', // any GCC telco — Zain / STC / Ooredoo / du / Etisalat / Mobily
+  'online', // noon / amazon / etc.
+  'imported', // grey market — warranty warning triggered
+  'other', // fallback; seller can describe in text field
 ]);
 
-export const WarrantyStatusSchema = z.enum([
-  'active_kuwait',
-  'active_international',
-  'expired',
-  'none',
-]);
-
-export const RegionSpecSchema = z.enum(['gcc', 'us', 'eu', 'jp', 'other']);
-
-export const CarrierLockSchema = z.enum([
-  'unlocked',
-  'zain',
-  'stc',
-  'ooredoo',
-  'other',
-]);
-
-/** Camera lens mount enum — only used when `device_kind=lens`. */
+/** GCC lens mounts — cameras sub-cat only. */
 export const LensMountSchema = z.enum([
   'canon_ef',
   'canon_rf',
@@ -140,86 +136,165 @@ export const LensMountSchema = z.enum([
 ]);
 
 // ---------------------------------------------------------------------------
-// Raw (snake_case, pre-transform) schema
+// Counterfeit blocklist (P7) — widened from v1 using research evidence
+// ---------------------------------------------------------------------------
+
+/**
+ * Arabic counterfeit terms harvested from:
+ *   - research-7a-v2/01-GULF-LIVE-OBSERVATION.md (live listings on
+ *     Dubizzle KW + OpenSooq KW showing "COPY A" + "شبيه الاصلي")
+ *   - research-7a-v2/03-KUWAIT-CULTURAL.md (Arabic detection
+ *     vocabulary from YouTube review channels)
+ *
+ * Applied at publish time on combined title + description + brand +
+ * model text via `containsElectronicsCounterfeitTerm()`. Rejection
+ * UX: submit blocked with translation key
+ * `counterfeit_term_not_allowed`.
+ */
+const COUNTERFEIT_TERMS_EN: ReadonlyArray<string> = [
+  '1st copy',
+  'first copy',
+  'high copy',
+  'high quality copy',
+  'master copy',
+  'mirror copy',
+  'aaa copy',
+  'aaa replica',
+  'super copy',
+  'replica',
+  'reproduction',
+  'knockoff',
+  'knock-off',
+  'clone',
+  'fake',
+  'counterfeit',
+];
+
+const COUNTERFEIT_TERMS_AR: ReadonlyArray<string> = [
+  'كوبي',
+  'هاي كوبي',
+  'ماستر كوبي',
+  'فيرست هاي كوبي',
+  'مستر كوبي',
+  'شبيه الاصلي',
+  'شبيه الأصلي',
+  'تقليد',
+  'مستنسخ',
+  'نسخة طبق الأصل',
+  'درجة ثانية',
+  'درجه ثانيه',
+  'كلاس وان',
+];
+
+/**
+ * Check whether a combined text blob contains any counterfeit-trigger
+ * term (EN or AR). Case-insensitive for Latin text. Returns true on
+ * first match — caller reports back the generic "not allowed" error;
+ * we don't leak which specific term matched (harder for bad actors
+ * to iterate around).
+ */
+export function containsElectronicsCounterfeitTerm(text: string): boolean {
+  const lower = text.toLowerCase();
+  for (const term of COUNTERFEIT_TERMS_EN) {
+    if (lower.includes(term)) return true;
+  }
+  for (const term of COUNTERFEIT_TERMS_AR) {
+    if (text.includes(term)) return true;
+  }
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// Raw schema (snake_case, pre-transform)
 // ---------------------------------------------------------------------------
 
 export const ElectronicsFieldsRaw = z
   .object({
-    // Identity
+    // Identity (5)
     device_kind: DeviceKindSchema,
+    /** FK to `electronics_device_catalog.slug`. Free-text fallback if
+     *  the model isn't in the catalog yet. v2 catalog ships ~40 models. */
+    model_slug: z.string().trim().min(1).max(120).optional(),
     brand: z.string().trim().min(1).max(60),
-    model: z.string().trim().min(1).max(80),
-    year_of_release: z
+    model: z.string().trim().min(1).max(120),
+    year_of_purchase: z
       .number()
       .int()
-      .min(1980)
+      .min(2000)
       .max(new Date().getFullYear() + 1)
       .optional(),
+
+    // Specs (5 — sub-cat-driven)
+    storage_gb: z.number().int().min(1).max(64_000).optional(),
+    ram_gb: z.number().int().min(1).max(2_048).optional(),
+    screen_size_inches: z.number().min(1).max(120).optional(),
+    resolution: ResolutionSchema.optional(),
+    storage_type: StorageTypeSchema.optional(),
+    lens_mount: LensMountSchema.optional(),
+
+    // Condition (3)
+    cosmetic_grade: CosmeticGradeSchema,
+    /** 0-100 — UI computes the band (green ≥85 / amber 70-84 / red <70). */
+    battery_health_pct: z.number().int().min(0).max(100).optional(),
     /**
      * Last 4 digits of IMEI (phones / cellular tablets / cellular
-     * smart-watches) or serial (laptops / cameras). Never store the
-     * full identifier — buyers verify against operator/Apple at the
-     * pickup point.
+     * smart-watches) or serial (laptops / cameras / TVs). NEVER stored
+     * in full — the buyer verifies the full number at handover.
+     *
+     * v2 additionally hashes the full IMEI into `electronics_imei_registry`
+     * for uniqueness (one IMEI = one active listing) — see P2 in doctrine.
+     * That hash lives in its own table, not this JSONB field.
      */
     serial_or_imei_last_4: z
       .string()
       .regex(/^[0-9A-Z]{4}$/, 'serial_or_imei_last_4 must be 4 alphanumeric uppercase chars')
       .optional(),
 
-    // Specs
-    storage_gb: z.number().int().min(1).max(64_000).optional(),
-    ram_gb: z.number().int().min(1).max(2_048).optional(),
-    cpu: z.string().trim().max(80).optional(),
-    gpu: z.string().trim().max(80).optional(),
-    storage_type: StorageTypeSchema.optional(),
-    screen_size_inches: z.number().min(1).max(120).optional(),
-    resolution: ResolutionSchema.optional(),
-    connectivity: z.array(ConnectivitySchema).default([]),
+    // Per-component repair disclosure (P4 — 4 components × 3 states)
+    repair_screen: RepairStateSchema.optional(),
+    repair_battery: RepairStateSchema.optional(),
+    repair_back_glass: RepairStateSchema.optional(),
+    repair_camera: RepairStateSchema.optional(),
 
-    // Condition + provenance
-    condition_grade: ConditionGradeSchema,
-    battery_health_pct: z.number().int().min(0).max(100).optional(),
-    battery_cycles: z.number().int().min(0).max(5_000).optional(),
-    repair_history: z.array(RepairKindSchema).default([]),
-    original_parts: z.boolean().optional(),
-    box_status: BoxStatusSchema.optional(),
-    accessories_included: z.array(AccessorySchema).default([]),
-
-    // Provenance + warranty
-    purchase_country: PurchaseCountrySchema.optional(),
-    warranty_status: WarrantyStatusSchema.optional(),
-    warranty_expires_at: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/, 'warranty_expires_at must be YYYY-MM-DD')
-      .optional(),
+    // Provenance + warranty (4 — P5, P6)
+    purchase_source: PurchaseSourceSchema.optional(),
     has_original_receipt: z.boolean().optional(),
+    warranty_active: z.boolean().optional(),
+    /** YYYY-MM-DD — optional date when warranty ends. */
+    warranty_end_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'warranty_end_date must be YYYY-MM-DD')
+      .optional(),
 
-    // Lock + trade
-    region_spec: RegionSpecSchema.optional(),
-    carrier_lock: CarrierLockSchema.optional(),
+    // Accessories + trade (2 — P8 badal support)
+    accessories_included: z.array(AccessorySchema).default([]),
     accepts_trade: z.boolean().optional(),
     trade_for_models: z.string().trim().max(200).optional(),
-
-    // Camera-only
-    lens_mount: LensMountSchema.optional(),
   })
   .passthrough();
 
 export type ElectronicsFieldsRawT = z.infer<typeof ElectronicsFieldsRaw>;
 
 // ---------------------------------------------------------------------------
-// Conditional refinement — requires sub-cat context
+// Sub-cat conditional validator
 // ---------------------------------------------------------------------------
 
 /**
- * Validate a raw category_fields blob against the sub-cat-dependent
- * invariants. Returns SafeParseReturn — consumers branch on `.success`.
+ * Layer sub-cat invariants on top of the bare schema. Call this (not
+ * the bare `ElectronicsFieldsRaw.safeParse`) at publish time.
  *
- * Call this instead of the bare `ElectronicsFieldsRaw.parse()` at
- * publish time, since conditional requirements depend on the sub-cat
- * (which lives outside the JSONB).
+ * Sub-cat requirements:
+ *   phones-tablets     → storage_gb, cosmetic_grade
+ *   laptops-computers  → storage_gb, ram_gb, screen_size_inches (laptop)
+ *   tvs-audio (TV)     → screen_size_inches, resolution
+ *   gaming console     → storage_gb
+ *   smart-watches      → battery_health_pct (watches live/die on battery)
+ *   cameras (lens)     → lens_mount
+ *
+ * device_kind must be one of the allowed kinds for the sub-cat
+ * (DEVICE_KIND_BY_SUB_CAT map).
  */
-export function validateElectronicsFieldsRaw(
+export function validateElectronicsFieldsRawV2(
   raw: unknown,
   subCat: ElectronicsCategoryKey,
 ): z.SafeParseReturnType<unknown, ElectronicsFieldsRawT> {
@@ -229,7 +304,7 @@ export function validateElectronicsFieldsRaw(
   const data = baseResult.data;
   const issues: z.ZodIssue[] = [];
 
-  // device_kind must belong to this sub-cat (no `console` under phones).
+  // device_kind must be within the allowed set for this sub-cat
   const allowedKinds = DEVICE_KIND_BY_SUB_CAT[subCat] ?? [];
   if (!(allowedKinds as ReadonlyArray<DeviceKind>).includes(data.device_kind)) {
     issues.push({
@@ -239,73 +314,41 @@ export function validateElectronicsFieldsRaw(
     });
   }
 
-  // ── Phones / tablets: IMEI + storage + region; phones also need carrier_lock
-  if (subCat === 'phones-tablets') {
-    if (!data.serial_or_imei_last_4) {
-      issues.push({
-        code: z.ZodIssueCode.custom,
-        path: ['serial_or_imei_last_4'],
-        message: 'phones/tablets require imei (last 4)',
-      });
-    }
+  // Phones / tablets
+  if (subCat === 'phones-tablets' && data.storage_gb == null) {
+    issues.push({
+      code: z.ZodIssueCode.custom,
+      path: ['storage_gb'],
+      message: 'phones/tablets require storage_gb',
+    });
+  }
+
+  // Laptops / desktops
+  if (subCat === 'laptops-computers' && (data.device_kind === 'laptop' || data.device_kind === 'desktop')) {
     if (data.storage_gb == null) {
       issues.push({
         code: z.ZodIssueCode.custom,
         path: ['storage_gb'],
-        message: 'phones/tablets require storage_gb',
+        message: 'laptops/desktops require storage_gb',
       });
     }
-    if (!data.region_spec) {
+    if (data.ram_gb == null) {
       issues.push({
         code: z.ZodIssueCode.custom,
-        path: ['region_spec'],
-        message: 'phones/tablets require region_spec (P5)',
+        path: ['ram_gb'],
+        message: 'laptops/desktops require ram_gb',
       });
     }
-    if (data.device_kind === 'phone' && !data.carrier_lock) {
+    if (data.device_kind === 'laptop' && data.screen_size_inches == null) {
       issues.push({
         code: z.ZodIssueCode.custom,
-        path: ['carrier_lock'],
-        message: 'phones require carrier_lock disclosure (P5)',
+        path: ['screen_size_inches'],
+        message: 'laptops require screen_size_inches',
       });
     }
   }
 
-  // ── Laptops: cpu + ram + storage + screen
-  if (subCat === 'laptops-computers') {
-    if (data.device_kind === 'laptop' || data.device_kind === 'desktop') {
-      if (data.storage_gb == null) {
-        issues.push({
-          code: z.ZodIssueCode.custom,
-          path: ['storage_gb'],
-          message: 'laptops/desktops require storage_gb',
-        });
-      }
-      if (data.ram_gb == null) {
-        issues.push({
-          code: z.ZodIssueCode.custom,
-          path: ['ram_gb'],
-          message: 'laptops/desktops require ram_gb',
-        });
-      }
-      if (!data.cpu) {
-        issues.push({
-          code: z.ZodIssueCode.custom,
-          path: ['cpu'],
-          message: 'laptops/desktops require cpu',
-        });
-      }
-      if (data.device_kind === 'laptop' && data.screen_size_inches == null) {
-        issues.push({
-          code: z.ZodIssueCode.custom,
-          path: ['screen_size_inches'],
-          message: 'laptops require screen_size_inches',
-        });
-      }
-    }
-  }
-
-  // ── TVs: screen size + resolution
+  // TVs
   if (subCat === 'tvs-audio' && data.device_kind === 'tv') {
     if (data.screen_size_inches == null) {
       issues.push({
@@ -323,7 +366,7 @@ export function validateElectronicsFieldsRaw(
     }
   }
 
-  // ── Gaming consoles need storage
+  // Gaming consoles
   if (
     subCat === 'gaming' &&
     (data.device_kind === 'console' || data.device_kind === 'handheld_console') &&
@@ -336,18 +379,16 @@ export function validateElectronicsFieldsRaw(
     });
   }
 
-  // ── Smart watches: need battery health (small device, big concern)
-  if (subCat === 'smart-watches' && data.device_kind === 'smart_watch') {
-    if (data.battery_health_pct == null) {
-      issues.push({
-        code: z.ZodIssueCode.custom,
-        path: ['battery_health_pct'],
-        message: 'smart watches require battery_health_pct (P4)',
-      });
-    }
+  // Smart watches — battery health is the single most-asked spec
+  if (subCat === 'smart-watches' && data.device_kind === 'smart_watch' && data.battery_health_pct == null) {
+    issues.push({
+      code: z.ZodIssueCode.custom,
+      path: ['battery_health_pct'],
+      message: 'smart watches require battery_health_pct',
+    });
   }
 
-  // ── Cameras: lenses need lens_mount
+  // Camera lenses need the mount
   if (subCat === 'cameras' && data.device_kind === 'lens' && !data.lens_mount) {
     issues.push({
       code: z.ZodIssueCode.custom,
@@ -356,152 +397,167 @@ export function validateElectronicsFieldsRaw(
     });
   }
 
-  // ── Battery cycles is a laptop-only metric — flag if set elsewhere
-  if (
-    data.battery_cycles != null &&
-    subCat !== 'laptops-computers'
-  ) {
-    issues.push({
-      code: z.ZodIssueCode.custom,
-      path: ['battery_cycles'],
-      message: 'battery_cycles only applies to laptops',
-    });
-  }
-
-  // ── Warranty cross-field — if status active, expiry should be in the future
-  if (
-    (data.warranty_status === 'active_kuwait' ||
-      data.warranty_status === 'active_international') &&
-    data.warranty_expires_at
-  ) {
-    const expiry = Date.parse(data.warranty_expires_at);
-    if (!Number.isNaN(expiry) && expiry < Date.now()) {
+  // Warranty coherence — if marked active, end_date shouldn't be in the past
+  if (data.warranty_active && data.warranty_end_date) {
+    const end = Date.parse(data.warranty_end_date);
+    if (!Number.isNaN(end) && end < Date.now()) {
       issues.push({
         code: z.ZodIssueCode.custom,
-        path: ['warranty_expires_at'],
-        message: 'warranty_expires_at is in the past — set status=expired instead',
+        path: ['warranty_end_date'],
+        message: 'warranty_active=true but warranty_end_date is in the past',
       });
     }
   }
 
+  // Trade-in invariant: if accepts_trade, trade_for_models is optional but
+  // trade_for_models without accepts_trade is contradictory.
+  if (data.trade_for_models && !data.accepts_trade) {
+    issues.push({
+      code: z.ZodIssueCode.custom,
+      path: ['accepts_trade'],
+      message: 'trade_for_models set but accepts_trade is false',
+    });
+  }
+
   if (issues.length > 0) {
-    return {
-      success: false,
-      error: new z.ZodError(issues),
-    };
+    return { success: false, error: new z.ZodError(issues) };
   }
   return { success: true, data };
 }
 
 // ---------------------------------------------------------------------------
-// Draft-time partial schema (progressive wizard) — mirrors Properties pattern
+// Draft-time partial schema — lenient for progressive wizard saves
 // ---------------------------------------------------------------------------
 
-export const ElectronicsFieldsDraftSchema = ElectronicsFieldsRaw.partial().passthrough();
-export type ElectronicsFieldsDraft = z.infer<typeof ElectronicsFieldsDraftSchema>;
-
-export function isElectronicsFieldsDraftNonEmpty(raw: unknown): boolean {
-  if (!raw || typeof raw !== 'object') return false;
-  return Object.keys(raw as Record<string, unknown>).length > 0;
-}
+export const ElectronicsFieldsDraftSchemaV2 = ElectronicsFieldsRaw.partial().passthrough();
+export type ElectronicsFieldsDraftV2 = z.infer<typeof ElectronicsFieldsDraftSchemaV2>;
 
 // ---------------------------------------------------------------------------
-// Transform to camelCase (consumer-facing)
+// camelCase transform for consumers
 // ---------------------------------------------------------------------------
 
 export interface ElectronicsFields {
   // Identity
   deviceKind: DeviceKind;
+  modelSlug?: string;
   brand: string;
   model: string;
-  yearOfRelease?: number;
-  serialOrImeiLast4?: string;
+  yearOfPurchase?: number;
 
   // Specs
   storageGb?: number;
   ramGb?: number;
-  cpu?: string;
-  gpu?: string;
-  storageType?: z.infer<typeof StorageTypeSchema>;
   screenSizeInches?: number;
   resolution?: z.infer<typeof ResolutionSchema>;
-  connectivity: z.infer<typeof ConnectivitySchema>[];
+  storageType?: z.infer<typeof StorageTypeSchema>;
+  lensMount?: z.infer<typeof LensMountSchema>;
 
-  // Condition + provenance
-  conditionGrade: z.infer<typeof ConditionGradeSchema>;
+  // Condition
+  cosmeticGrade: z.infer<typeof CosmeticGradeSchema>;
   batteryHealthPct?: number;
-  batteryCycles?: number;
-  repairHistory: z.infer<typeof RepairKindSchema>[];
-  originalParts?: boolean;
-  boxStatus?: z.infer<typeof BoxStatusSchema>;
-  accessoriesIncluded: z.infer<typeof AccessorySchema>[];
+  serialOrImeiLast4?: string;
 
-  // Warranty
-  purchaseCountry?: z.infer<typeof PurchaseCountrySchema>;
-  warrantyStatus?: z.infer<typeof WarrantyStatusSchema>;
-  warrantyExpiresAt?: string;
+  // Repair disclosure (per component)
+  repairScreen?: z.infer<typeof RepairStateSchema>;
+  repairBattery?: z.infer<typeof RepairStateSchema>;
+  repairBackGlass?: z.infer<typeof RepairStateSchema>;
+  repairCamera?: z.infer<typeof RepairStateSchema>;
+
+  // Provenance + warranty
+  purchaseSource?: z.infer<typeof PurchaseSourceSchema>;
   hasOriginalReceipt?: boolean;
+  warrantyActive?: boolean;
+  warrantyEndDate?: string;
 
-  // Lock + trade
-  regionSpec?: z.infer<typeof RegionSpecSchema>;
-  carrierLock?: z.infer<typeof CarrierLockSchema>;
+  // Trade
+  accessoriesIncluded: z.infer<typeof AccessorySchema>[];
   acceptsTrade?: boolean;
   tradeForModels?: string;
-
-  // Camera-only
-  lensMount?: z.infer<typeof LensMountSchema>;
 }
 
-/** Transform raw (snake_case) to camelCase. Assumes
- *  validateElectronicsFieldsRaw already passed. Pure function. */
+/** Pure transform — assumes `validateElectronicsFieldsRawV2` already passed. */
 export function toElectronicsFields(raw: ElectronicsFieldsRawT): ElectronicsFields {
   return {
     deviceKind: raw.device_kind,
+    modelSlug: raw.model_slug,
     brand: raw.brand,
     model: raw.model,
-    yearOfRelease: raw.year_of_release,
-    serialOrImeiLast4: raw.serial_or_imei_last_4,
+    yearOfPurchase: raw.year_of_purchase,
 
     storageGb: raw.storage_gb,
     ramGb: raw.ram_gb,
-    cpu: raw.cpu,
-    gpu: raw.gpu,
-    storageType: raw.storage_type,
     screenSizeInches: raw.screen_size_inches,
     resolution: raw.resolution,
-    connectivity: raw.connectivity ?? [],
+    storageType: raw.storage_type,
+    lensMount: raw.lens_mount,
 
-    conditionGrade: raw.condition_grade,
+    cosmeticGrade: raw.cosmetic_grade,
     batteryHealthPct: raw.battery_health_pct,
-    batteryCycles: raw.battery_cycles,
-    repairHistory: raw.repair_history ?? [],
-    originalParts: raw.original_parts,
-    boxStatus: raw.box_status,
-    accessoriesIncluded: raw.accessories_included ?? [],
+    serialOrImeiLast4: raw.serial_or_imei_last_4,
 
-    purchaseCountry: raw.purchase_country,
-    warrantyStatus: raw.warranty_status,
-    warrantyExpiresAt: raw.warranty_expires_at,
+    repairScreen: raw.repair_screen,
+    repairBattery: raw.repair_battery,
+    repairBackGlass: raw.repair_back_glass,
+    repairCamera: raw.repair_camera,
+
+    purchaseSource: raw.purchase_source,
     hasOriginalReceipt: raw.has_original_receipt,
+    warrantyActive: raw.warranty_active,
+    warrantyEndDate: raw.warranty_end_date,
 
-    regionSpec: raw.region_spec,
-    carrierLock: raw.carrier_lock,
+    accessoriesIncluded: raw.accessories_included ?? [],
     acceptsTrade: raw.accepts_trade,
     tradeForModels: raw.trade_for_models,
-
-    lensMount: raw.lens_mount,
   };
 }
 
 // ---------------------------------------------------------------------------
-// Battery-health UI helper (P4)
+// UX helpers — keep them here so the component layer can render without
+// duplicating threshold logic.
 // ---------------------------------------------------------------------------
 
 export type BatteryHealthBand = 'green' | 'amber' | 'red' | 'unknown';
 
+/**
+ * Map raw battery health % to the 3-band visual (Reebelo convention +
+ * Swappa iPhone ≥80% disclosure line):
+ *   ≥85 → green · 70-84 → amber · <70 → red · null/undefined → unknown
+ */
 export function batteryHealthBand(pct: number | undefined | null): BatteryHealthBand {
   if (pct == null) return 'unknown';
   if (pct >= 85) return 'green';
   if (pct >= 70) return 'amber';
   return 'red';
+}
+
+/**
+ * Does the device-kind carry a battery worth disclosing? Gating rule
+ * for when the UI should show the "Battery not disclosed" amber
+ * warning on the detail page.
+ */
+export function deviceKindHasBattery(kind: DeviceKind): boolean {
+  return (
+    kind === 'phone' ||
+    kind === 'tablet' ||
+    kind === 'laptop' ||
+    kind === 'smart_watch' ||
+    kind === 'handheld_console' ||
+    kind === 'headphones' ||
+    kind === 'camera'
+  );
+}
+
+/**
+ * Does the device-kind have a repairable screen worth disclosing? TVs
+ * and laptops yes; headphones/consoles no.
+ */
+export function deviceKindHasScreen(kind: DeviceKind): boolean {
+  return (
+    kind === 'phone' ||
+    kind === 'tablet' ||
+    kind === 'laptop' ||
+    kind === 'tv' ||
+    kind === 'smart_watch' ||
+    kind === 'handheld_console'
+  );
 }

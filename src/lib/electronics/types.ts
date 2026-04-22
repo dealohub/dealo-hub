@@ -1,27 +1,30 @@
 import type { ElectronicsFields } from './validators';
 
 /**
- * App-facing types for the Electronics vertical.
+ * Electronics vertical — app-facing types (v2).
+ *
+ * v1 (archived Phase 7 iteration) carried 28 fields including a
+ * region_spec enum, carrier_lock enum, and installment tracking — all
+ * dropped in v2 after user research showed ≥95% of GCC phones are
+ * unlocked by default and region-spec is implicit in purchase_source
+ * (imported → warranty warning; local retailer → GCC warranty).
  *
  * Conventions mirror src/lib/properties/types.ts:
- *   - camelCase throughout (DB rows live in src/types/database.ts)
- *   - No phone_e164 / email on public shapes (DECISIONS.md #2)
- *   - Nullable where the DB is nullable; Zod narrows on parse
+ *   - camelCase throughout (DB stays snake_case)
+ *   - No phone/email on public shapes (DECISIONS.md #2 — chat-only)
+ *   - Nullable where DB is nullable; Zod narrows on parse
  *
- * Architecture note: ElectronicsFields (the camelCase consumer shape)
- * lives in validators.ts so the Zod source of truth is co-located
- * with its conditional refinement logic.
+ * v2 scope is GCC-wide (Kuwait · UAE · Saudi · Qatar · Bahrain · Oman) —
+ * NOT Kuwait-only. Purchase-source enum covers retailers across the
+ * region; voice stays professional, not dialect-specific.
  *
- * Reference: planning/PHASE-7A-ELECTRONICS.md §2 (taxonomy fit) + §3 (schema).
+ * Reference: planning/PHASE-7A-ELECTRONICS-V2.md · planning/research-7a-v2/
  */
 
 // ---------------------------------------------------------------------------
-// Taxonomy
+// Taxonomy — unchanged from v1 (6 sub-cats seeded in migration 0001)
 // ---------------------------------------------------------------------------
 
-/** One of the 6 sub-cats inserted by the original taxonomy seed under
- *  the `electronics` parent. Mirrors what `getCategoryBySlug('electronics')`
- *  returns under `subCategories`. */
 export type ElectronicsCategoryKey =
   | 'phones-tablets'
   | 'laptops-computers'
@@ -30,11 +33,26 @@ export type ElectronicsCategoryKey =
   | 'smart-watches'
   | 'cameras';
 
-/**
- * `device_kind` is finer than the sub-cat — a single sub-cat (gaming)
- * may carry multiple device kinds (console, handheld_console,
- * accessory). Listed here so consumers can branch UI on it.
- */
+export const ELECTRONICS_SUB_CATS: ReadonlyArray<ElectronicsCategoryKey> = [
+  'phones-tablets',
+  'laptops-computers',
+  'tvs-audio',
+  'gaming',
+  'smart-watches',
+  'cameras',
+];
+
+export function isElectronicsSubCat(
+  slug: string | null | undefined,
+): slug is ElectronicsCategoryKey {
+  if (!slug) return false;
+  return (ELECTRONICS_SUB_CATS as ReadonlyArray<string>).includes(slug);
+}
+
+// ---------------------------------------------------------------------------
+// Device kind — finer than sub-cat (a single sub-cat may host multiple kinds)
+// ---------------------------------------------------------------------------
+
 export type DeviceKind =
   | 'phone'
   | 'tablet'
@@ -51,8 +69,22 @@ export type DeviceKind =
   | 'camera'
   | 'lens';
 
+/** Sub-cat → allowed device-kinds map. Locks the wizard so a `console`
+ *  can't be filed under `phones-tablets`, etc. */
+export const DEVICE_KIND_BY_SUB_CAT: Record<
+  ElectronicsCategoryKey,
+  ReadonlyArray<DeviceKind>
+> = {
+  'phones-tablets': ['phone', 'tablet'],
+  'laptops-computers': ['laptop', 'desktop'],
+  'tvs-audio': ['tv', 'soundbar', 'headphones', 'speaker'],
+  gaming: ['console', 'handheld_console', 'accessory'],
+  'smart-watches': ['smart_watch', 'accessory'],
+  cameras: ['camera', 'lens', 'accessory'],
+};
+
 // ---------------------------------------------------------------------------
-// Verification (cross-vertical — reuse Properties' types)
+// Verification (reuse cross-vertical types from Properties)
 // ---------------------------------------------------------------------------
 
 export type {
@@ -64,23 +96,12 @@ export type {
 // Image categories
 // ---------------------------------------------------------------------------
 
-/**
- * Electronics-specific image-category enum. Reuses 4 of the
- * automotive-shared values (exterior/interior/details — generic) and
- * adds 4 electronics-specific ones. All values live as plain text in
- * `listing_images.category` — listing_images.category CHECK was
- * extended in migration 0026 with property values; we extend it
- * again in 7a's optional companion migration if seeders need the
- * new categories. For Phase 7a alone we lean on the existing 'details'
- * value as the catch-all.
- */
 export type ElectronicsImageCategory =
-  | 'power_on_screen'
-  | 'imei_screen'
-  | 'battery_health_screen'
-  | 'serial_label'
-  // Generic photo categories already accepted by listing_images.category
-  | 'exterior'
+  | 'power_on_screen' // device on, home screen visible
+  | 'imei_screen' // Settings → About with IMEI (IMEI itself redacted/blurred)
+  | 'battery_health_screen' // Settings → Battery → Battery Health for iPhone
+  | 'serial_label' // sticker on back of laptop/console/TV
+  | 'exterior' // cross-vertical legacy values (extant in DB)
   | 'interior'
   | 'details';
 
@@ -121,7 +142,7 @@ export interface ElectronicsDetail {
   oldPriceMinorUnits: number | null;
   isPriceNegotiable: boolean;
 
-  // Verification (P10 — pillar)
+  // Verification (P2 — IMEI uniqueness / pre-publish check)
   verificationTier: import('@/lib/properties/types').VerificationTier;
   verifiedAt: string | null;
   verifiedBy: import('@/lib/properties/types').VerificationMethod | null;
@@ -147,11 +168,12 @@ export interface ElectronicsDetail {
     createdAt: string;
   };
 
-  // Location
+  // Location — GCC-wide
   cityId: number;
   cityName: string;
   areaId: number | null;
   areaName: string | null;
+  countryCode: string; // 'KW' | 'AE' | 'SA' | 'QA' | 'BH' | 'OM'
 
   // Images
   images: ElectronicsImage[];
@@ -168,7 +190,7 @@ export interface ElectronicsDetail {
 }
 
 // ---------------------------------------------------------------------------
-// ElectronicsCard — grid/hub card shape (subset of ElectronicsDetail)
+// ElectronicsCard — grid/hub card shape
 // ---------------------------------------------------------------------------
 
 export interface ElectronicsCard {
@@ -191,50 +213,15 @@ export interface ElectronicsCard {
   model: string;
   deviceKind: DeviceKind;
   storageGb: number | null;
-  conditionGrade: ElectronicsFields['conditionGrade'];
+  cosmeticGrade: ElectronicsFields['cosmeticGrade'];
   batteryHealthPct: number | null;
-  warrantyStatus: ElectronicsFields['warrantyStatus'];
+  purchaseSource: ElectronicsFields['purchaseSource'];
+  acceptsTrade: boolean;
 
   cityName: string;
   areaName: string | null;
+  countryCode: string;
 
   isFeatured: boolean;
   createdAt: string;
 }
-
-// ---------------------------------------------------------------------------
-// Helpers — locked sub-cat lists (consumed by route guards)
-// ---------------------------------------------------------------------------
-
-export const ELECTRONICS_SUB_CATS: ReadonlyArray<ElectronicsCategoryKey> = [
-  'phones-tablets',
-  'laptops-computers',
-  'tvs-audio',
-  'gaming',
-  'smart-watches',
-  'cameras',
-];
-
-export function isElectronicsSubCat(
-  slug: string | null | undefined,
-): slug is ElectronicsCategoryKey {
-  if (!slug) return false;
-  return (ELECTRONICS_SUB_CATS as ReadonlyArray<string>).includes(slug);
-}
-
-/**
- * Map a DeviceKind to its parent sub-cat. Used by the wizard's
- * "lock device_kind once sub-cat is chosen" UX so we don't allow a
- * `console` device under `phones-tablets`.
- */
-export const DEVICE_KIND_BY_SUB_CAT: Record<
-  ElectronicsCategoryKey,
-  ReadonlyArray<DeviceKind>
-> = {
-  'phones-tablets': ['phone', 'tablet'],
-  'laptops-computers': ['laptop', 'desktop'],
-  'tvs-audio': ['tv', 'soundbar', 'headphones', 'speaker'],
-  gaming: ['console', 'handheld_console', 'accessory'],
-  'smart-watches': ['smart_watch', 'accessory'],
-  cameras: ['camera', 'lens', 'accessory'],
-};
