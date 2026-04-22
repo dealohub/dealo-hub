@@ -65,14 +65,25 @@ const SUB_CAT_TO_BUCKET: Readonly<Record<string, FeedCategoryKey>> = {
   'international-property': 'property',
   'property-management': 'property',
   'realestate-offices': 'property',
-  // Future: electronics, jobs sub-cats — add when seeded.
+  // Electronics family (Phase 7 v2) — 6 sub-cats → 'tech'.
+  'phones-tablets': 'tech',
+  'laptops-computers': 'tech',
+  'tvs-audio': 'tech',
+  gaming: 'tech',
+  'smart-watches': 'tech',
+  cameras: 'tech',
+  // Future: jobs sub-cats — add when seeded.
 };
 
 function toFeedCategory(
   subCategorySlug: string | null | undefined,
 ): FeedCategoryKey {
-  if (!subCategorySlug) return 'tech';
-  return SUB_CAT_TO_BUCKET[subCategorySlug] ?? 'tech';
+  // Default fallback is 'jobs' — the only remaining bucket that lacks
+  // its own vertical detail page. When an unmapped sub-cat appears in
+  // the feed, routing through verticalPathForFeedCat lands it on the
+  // locale root rather than falsely claiming it's an electronics SKU.
+  if (!subCategorySlug) return 'jobs';
+  return SUB_CAT_TO_BUCKET[subCategorySlug] ?? 'jobs';
 }
 
 // ---------------------------------------------------------------------------
@@ -81,13 +92,18 @@ function toFeedCategory(
 
 /**
  * Tiny spec line derived from the JSONB category_fields. Kept simple
- * and generic — automotive surfaces {year · mileage}; non-automotive
- * returns undefined (the card shows only title + price + location).
+ * and generic:
+ *   automotive   → {year · mileage_km}
+ *   electronics  → {storage_gb · battery_health_pct · cosmetic_grade}
+ *                  (falls back to any subset — won't emit an empty line)
+ *   everything else → undefined (card shows title + price + location only)
  */
 function deriveMeta(fields: unknown): string | undefined {
   if (!fields || typeof fields !== 'object') return undefined;
   const f = fields as Record<string, unknown>;
   const parts: string[] = [];
+
+  // Automotive signals
   if (typeof f.year === 'number') parts.push(String(f.year));
   if (typeof f.mileage_km === 'number') {
     parts.push(
@@ -96,6 +112,24 @@ function deriveMeta(fields: unknown): string | undefined {
         : `${(f.mileage_km as number).toLocaleString('en-US')} km`,
     );
   }
+
+  // Electronics signals (additive — a listing will only ever carry one
+  // family of fields at a time, but we check both defensively).
+  if (typeof f.storage_gb === 'number' && f.storage_gb > 0) {
+    parts.push(
+      f.storage_gb >= 1000
+        ? `${(f.storage_gb as number) / 1000}TB`
+        : `${f.storage_gb}GB`,
+    );
+  }
+  if (
+    typeof f.battery_health_pct === 'number' &&
+    f.battery_health_pct > 0 &&
+    f.battery_health_pct <= 100
+  ) {
+    parts.push(`${f.battery_health_pct}%`);
+  }
+
   return parts.length > 0 ? parts.join(' · ') : undefined;
 }
 
