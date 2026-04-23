@@ -82,8 +82,16 @@ logs/
 # playwright-mcp dev artifacts
 .playwright-mcp/
 
+# Playwright session state (cookies, localStorage, screenshots)
+.browser-sessions/
+
 # Local dev screenshots + scratch files
 tmp/
+
+# Root-level verification screenshots (Playwright + manual captures).
+# Scope is anchored with a leading slash so subdirectory PNG assets
+# (e.g. public/, design-prototypes/) are NOT affected.
+/*.png
 
 # Vendored reference template (Admin Kit by Shadcnblocks) — port selectively
 # into src/components/admin/, keep locally for reference, never commit.
