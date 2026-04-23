@@ -43,7 +43,7 @@ export const RidesBestOf2026 = () => {
               transition={{ duration: 0.5, ease: [0.22, 0.61, 0.36, 1] }}
               className="flex flex-col justify-center"
             >
-              <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-[#D4A827]/60 bg-[#D4A827]/18 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#D4A827]">
+              <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-[#F59E0B]/60 bg-[#F59E0B]/18 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#F59E0B]">
                 <Trophy size={12} strokeWidth={2.2} />
                 {t('eyebrow')}
               </div>
@@ -129,7 +129,7 @@ const WinnerCard = ({
           onLoad={() => setLoaded(true)}
         />
         {/* Winner badge — always visible above skeleton */}
-        <span className="absolute start-2 top-2 z-10 inline-flex items-center gap-0.5 rounded-full bg-[#D4A827] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#110900] shadow-md">
+        <span className="absolute start-2 top-2 z-10 inline-flex items-center gap-0.5 rounded-full bg-[#F59E0B] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#1C1200] shadow-md">
           #{index + 1}
         </span>
       </div>
