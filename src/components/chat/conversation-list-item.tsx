@@ -54,7 +54,7 @@ export default function ConversationListItem({ conversation, locale }: Props) {
       }
     >
       {/* Listing cover */}
-      <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-foreground/5">
+      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-foreground/5">
         {c.listing.cover ? (
           <Image
             src={c.listing.cover}
@@ -81,7 +81,7 @@ export default function ConversationListItem({ conversation, locale }: Props) {
           >
             {c.otherParty.dealerName || c.otherParty.displayName}
           </span>
-          <span className="inline-flex flex-shrink-0 items-center gap-0.5 rounded-full bg-foreground/5 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider text-foreground/60">
+          <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-foreground/5 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider text-foreground/60">
             <Tag size={8} />
             {c.viewerIsBuyer ? t('youBuyer') : t('youSeller')}
           </span>
@@ -102,7 +102,7 @@ export default function ConversationListItem({ conversation, locale }: Props) {
       </div>
 
       {/* Right meta */}
-      <div className="flex flex-shrink-0 flex-col items-end gap-1">
+      <div className="flex shrink-0 flex-col items-end gap-1">
         <span className="text-[10px] text-foreground/50">
           {formatTimestamp(c.lastMessageAt ?? c.createdAt, locale)}
         </span>

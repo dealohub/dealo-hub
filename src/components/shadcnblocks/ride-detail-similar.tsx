@@ -72,7 +72,7 @@ export const RideDetailSimilar = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.4, delay: i * 0.06 }}
-              className="min-w-[220px] flex-shrink-0 snap-start md:min-w-0"
+              className="min-w-[220px] shrink-0 snap-start md:min-w-0"
             >
               <Link
                 href={`/${locale}/rides/${s.slug}`}

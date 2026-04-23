@@ -30,7 +30,7 @@ export default function SearchResultCard({ card, locale }: Props) {
       className="group flex gap-4 overflow-hidden rounded-xl border border-border/50 bg-card p-3 transition hover:border-border hover:shadow-sm"
     >
       {/* Cover */}
-      <div className="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-lg bg-foreground/5 sm:h-32 sm:w-32">
+      <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-lg bg-foreground/5 sm:h-32 sm:w-32">
         {card.coverUrl ? (
           <Image
             src={card.coverUrl}

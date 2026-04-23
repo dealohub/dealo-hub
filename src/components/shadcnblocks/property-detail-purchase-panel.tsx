@@ -146,7 +146,7 @@ export default function PropertyDetailPurchasePanel({ listing, locale }: Props) 
 
       {/* Seller mini */}
       <div className="flex items-center gap-3 border-t border-border/40 pt-3">
-        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
           {listing.seller.displayName.slice(0, 2).toUpperCase()}
         </div>
         <div className="min-w-0 flex-1">

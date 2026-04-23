@@ -85,7 +85,7 @@ export default function PropertyDetailPaymentPlan({ listing }: Props) {
 function Stage({ index, label, pct }: { index: number; label: string; pct: number }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-indigo-500/15 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-500/15 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
         {index}
       </span>
       <span className="flex-1 text-sm text-foreground/80">{label}</span>

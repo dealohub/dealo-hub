@@ -163,7 +163,7 @@ export default function PropertyDetailAmenities({ listing }: Props) {
                       key={slug}
                       className="flex items-center gap-2 rounded-lg bg-foreground/5 px-3 py-2 text-sm text-foreground/80"
                     >
-                      <Icon size={16} className="flex-shrink-0 text-foreground/60" />
+                      <Icon size={16} className="shrink-0 text-foreground/60" />
                       <span>{t(AMENITY_I18N[slug] as any)}</span>
                     </div>
                   );

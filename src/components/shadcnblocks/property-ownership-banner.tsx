@@ -91,7 +91,7 @@ export default function PropertyOwnershipBanner({ subCat, zoningType }: Props) {
     >
       <Icon
         size={20}
-        className={'mt-0.5 flex-shrink-0 ' + toneClasses.icon}
+        className={'mt-0.5 shrink-0 ' + toneClasses.icon}
         strokeWidth={2.25}
       />
       <div className="min-w-0 flex-1 space-y-1">

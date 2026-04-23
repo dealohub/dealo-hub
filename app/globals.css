@@ -1,47 +1,91 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
+/* Tailwind 4 darkMode: 'class' equivalent.
+   Any ancestor with .dark enables dark: variants. */
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+   Defined once as HSL triplets (or hex where useful) on :root / .dark,
+   then exposed to Tailwind through @theme so utilities like
+   `bg-background`, `text-foreground`, `border-border`, `bg-primary`,
+   `font-sans`, `rounded-lg`, etc. resolve to these values.
+
+   Tailwind 4 content-detection is automatic — no `content:` glob needed.
+   Logical utilities (ms-*, me-*, ps-*, pe-*, start-*, end-*) are native,
+   so tailwindcss-logical is no longer a dep.
+
+   Palette: cool-neutral slate (hue 240) shared between light and dark
+   so the theme toggle reads as a polarity flip rather than a redesign.
+   All saturation ≤ 6% — imperceptible tint, zero hue-shift in
+   bg-foreground/[opacity] surfaces. Brand red #e30613 owns the accent
+   lane via --primary.
+   --------------------------------------------------------------------------- */
+:root {
+  --background: 0 0% 100%; /* paper white */
+  --foreground: 240 10% 10%; /* cool near-black */
+  --muted: 240 5% 96%; /* neutral grey surface */
+  --muted-foreground: 240 4% 46%; /* secondary text */
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 10%;
+  --border: 240 6% 90%; /* hairline */
+  --input: 240 6% 90%;
+  --ring: 240 10% 10%;
+  --primary: #e30613; /* Dealo brand red */
+  --primary-foreground: 0 0% 100%;
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: 240 10% 4%;
+  --foreground: 0 0% 98%;
+  --muted: 240 6% 10%;
+  --muted-foreground: 240 5% 65%;
+  --popover: 240 10% 6%;
+  --popover-foreground: 0 0% 98%;
+  --border: 240 6% 14%;
+  --input: 240 6% 14%;
+  --ring: 240 5% 65%;
+}
+
+@theme inline {
+  /* Colors */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  /* Border radii — derived from --radius so a single knob scales the system */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+
+  /* Font stacks — keep the two families exposed as font-sans / font-calSans */
+  --font-sans: var(--font-geist-sans), 'Geist', ui-sans-serif, system-ui,
+    sans-serif;
+  --font-calSans: var(--font-bricolage), 'Bricolage Grotesque',
+    var(--font-geist-sans), 'Geist', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---------------------------------------------------------------------------
+   Base styles
+   --------------------------------------------------------------------------- */
 @layer base {
-  /* 2026-04-23 palette reset — cool-neutral slate.
-     Shared hue 240 with dark mode so the theme toggle reads as a
-     polarity flip rather than a redesign. All saturation ≤ 6% →
-     imperceptible tint, zero hue-shift in bg-foreground/[opacity]
-     surfaces (the fix for the pink-tint bug: previously fg hue 30
-     over bg hue 60 mixed toward salmon at low alpha).
-     Brand red #e30613 owns the accent lane via --primary,
-     replacing the inherited-from-shadcn purple (oklch 274) that
-     never matched Dealo's identity. */
-  :root {
-    --background: 0 0% 100%;           /* paper white */
-    --foreground: 240 10% 10%;         /* cool near-black */
-    --muted: 240 5% 96%;               /* neutral grey surface */
-    --muted-foreground: 240 4% 46%;    /* secondary text */
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
-    --border: 240 6% 90%;              /* hairline */
-    --input: 240 6% 90%;
-    --ring: 240 10% 10%;
-    --primary: #e30613;                /* Dealo brand red */
-    --primary-foreground: 0 0% 100%;
-    --radius: 0.625rem;
-  }
-
-  .dark {
-    --background: 240 10% 4%;
-    --foreground: 0 0% 98%;
-    --muted: 240 6% 10%;
-    --muted-foreground: 240 5% 65%;
-    --popover: 240 10% 6%;
-    --popover-foreground: 0 0% 98%;
-    --border: 240 6% 14%;
-    --input: 240 6% 14%;
-    --ring: 240 5% 65%;
-  }
-
   html,
   body {
-    font-family: var(--font-geist-sans), 'Geist', ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-geist-sans), 'Geist', ui-sans-serif, system-ui,
+      sans-serif;
     background: hsl(var(--background));
     color: hsl(var(--foreground));
   }
@@ -50,9 +94,9 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Arabic typography — Cairo is applied through the whole RTL tree.
+  /* Arabic typography — Cairo applies through the whole RTL tree.
      Font utilities (font-sans, font-calSans) still work because we
-     rebind their CSS variables here so Tailwind picks Cairo up. */
+     rebind the CSS variables here so Tailwind picks Cairo up. */
   html[dir='rtl'],
   html[dir='rtl'] body {
     font-family: var(--font-cairo), 'Cairo', 'Segoe UI', Tahoma, sans-serif;
@@ -64,19 +108,16 @@
   }
 
   /* ───────────── a11y: keyboard focus ring ─────────────
-     We opt out of the browser's default outline for mouse clicks
-     (which is what `:focus` alone covers) but REINSTATE a visible
-     ring for keyboard focus via `:focus-visible`. This is the
-     modern best practice:
+     Opt out of the browser's default outline for mouse clicks (covered
+     by `:focus` alone) but REINSTATE a visible ring for keyboard focus
+     via `:focus-visible`. Modern best practice:
        - Mouse clicks leave UI clean
        - Tab / arrow-key navigation shows a crisp ring on every
          interactive element
      Anchors, buttons, and form controls all share the same token
-     (var(--ring)) so the ring styling stays consistent with the
-     rest of the design system.
-     Components that define their own `focus:ring-…` classes (many
-     do) keep winning via higher specificity — this rule is only a
-     fallback for the ones that forgot. */
+     (var(--ring)) so the ring stays consistent with the rest of the
+     design system. Components with their own `focus:ring-…` classes
+     keep winning via specificity — this is a fallback. */
   :focus {
     outline: none;
   }
@@ -86,10 +127,9 @@
     border-radius: 4px;
   }
 
-  /* Respect reduced motion preferences — strips all CSS transitions
-     and animations for users who opted in at the OS level. Lives at
-     the base layer so it catches every component that declares
-     `transition-*` classes via Tailwind. */
+  /* Respect reduced motion — strips CSS transitions and animations
+     for users who opted in at the OS level. At the base layer so it
+     catches every component declaring `transition-*` classes. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

@@ -179,7 +179,7 @@ export default function PropertyDetailGallery({ listing }: Props) {
               key={img.url + i}
               onClick={() => setActive(i)}
               className={
-                'relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-md ring-2 transition ' +
+                'relative h-16 w-24 shrink-0 overflow-hidden rounded-md ring-2 transition ' +
                 (i === active
                   ? 'ring-primary'
                   : 'opacity-70 ring-transparent hover:opacity-100')

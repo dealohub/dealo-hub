@@ -148,7 +148,7 @@ function ActivityCard({
       style={{ animation: 'fade-in 0.4s ease-out' }}
     >
       {/* Cover thumbnail */}
-      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-foreground/5">
+      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-foreground/5">
         {item.cover ? (
           <Image
             src={item.cover}

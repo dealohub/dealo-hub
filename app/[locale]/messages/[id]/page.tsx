@@ -60,7 +60,7 @@ export default async function ThreadPage(
         <header className="mb-3 flex items-center gap-3 rounded-xl border border-border/50 bg-card p-3">
           <Link
             href={`/${params.locale}/messages`}
-            className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-foreground/60 transition hover:bg-foreground/5 hover:text-foreground"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-foreground/60 transition hover:bg-foreground/5 hover:text-foreground"
             title={t('backToInbox')}
           >
             <ArrowLeft size={16} className="rtl:rotate-180" />
@@ -71,7 +71,7 @@ export default async function ThreadPage(
             href={listingDetailPath(params.locale, conv.listing)}
             className="group flex min-w-0 flex-1 items-center gap-2.5"
           >
-            <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-foreground/5">
+            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-foreground/5">
               {conv.listing.cover ? (
                 <Image
                   src={conv.listing.cover}
@@ -94,7 +94,7 @@ export default async function ThreadPage(
                 {conv.listing.title}
               </p>
             </div>
-            <ExternalLink size={12} className="flex-shrink-0 text-foreground/40 rtl:-scale-x-100" />
+            <ExternalLink size={12} className="shrink-0 text-foreground/40 rtl:-scale-x-100" />
           </Link>
         </header>
 

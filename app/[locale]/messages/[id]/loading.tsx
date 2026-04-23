@@ -16,8 +16,8 @@ export default function ThreadLoading() {
     >
       {/* Header strip — back button + listing mini */}
       <header className="mb-3 flex items-center gap-3 rounded-xl border border-border/50 bg-card p-3">
-        <div className="h-9 w-9 flex-shrink-0 animate-pulse rounded-lg bg-foreground/5" />
-        <div className="h-10 w-10 flex-shrink-0 animate-pulse rounded-lg bg-foreground/5" />
+        <div className="h-9 w-9 shrink-0 animate-pulse rounded-lg bg-foreground/5" />
+        <div className="h-10 w-10 shrink-0 animate-pulse rounded-lg bg-foreground/5" />
         <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <div className="h-3 w-1/3 animate-pulse rounded bg-foreground/5" />
           <div className="h-2.5 w-2/3 animate-pulse rounded bg-foreground/5" />

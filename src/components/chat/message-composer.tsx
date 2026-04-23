@@ -154,7 +154,7 @@ export default function MessageComposer({
             type="button"
             onClick={() => setIsOffer(true)}
             title={t('offerCompose')}
-            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 transition hover:bg-amber-500/20 dark:text-amber-400"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 transition hover:bg-amber-500/20 dark:text-amber-400"
           >
             <Target size={16} />
           </button>
@@ -165,7 +165,7 @@ export default function MessageComposer({
           type="button"
           onClick={submit}
           disabled={!canSend || isPending}
-          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending ? (
             <Loader2 size={16} className="animate-spin" />

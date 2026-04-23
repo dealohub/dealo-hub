@@ -245,7 +245,7 @@ export default function NavbarUserMenu({ locale }: Props) {
               role="menuitem"
               className="flex w-full items-center gap-2.5 px-3 py-2.5 text-start text-xs text-foreground/80 transition hover:bg-muted hover:text-foreground"
             >
-              <LogOut size={14} className="flex-shrink-0 text-foreground/50" />
+              <LogOut size={14} className="shrink-0 text-foreground/50" />
               <span>{t('menuSignOut')}</span>
             </button>
           </form>
@@ -275,7 +275,7 @@ function MenuLink({
       onClick={onClick}
       className="flex items-center gap-2.5 px-3 py-2.5 text-xs text-foreground/80 transition hover:bg-muted hover:text-foreground"
     >
-      <Icon size={14} className="flex-shrink-0 text-foreground/50" />
+      <Icon size={14} className="shrink-0 text-foreground/50" />
       <span className="flex-1 truncate">{label}</span>
       {badge != null && (
         <span className="inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">

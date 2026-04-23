@@ -72,7 +72,7 @@ export default function SearchInput({
             onClick={() => {
               setValue('');
             }}
-            className="inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-foreground/50 transition hover:bg-foreground/5 hover:text-foreground"
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-foreground/50 transition hover:bg-foreground/5 hover:text-foreground"
             aria-label="Clear"
           >
             <X size={12} />

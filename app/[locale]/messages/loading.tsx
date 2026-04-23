@@ -29,7 +29,7 @@ export default function InboxLoading() {
             key={i}
             className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3"
           >
-            <div className="h-12 w-12 flex-shrink-0 animate-pulse rounded-lg bg-foreground/5" />
+            <div className="h-12 w-12 shrink-0 animate-pulse rounded-lg bg-foreground/5" />
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">
               <div className="h-3 w-1/3 animate-pulse rounded bg-foreground/5" />
               <div className="h-2.5 w-3/4 animate-pulse rounded bg-foreground/5" />
