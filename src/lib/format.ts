@@ -71,7 +71,7 @@ export function formatPrice(
     style: 'currency',
     currency,
     numberingSystem: 'latn', // ⚠️ ALWAYS Western digits in Gulf context
-    minimumFractionDigits: decimals,
+    minimumFractionDigits: 0,
     maximumFractionDigits: decimals,
   }).format(amount);
 }

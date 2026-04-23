@@ -59,13 +59,6 @@ export const ListingCardCompact = ({ item, priceDrop = false }: Props) => {
           : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04]')
       }
     >
-      {/* Category accent rail */}
-      <span
-        aria-hidden
-        className="absolute left-0 top-0 h-full w-[2px] rounded-l-lg"
-        style={{ background: priceDrop ? 'var(--primary)' : catColor, opacity: priceDrop ? 0.7 : 0.4 }}
-      />
-
       {/* Image — small 4:3 */}
       <div className="relative aspect-[4/3] w-28 shrink-0 overflow-hidden rounded-md bg-foreground/5">
         <img

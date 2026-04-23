@@ -137,13 +137,6 @@ export const ListingCardEditorial = ({ item, priceDrop = false }: Props) => {
         </span>
       </div>
 
-      {/* Vertical accent rail down the card side */}
-      <span
-        aria-hidden
-        className="absolute left-0 top-0 h-full w-[2px]"
-        style={{ background: priceDrop ? 'var(--primary)' : catColor, opacity: priceDrop ? 0.7 : 0.35 }}
-      />
-
       {/* ─── BODY ───────────────────────────────────────────── */}
       <div className="flex flex-1 flex-col gap-3 p-4">
         {/* Location (category is already on the image) */}

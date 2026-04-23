@@ -88,10 +88,10 @@ const Feature283 = ({ className = '', images }: Feature283Props) => {
     <section className={'flex min-h-[calc(100vh-3.5rem)] items-center overflow-hidden py-16 ' + className}>
       <div className="container mx-auto flex h-full w-full max-w-7xl flex-col items-center justify-center px-4">
         <div className="relative flex w-full max-w-lg flex-col items-center justify-center">
-          <h2 className="relative py-2 text-center font-sans text-4xl font-semibold tracking-tighter md:text-5xl">
+          <h2 className="relative py-2 text-center font-calSans text-4xl font-semibold tracking-tight md:text-5xl lg:text-[56px] lg:leading-[1.05]">
             {t('hero.headline')}
           </h2>
-          <p className="mx-auto mt-2 max-w-xl px-5 text-center text-sm text-muted-foreground/70 md:text-base">
+          <p className="mx-auto mt-3 max-w-md px-5 text-center text-sm text-muted-foreground/60 md:text-[15px]">
             {t('hero.subline')}
           </p>
           <DealoSearchInline />

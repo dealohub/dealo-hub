@@ -43,12 +43,6 @@ export const RidesDealerSpotlight = () => {
               key={d.key}
               className="group relative flex flex-col overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-foreground/[0.04] hover:shadow-lg hover:shadow-foreground/5"
             >
-              <span
-                aria-hidden
-                className="absolute start-0 top-0 h-full w-[2px] opacity-50"
-                style={{ background: d.tint }}
-              />
-
               {/* Header */}
               <div className="flex items-center gap-3">
                 <div

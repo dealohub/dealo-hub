@@ -85,14 +85,7 @@ export const ListingCardPolished = ({ item, priceDrop = false }: Props) => {
           : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04]')
       }
     >
-      {/* Vertical category accent rail */}
-      <span
-        aria-hidden
-        className="absolute left-0 top-0 h-full w-[2px]"
-        style={{ background: priceDrop ? 'var(--primary)' : catColor, opacity: priceDrop ? 0.7 : 0.35 }}
-      />
-
-      <div className="flex items-stretch gap-5 p-3 pl-4">
+      <div className="flex items-stretch gap-5 p-3 ps-4">
         {/* IMAGE — sized to sit closer to content height (3:2 instead of 4:3) */}
         <div className="relative aspect-[3/2] w-60 shrink-0 self-stretch overflow-hidden rounded-lg bg-foreground/5">
           <img

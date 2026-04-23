@@ -108,13 +108,6 @@ export const ListingCardRides = ({ item, premium = false }: Props) => {
         </div>
       </div>
 
-      {/* Category accent rail */}
-      <span
-        aria-hidden
-        className="absolute start-0 top-0 h-full w-[2px] opacity-40"
-        style={{ background: premium ? '#C9A86A' : catColor }}
-      />
-
       {/* Content */}
       <div className="flex flex-1 flex-col gap-2 p-4">
         {/* Price */}

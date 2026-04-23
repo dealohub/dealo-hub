@@ -360,18 +360,6 @@ export const RideDetailGallery = ({ listing }: Props) => {
               small
             />
             <div className="relative flex-1 overflow-hidden rounded-2xl border border-foreground/10 bg-muted/40 p-4">
-              {/* Category accent — thin vertical bar on the start edge.
-                  Replaces the full-surface gradient that read as salmon
-                  pink when the category color (red) sat over the warm
-                  off-white background. A 3px edge line keeps the category
-                  identity legible without tinting the whole card. */}
-              <span
-                aria-hidden
-                className="pointer-events-none absolute start-0 top-0 h-full w-[3px]"
-                style={{
-                  background: `linear-gradient(to bottom, ${catColor}, ${catColor}00)`,
-                }}
-              />
               <Info size={14} className="mb-2 text-foreground/60" />
               <p className="text-[11px] leading-relaxed text-foreground/70">
                 {t('sideHintBody')}

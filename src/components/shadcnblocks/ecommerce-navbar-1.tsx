@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, useTransition, type ReactNode } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import { useTheme } from 'next-themes';
+import { usePathname, useRouter } from '@/i18n/routing';
 import {
   Menu,
   X,
@@ -12,6 +14,8 @@ import {
   Plus,
   Phone,
   Send,
+  Moon,
+  Sun,
   type LucideIcon,
 } from 'lucide-react';
 import NavbarUserMenu from '@/components/navbar/navbar-user-menu';
@@ -562,7 +566,7 @@ const DesktopNav = ({ menu, home }: { menu: MenuItem[]; home: HomeInfo }) => {
         </div>
 
         {/* Right cluster */}
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex shrink-0 items-center gap-1">
           <CountrySelector />
           <SecondaryNav />
         </div>
@@ -636,7 +640,7 @@ const DesktopMenuItem = ({ item, isOpen, onEnter }: { item: MenuItem; isOpen: bo
   const label = getLabel(item);
   const style = { color: item.accentColor };
   const base =
-    'inline-flex h-9 items-center whitespace-nowrap rounded-md px-3 text-xs font-semibold uppercase tracking-wide transition hover:bg-muted focus:outline-none';
+    'inline-flex h-9 items-center whitespace-nowrap rounded-md px-2 text-xs font-semibold uppercase tracking-wide transition hover:bg-muted focus:outline-none';
 
   const badge = item.badge ? (
     <span className="ml-1.5 inline-flex h-4 items-center rounded-full bg-[oklch(58.6%_0.253_17.585)] px-1.5 text-[9px] font-bold text-white">
@@ -746,13 +750,52 @@ const MenuFeaturedLink = ({ href, imageSrc, label }: FeaturedItem) => (
   </a>
 );
 
+/* ---------- Inline locale + theme toggles ---------- */
+
+const NavLocaleButton = () => {
+  const locale = useLocale() as 'ar' | 'en';
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const next = locale === 'ar' ? 'en' : 'ar';
+  return (
+    <button
+      type="button"
+      aria-label={`Switch to ${next}`}
+      disabled={isPending}
+      onClick={() => startTransition(() => router.replace(pathname, { locale: next }))}
+      className="grid h-9 min-w-[2.25rem] place-items-center rounded-md px-2 text-[11px] font-semibold uppercase tracking-wider text-foreground/55 transition hover:bg-muted hover:text-foreground disabled:opacity-50"
+    >
+      {next.toUpperCase()}
+    </button>
+  );
+};
+
+const NavThemeButton = () => {
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <div className="h-9 w-9 shrink-0" aria-hidden />;
+  const isDark = (theme === 'system' ? resolvedTheme : theme) === 'dark';
+  return (
+    <button
+      type="button"
+      aria-label="Toggle theme"
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      className="grid h-9 w-9 shrink-0 place-items-center rounded-md text-foreground/55 transition hover:bg-muted hover:text-foreground"
+    >
+      {isDark ? <Sun size={15} /> : <Moon size={15} />}
+    </button>
+  );
+};
+
 /* ---------- Secondary nav (shared desktop + mobile) ---------- */
 
 const SecondaryNav = () => {
   const t = useTranslations('marketplace.navbar');
   const locale = useLocale() as 'ar' | 'en';
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1">
       {/* Primary action for a C2C marketplace: post a listing. */}
       <a
         href={`/${locale}/sell/category`}
@@ -761,13 +804,16 @@ const SecondaryNav = () => {
         <Plus size={14} strokeWidth={2.5} />
         {t('sellNow')}
       </a>
-      {/* Auth-aware account menu — renders avatar + dropdown when
-          signed in, "تسجيل الدخول" link when signed out. Includes
-          unread-messages badge. */}
+      {/* Auth-aware account menu */}
       <NavbarUserMenu locale={locale} />
       <IconButton title={t('search')}>
         <Search size={18} />
       </IconButton>
+      {/* Locale + theme — inline, not floating */}
+      <div className="ms-1 flex items-center gap-0.5 border-s border-foreground/10 ps-2">
+        <NavLocaleButton />
+        <NavThemeButton />
+      </div>
     </div>
   );
 };
@@ -793,12 +839,12 @@ const CountrySelector = ({ className = '' }: { className?: string }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const opts = [
-    { value: 'KW', label: 'Kuwait (KWD)' },
-    { value: 'AE', label: 'UAE (AED)' },
-    { value: 'SA', label: 'Saudi Arabia (SAR)' },
-    { value: 'QA', label: 'Qatar (QAR)' },
-    { value: 'BH', label: 'Bahrain (BHD)' },
-    { value: 'OM', label: 'Oman (OMR)' },
+    { value: 'KW', label: 'Kuwait (KWD)', short: 'KWD' },
+    { value: 'AE', label: 'UAE (AED)',    short: 'AED' },
+    { value: 'SA', label: 'Saudi (SAR)',  short: 'SAR' },
+    { value: 'QA', label: 'Qatar (QAR)', short: 'QAR' },
+    { value: 'BH', label: 'Bahrain (BHD)', short: 'BHD' },
+    { value: 'OM', label: 'Oman (OMR)',  short: 'OMR' },
   ];
 
   useEffect(() => {
@@ -816,10 +862,10 @@ const CountrySelector = ({ className = '' }: { className?: string }) => {
       <button
         type="button"
         onClick={() => setOpen((s) => !s)}
-        className="flex h-9 w-full min-w-[10.5rem] items-center justify-between gap-2 rounded-md border-none bg-transparent px-3 text-xs font-semibold uppercase leading-relaxed text-muted-foreground shadow-none outline-none hover:text-foreground"
+        className="flex h-9 items-center gap-1.5 rounded-md border-none bg-transparent px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground shadow-none outline-none hover:text-foreground"
       >
-        <span>{current.label}</span>
-        <ChevronDown size={12} className={`transition ${open ? 'rotate-180' : ''}`} />
+        <span>{current.short}</span>
+        <ChevronDown size={11} className={`transition ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
         <div className="absolute right-0 top-full z-50 mt-1 min-w-[12rem] overflow-hidden rounded-md border bg-popover p-1 shadow-md">

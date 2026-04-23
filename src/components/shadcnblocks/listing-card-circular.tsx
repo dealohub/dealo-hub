@@ -62,7 +62,7 @@ export const ListingCardCircular = ({ item, priceDrop = false }: Props) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
       className={
-        'group relative flex items-center gap-5 rounded-[2rem] border pl-3 pr-5 py-3.5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ' +
+        'group relative flex items-center gap-5 rounded-[2rem] border ps-3 pe-5 py-3.5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ' +
         (priceDrop
           ? 'border-primary/25 bg-gradient-to-r from-primary/[0.06] via-transparent to-transparent hover:border-primary/40 hover:shadow-primary/10'
           : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04] hover:shadow-foreground/5')

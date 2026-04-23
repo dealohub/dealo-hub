@@ -1,126 +1,119 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ShieldCheck, Sparkles, ScanSearch, Eye, type LucideIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-/**
- * AIProtectionStrip — showcases the AI-protection layer that is
- * Dealo Hub's core differentiator from generic classifieds. Sits
- * between the brands marquee and the live feed so visitors see
- * "why you can trust this marketplace" before they see the listings.
- */
+type FeatureKey = 'verification' | 'image' | 'scam' | 'semantic';
 
-interface Feature {
-  icon: LucideIcon;
-  key: 'verification' | 'image' | 'scam' | 'semantic';
-  tint: string;
-}
-
-const FEATURES: Feature[] = [
-  { icon: ShieldCheck, key: 'verification', tint: '#10b981' },
-  { icon: Eye,         key: 'image',        tint: '#3b82f6' },
-  { icon: ScanSearch,  key: 'scam',         tint: '#ef4444' },
-  { icon: Sparkles,    key: 'semantic',     tint: '#a855f7' },
-];
+const FEATURE_KEYS: FeatureKey[] = ['verification', 'image', 'scam', 'semantic'];
 
 export const AIProtectionStrip = () => {
   const t = useTranslations('marketplace.ai');
 
   return (
     <section className="relative w-full bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="mb-10 flex flex-col items-center text-center">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-foreground/10 bg-foreground/[0.03] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/65">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#a855f7] opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#a855f7]" />
-            </span>
-            {t('eyebrow')}
+      <div className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
+        <div className="grid grid-cols-1 gap-14 lg:grid-cols-[1fr_1.15fr] lg:gap-20 xl:gap-28">
+
+          {/* Left: bold statement */}
+          <motion.div
+            className="flex flex-col justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.55, ease: [0.22, 0.61, 0.36, 1] }}
+          >
+            <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-foreground/10 bg-foreground/[0.03] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/60">
+              <span className="relative flex h-1.5 w-1.5" aria-hidden>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e30613] opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#e30613]" />
+              </span>
+              {t('eyebrow')}
+            </div>
+
+            <h2 className="font-calSans text-4xl font-semibold tracking-tight text-foreground md:text-5xl lg:text-[52px] lg:leading-[1.06]">
+              {t('headline')}
+            </h2>
+
+            <p className="mt-5 max-w-[22rem] text-[15px] leading-relaxed text-foreground/50">
+              {t('subline')}
+            </p>
+
+            <p className="mt-10 text-[11px] leading-loose text-foreground/30">
+              {t('reassurance')}
+            </p>
+          </motion.div>
+
+          {/* Right: numbered feature list */}
+          <div className="flex flex-col justify-center divide-y divide-foreground/[0.07]">
+            {FEATURE_KEYS.map((key, i) => (
+              <FeatureRow key={key} featureKey={key} index={i} />
+            ))}
           </div>
-          <h2 className="font-calSans text-3xl font-semibold tracking-tight text-foreground md:text-[38px]">
-            {t('headline')}
-          </h2>
-          <p className="mt-2 max-w-xl text-sm text-foreground/55 md:text-base">
-            {t('subline')}
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {FEATURES.map((f, i) => (
-            <FeatureCard key={f.key} feature={f} index={i} />
-          ))}
         </div>
-
-        <p className="mt-8 text-center text-[11px] text-foreground/40">
-          {t('reassurance')}
-        </p>
       </div>
     </section>
   );
 };
 
-const FeatureCard = ({ feature, index }: { feature: Feature; index: number }) => {
+const FeatureRow = ({
+  featureKey,
+  index,
+}: {
+  featureKey: FeatureKey;
+  index: number;
+}) => {
   const t = useTranslations('marketplace.ai');
-  const Icon = feature.icon;
-  const title = t(`features.${feature.key}.title`);
-  const desc = t(`features.${feature.key}.desc`);
+  const num = String(index + 1).padStart(2, '0');
+
   return (
-    <motion.article
-      initial={{ y: 16, opacity: 0 }}
-      whileInView={{ y: 0, opacity: 1 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.45, delay: index * 0.08, ease: [0.22, 0.61, 0.36, 1] }}
-      whileHover={{ y: -3 }}
-      className="group relative overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-5 transition-colors duration-300 hover:border-foreground/20 hover:bg-foreground/[0.04]"
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{
+        duration: 0.4,
+        delay: 0.08 + index * 0.07,
+        ease: [0.22, 0.61, 0.36, 1],
+      }}
+      className="group flex gap-5 py-6 first:pt-0 last:pb-0"
     >
-      {/* Tint wash on hover */}
-      <div
+      {/* Index number */}
+      <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{
-          background: `radial-gradient(circle at 0% 0%, ${feature.tint}18, transparent 60%)`,
-        }}
-      />
-
-      {/* Icon medallion */}
-      <div
-        className="relative mb-4 inline-flex size-11 items-center justify-center rounded-xl border"
-        style={{
-          borderColor: `${feature.tint}40`,
-          background: `${feature.tint}14`,
-          color: feature.tint,
-        }}
+        className="mt-0.5 shrink-0 font-mono text-[11px] font-bold tabular-nums tracking-[0.12em] text-foreground/25 transition-colors duration-300 group-hover:text-[#e30613]"
       >
-        <Icon size={20} strokeWidth={1.75} />
-      </div>
+        {num}
+      </span>
 
-      <h3 className="relative mb-1.5 text-[15px] font-semibold tracking-tight text-foreground">
-        {title}
-      </h3>
-      <p className="relative text-[13px] leading-relaxed text-foreground/60">{desc}</p>
-
-      {/* Arrow affordance */}
-      <div
-        className="relative mt-4 inline-flex items-center gap-1 text-[11px] font-medium transition-colors duration-300"
-        style={{ color: `${feature.tint}` }}
-      >
-        <span className="opacity-70 group-hover:opacity-100">{t('learnMore')}</span>
-        <svg
-          width="11"
-          height="11"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="transition-transform duration-300 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
-        >
-          <path d="M5 12h14M13 5l7 7-7 7" />
-        </svg>
+      {/* Text */}
+      <div className="min-w-0">
+        <h3 className="text-[15px] font-semibold tracking-tight text-foreground">
+          {t(`features.${featureKey}.title`)}
+        </h3>
+        <p className="mt-1 text-[13px] leading-relaxed text-foreground/50">
+          {t(`features.${featureKey}.desc`)}
+        </p>
+        <div className="mt-3 inline-flex items-center gap-1 text-[11px] font-medium text-foreground/30 transition-colors duration-300 group-hover:text-foreground/60">
+          <span>{t('learnMore')}</span>
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+            className="transition-transform duration-300 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+          >
+            <path d="M5 12h14M13 5l7 7-7 7" />
+          </svg>
+        </div>
       </div>
-    </motion.article>
+    </motion.div>
   );
 };
 
