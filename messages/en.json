@@ -2312,5 +2312,114 @@
     "completionMark": {
       "marked": "Marked job complete"
     }
+  },
+  "admin": {
+    "nav": {
+      "moderation": "Moderation",
+      "dashboard": "Dashboard",
+      "listings": "Listings"
+    },
+    "userMenu": {
+      "profile": "Profile",
+      "signOut": "Sign out"
+    },
+    "dashboard": {
+      "title": "Admin",
+      "subtitle": "Moderation overview",
+      "statsLabel": "Listing status at a glance",
+      "stats": {
+        "held": "On hold",
+        "live": "Live",
+        "rejected": "Rejected"
+      },
+      "queue": {
+        "title": "Moderation queue",
+        "body": "{count, plural, =0 {No listings waiting for review.} one {# listing waiting for review.} other {# listings waiting for review.}}",
+        "cta": "Open queue"
+      }
+    },
+    "listings": {
+      "title": "Listings",
+      "subtitle": "Approve, hold, or reject listings awaiting moderation.",
+      "searchPlaceholder": "Search by title or ID…",
+      "searchAriaLabel": "Search listings",
+      "tabs": {
+        "all": "All",
+        "held": "Held",
+        "live": "Live",
+        "rejected": "Rejected",
+        "draft": "Draft",
+        "sold": "Sold",
+        "archived": "Archived"
+      },
+      "cols": {
+        "image": "Image",
+        "title": "Title",
+        "seller": "Seller",
+        "category": "Category",
+        "status": "Status",
+        "price": "Price",
+        "created": "Created"
+      },
+      "statuses": {
+        "live": "Live",
+        "held": "Held",
+        "rejected": "Rejected",
+        "sold": "Sold",
+        "draft": "Draft",
+        "archived": "Archived",
+        "deleted": "Deleted"
+      },
+      "fraud": {
+        "flagged": "Flagged",
+        "held": "Held by system",
+        "rejected": "Rejected by system",
+        "none": "Clear"
+      },
+      "actions": {
+        "approve": "Approve",
+        "hold": "Hold",
+        "reject": "Reject"
+      },
+      "bulk": {
+        "selected": "{count, plural, one {# selected} other {# selected}}",
+        "pickAction": "Choose an action",
+        "clear": "Clear selection"
+      },
+      "reject": {
+        "titleSingle": "Reject listing",
+        "titleBulk": "Reject {count, plural, one {# listing} other {# listings}}",
+        "bodySingle": "Share a brief reason for rejecting \"{title}\". The seller will see it.",
+        "bodyBulk": "Share a brief reason. The same note will be attached to every selected listing.",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "e.g. Misleading title, duplicate listing, prohibited item…",
+        "reasonHint": "{max, number} characters max.",
+        "cancel": "Cancel",
+        "confirm": "Reject"
+      },
+      "pagination": {
+        "summary": "Showing {from}–{to} of {total}",
+        "prev": "Previous",
+        "next": "Next",
+        "pageOf": "Page {page} of {total}"
+      },
+      "empty": {
+        "title": "Nothing here",
+        "body": "No listings match this filter."
+      },
+      "a11y": {
+        "selectAll": "Select all listings on this page",
+        "selectRow": "Select listing {title}",
+        "rowActions": "Actions for {title}"
+      },
+      "errors": {
+        "bulkPartial": "{ok} succeeded, {fail} failed. Try the failed items again.",
+        "reasonTooShort": "Please provide a short reason (at least 3 characters).",
+        "notAuthenticated": "You are not signed in.",
+        "unauthorized": "You do not have permission to perform this action.",
+        "invalidInput": "The request was rejected. Please check the input.",
+        "rpcFailed": "The action failed. Please try again."
+      }
+    }
   }
 }

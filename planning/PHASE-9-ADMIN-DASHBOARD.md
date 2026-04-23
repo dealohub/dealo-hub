@@ -264,23 +264,18 @@ Badges (red dot + count) on Listings and AI-Reviews are fed by a single `getAdmi
 
 ---
 
-## 6. Open Decisions (Pending User Input)
+## 6. Open Decisions (Resolved 2026-04-23)
 
-These three blockers need an answer before Phase 9a codes a single line:
+Committed ahead of Phase 9a coding, under blanket authority "اعمل الذي تراه مناسب مع التوثيق".
 
-### D1 — Role model (§2.1 recommendation: `is_admin BOOLEAN`)
-User asked "نتناقش أولاً" (let's discuss first). Recommendation stands; awaiting explicit confirm OR a case for enum.
+### D1 — Role model → `is_admin BOOLEAN` ✅ SHIPPED
+Implemented in migration `0041_profiles_is_admin.sql` (commit `1eb28d7`). Mirrors existing `is_dealer` / `is_founding_partner` pattern on profiles. SECURITY DEFINER `public.is_admin()` RPC wraps the check so RLS policies can call it without recursion. No enum, no separate table.
 
-### D2 — Dashboard variant for `/admin` home
-Four options ranked by fit:
-1. **`dashboard-3`** (1866 LOC) — KPIs + revenue chart + recent-transactions table. Retargets cleanly: KPIs become {active listings, held listings, new signups, messages 24h}, "transactions" becomes "latest listings." **Recommended.**
-2. `dashboard-7` (2262 LOC) — sales pipelines. Doesn't map (no sales).
-3. `dashboard-5` — analytics with more charts. Heavier; needs real data we don't yet track.
-4. **Empty placeholder now, port in 9b** — saves ~1h today, lets us ship listings moderation faster.
+### D2 — Dashboard `/admin` home → **Option 4: empty placeholder** for Phase 9a
+Rationale: Karpathy surgical-changes discipline. Phase 9a's user-visible goal is "admin can moderate listings" — the dashboard home is chrome, not the job. Porting `dashboard-3` (1866 LOC) on the same commit balloons the diff, risks KPI-source drift (we'd port fake "revenue" and have to rewire it against real counts), and delays listings moderation shipping. Placeholder shows: admin welcome + count badges reused from the sidebar + a visible "dashboard landing coming in 9b" hint. Real dashboard port lands in 9b alongside AI-reviews queue.
 
-### D3 — Icon library
-- ✅ Add `@tabler/icons-react` (recommendation): tree-shaken cost is real-world ~15-25KB for the 30 icons we'll use; tabler is richer for admin vocabulary (warehouse, pipeline, barrier, etc.).
-- Hand-port to `lucide-react` (already in project): zero new dep, ~30 min swapping + 2-3 icons that lack a clean analog.
+### D3 — Icon library → **`lucide-react`** (existing dep)
+Verified all Phase 9 icons exist in lucide: `LayoutDashboard`, `Package`, `Bot`, `Users`, `FolderTree`, `Settings`, `PanelLeft`, `ChevronRight`, `ChevronsUpDown`, `LogOut`, `Bell`, `Search`, `Command`. Zero new dep, zero bundle growth, one icon family across the entire app (marketplace + admin). If 9c/10+ needs an icon without a lucide analog, revisit then — not now on speculation.
 
 ---
 
