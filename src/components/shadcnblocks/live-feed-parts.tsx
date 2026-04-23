@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useReducer, useRef, useState, type ReactNode } from 'react';
 import { motion, useInView, animate } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
@@ -127,25 +127,6 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
   const barRef = useRef<HTMLDivElement>(null);
   const inView = useInView(barRef, { margin: '-40px', amount: 0.4 });
 
-  const spark = useMemo(() => {
-    return Array.from({ length: 30 }, (_, i) => {
-      const base = 18 + Math.sin(i / 3) * 4 + (i / 30) * 6;
-      const noise = ((i * 13) % 7) * 0.8;
-      return base + noise;
-    });
-  }, []);
-
-  const max = Math.max(...spark);
-  const min = Math.min(...spark);
-  const path = spark
-    .map((v, i) => {
-      const x = (i / (spark.length - 1)) * 100;
-      const y = 100 - ((v - min) / (max - min || 1)) * 100;
-      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(' ');
-  const areaPath = `${path} L100,100 L0,100 Z`;
-  const lastY = 100 - ((spark[spark.length - 1] - min) / (max - min || 1)) * 100;
 
   return (
     <div
@@ -232,53 +213,11 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
           </div>
         </div>
 
-        {/* Spark chart — animated draw-in + traveling dot */}
-        <div className="ms-auto hidden items-center gap-3 md:flex">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-foreground/45">
+        {/* Activity label — right-anchored */}
+        <div className="ms-auto hidden items-center md:flex">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-foreground/35">
             {t('last60')}
           </span>
-          <svg
-            width="140"
-            height="28"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            className="overflow-visible text-primary"
-          >
-            {/* stopColor/stroke/fill all inherit currentColor → --primary via wrapper */}
-            <defs>
-              <linearGradient id="sparkFill" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="currentColor" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <motion.path
-              d={areaPath}
-              fill="url(#sparkFill)"
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : { opacity: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-            />
-            <motion.path
-              d={path}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              vectorEffect="non-scaling-stroke"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              initial={{ pathLength: 0 }}
-              animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
-              transition={{ duration: 1.4, ease: [0.22, 0.61, 0.36, 1] }}
-            />
-            <motion.circle
-              cx="100"
-              cy={lastY}
-              r="3"
-              fill="currentColor"
-              animate={{ scale: [1, 1.6, 1], opacity: [1, 0.7, 1] }}
-              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          </svg>
         </div>
       </div>
     </div>
@@ -405,13 +344,7 @@ export const ListingCard = ({ item, priceDrop = false }: { item: ListingItem; pr
           : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04]')
       }
     >
-      <span
-        aria-hidden
-        className="absolute left-0 top-0 h-full w-[2px]"
-        style={{ background: priceDrop ? 'var(--primary)' : catColor, opacity: priceDrop ? 0.7 : 0.4 }}
-      />
-
-      <div className="flex items-stretch gap-5 p-3 pl-4">
+      <div className="flex items-stretch gap-5 p-3 ps-4">
         <div className="relative aspect-[4/3] w-44 shrink-0 overflow-hidden rounded-lg bg-foreground/5 md:w-52">
           <img
             src={item.image}
@@ -533,7 +466,7 @@ export const ListingCard = ({ item, priceDrop = false }: { item: ListingItem; pr
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
-              <div className="flex items-center gap-1.5 border-r border-foreground/10 pr-3 text-[11px] text-foreground/55">
+              <div className="flex items-center gap-1.5 border-e border-foreground/10 pe-3 text-[11px] text-foreground/55">
                 <span className="truncate max-w-[120px]">{item.dealer}</span>
                 {item.verified && (
                   <svg width="12" height="12" viewBox="0 0 24 24" className="shrink-0">
@@ -621,8 +554,6 @@ export const FeaturedPartnersSection = () => {
             key={p.name}
             className="group relative overflow-hidden rounded-xl border border-foreground/10 bg-foreground/[0.02] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-foreground/[0.04] hover:shadow-lg hover:shadow-foreground/5"
           >
-            <span aria-hidden className="absolute left-0 top-0 h-full w-[2px] opacity-50" style={{ background: p.tint }} />
-
             <div className="flex items-center gap-3">
               <div
                 className="flex size-11 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold tracking-tight"
@@ -682,24 +613,34 @@ export const FeaturedPartnersSection = () => {
         </svg>
       </a>
 
-      {/* Market pulse — slim strip */}
-      <div className="mx-auto mt-12 grid max-w-3xl grid-cols-3 divide-x divide-foreground/10 rounded-2xl border border-foreground/10 bg-foreground/[0.02] text-center rtl:divide-x-reverse">
-        <div className="px-6 py-5">
-          <div className="text-[22px] font-semibold tabular-nums text-foreground">247</div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">{t('marketPulse.total')}</div>
-        </div>
-        <div className="px-6 py-5">
-          <div className="text-[22px] font-semibold tabular-nums text-foreground">12,847</div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">{t('marketPulse.premium')}</div>
-        </div>
-        <div className="px-6 py-5">
-          <div className="inline-flex items-baseline gap-1 text-[22px] font-semibold tabular-nums text-emerald-400">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-              <path d="M12 19V5M5 12l7-7 7 7" />
-            </svg>
-            +12%
+      {/* Market pulse — asymmetric trust strip */}
+      <div className="mx-auto mt-12 flex max-w-3xl flex-col items-center gap-3 sm:flex-row sm:items-end sm:gap-8">
+        {/* Primary: listing depth */}
+        <div className="shrink-0 text-center sm:text-start">
+          <div className="font-calSans text-[52px] font-semibold leading-none tabular-nums text-foreground">
+            12,847
           </div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-foreground/50">{t('marketPulse.growth')}</div>
+          <div className="mt-1.5 text-[12px] text-foreground/45">{t('marketPulse.premium')}</div>
+        </div>
+
+        {/* Divider */}
+        <div className="hidden h-14 w-px bg-foreground/10 sm:block" aria-hidden />
+
+        {/* Supporting: partner count + growth — stacked pair */}
+        <div className="flex gap-8">
+          <div>
+            <div className="text-[26px] font-semibold tabular-nums text-foreground">247</div>
+            <div className="mt-0.5 text-[11px] text-foreground/40">{t('marketPulse.total')}</div>
+          </div>
+          <div>
+            <div className="inline-flex items-baseline gap-1 text-[26px] font-semibold tabular-nums text-emerald-400">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden>
+                <path d="M12 19V5M5 12l7-7 7 7" />
+              </svg>
+              +12%
+            </div>
+            <div className="mt-0.5 text-[11px] text-foreground/40">{t('marketPulse.growth')}</div>
+          </div>
         </div>
       </div>
     </div>
