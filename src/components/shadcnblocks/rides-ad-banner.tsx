@@ -15,14 +15,14 @@ export const RidesAdBanner = () => {
   return (
     <section className="relative w-full bg-background">
       <div className="mx-auto max-w-7xl px-6 py-10">
-        <article className="group relative overflow-hidden rounded-3xl border border-foreground/10 bg-gradient-to-br from-[#0b1a3a] via-[#1e2a5a] to-[#2a1c5a] text-white shadow-lg transition-shadow hover:shadow-xl">
-          {/* Decorative pattern */}
+        <article className="group relative overflow-hidden rounded-3xl border border-foreground/8 bg-gradient-to-br from-[hsl(240_12%_8%)] to-[hsl(240_12%_4%)] text-white shadow-lg transition-shadow hover:shadow-xl">
+          {/* Decorative pattern — red brand glow */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-40"
+            className="pointer-events-none absolute inset-0"
             style={{
               background:
-                'radial-gradient(600px 240px at 85% 0%, rgba(255,255,255,0.12), transparent 55%), radial-gradient(500px 200px at 15% 100%, rgba(255,150,50,0.18), transparent 60%)',
+                'radial-gradient(700px 300px at 20% -20%, rgba(227,6,19,0.18), transparent 55%), radial-gradient(400px 200px at 85% 110%, rgba(227,6,19,0.08), transparent 60%)',
             }}
           />
 
@@ -43,20 +43,20 @@ export const RidesAdBanner = () => {
               <div className="mt-5 flex flex-wrap items-center gap-3">
                 <a
                   href="#"
-                  className="inline-flex h-10 items-center gap-1.5 rounded-full bg-white px-5 text-[12px] font-semibold text-[#0b1a3a] transition hover:bg-white/90"
+                  className="inline-flex h-10 items-center gap-1.5 rounded-full bg-primary px-5 text-[12px] font-semibold text-white transition-colors duration-150 hover:bg-[#c80510] active:scale-[0.98]"
                 >
                   {t('cta')}
                   <ArrowRight size={12} className="rtl:rotate-180" />
                 </a>
                 <a
                   href="#"
-                  className="inline-flex h-10 items-center gap-1.5 rounded-full border border-white/25 bg-white/5 px-5 text-[12px] font-semibold text-white transition hover:bg-white/10"
+                  className="inline-flex h-10 items-center gap-1.5 rounded-full border border-white/25 bg-white/5 px-5 text-[12px] font-semibold text-white transition-colors duration-150 hover:border-white/40 hover:bg-white/10 active:scale-[0.98]"
                 >
                   {t('secondaryCta')}
                 </a>
               </div>
 
-              <p className="mt-4 text-[10.5px] text-white/45">
+              <p className="mt-4 text-[11px] text-white/45">
                 {t('disclosure')} <span className="font-medium text-white/65">Dealo Pro</span>
               </p>
             </div>
@@ -67,7 +67,7 @@ export const RidesAdBanner = () => {
                 {t('statEyebrow')}
               </div>
               <div className="mt-3 font-calSans text-[56px] font-extrabold leading-none tracking-tight text-white md:text-[72px]">
-                3<span className="text-[#facc15]">×</span>
+                3<span className="text-primary">×</span>
               </div>
               <div className="mt-2 text-[14px] font-medium text-white/80">
                 {t('statLabel')}
@@ -96,7 +96,7 @@ export const RidesAdBanner = () => {
 };
 
 const BulletDot = () => (
-  <span className="inline-block size-1.5 rounded-full bg-[#facc15]" />
+  <span className="inline-block size-1.5 rounded-full bg-primary" />
 );
 
 export default RidesAdBanner;

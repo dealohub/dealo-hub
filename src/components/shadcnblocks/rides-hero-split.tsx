@@ -31,7 +31,7 @@ export const RidesHeroSplit = () => {
         className="pointer-events-none absolute inset-0 opacity-[0.35]"
         style={{
           background:
-            'radial-gradient(1200px 500px at 10% 0%, hsl(var(--primary-foreground) / 0.04), transparent 60%), radial-gradient(900px 400px at 85% 0%, oklch(0.58 0.19 274 / 0.06), transparent 55%)',
+            'radial-gradient(1200px 500px at 10% 0%, rgba(227,6,19,0.05), transparent 60%), radial-gradient(900px 400px at 90% 0%, rgba(227,6,19,0.03), transparent 55%)',
         }}
       />
 
@@ -64,7 +64,7 @@ export const RidesHeroSplit = () => {
             {/* Search card */}
             <div className="mt-8 rounded-2xl border border-foreground/10 bg-background p-4 shadow-xl shadow-foreground/5 md:p-5">
               {/* Mode toggle */}
-              <div className="mb-4 inline-flex items-center gap-1 rounded-full border border-foreground/10 bg-foreground/[0.03] p-1">
+              <div className="mb-4 inline-flex items-center gap-1 rounded-full border border-foreground/10 bg-foreground/3 p-1">
                 <TabButton active={!aiMode} onClick={() => setAiMode(false)} icon={<Search size={12} />}>
                   {th('modeClassic')}
                 </TabButton>
@@ -74,7 +74,7 @@ export const RidesHeroSplit = () => {
               </div>
 
               {/* Search input */}
-              <div className="relative flex items-center rounded-xl border border-foreground/15 bg-foreground/[0.02] focus-within:border-foreground/40">
+              <div className="relative flex items-center rounded-xl border border-foreground/15 bg-foreground/2 focus-within:border-foreground/40">
                 <Search size={16} className="absolute start-4 text-foreground/40" />
                 <input
                   type="text"
@@ -84,13 +84,13 @@ export const RidesHeroSplit = () => {
                 <button
                   type="button"
                   aria-label={th('voice')}
-                  className="absolute end-14 grid size-8 place-items-center rounded-full text-foreground/45 transition hover:bg-foreground/[0.06] hover:text-foreground"
+                  className="absolute end-14 grid size-8 place-items-center rounded-full text-foreground/45 transition-colors duration-150 hover:bg-foreground/6 hover:text-foreground active:scale-95"
                 >
                   <Mic size={14} />
                 </button>
                 <button
                   type="submit"
-                  className="absolute end-1 inline-flex h-10 items-center gap-1.5 rounded-lg bg-primary px-4 text-[12px] font-semibold text-white shadow transition hover:bg-[#c80510]"
+                  className="absolute end-1 inline-flex h-10 items-center gap-1.5 rounded-lg bg-primary px-4 text-[12px] font-semibold text-white shadow transition-colors duration-150 hover:bg-[#c80510] active:scale-[0.97]"
                 >
                   {th('submit')}
                   <ArrowRight size={12} className="rtl:rotate-180" />
@@ -122,7 +122,7 @@ export const RidesHeroSplit = () => {
             className="relative flex flex-col overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.02] shadow-xl shadow-foreground/5"
           >
             {/* Sponsored label */}
-            <div className="absolute end-3 top-3 z-10 inline-flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white backdrop-blur-md">
+            <div className="absolute end-3 top-3 z-10 inline-flex items-center gap-1 rounded-full bg-foreground/65 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-background backdrop-blur-md">
               {th('sponsored')}
             </div>
 
@@ -133,7 +133,7 @@ export const RidesHeroSplit = () => {
                 alt=""
                 className="size-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
 
               {/* Award ribbon */}
               <div className="absolute start-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-[#C9A86A]/60 bg-[#C9A86A]/20 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#E8C98D] backdrop-blur-md">
@@ -212,12 +212,12 @@ const TabButton = ({
     type="button"
     onClick={onClick}
     className={
-      'inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[11px] font-semibold uppercase tracking-wider transition ' +
+      'inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-[11px] font-semibold uppercase tracking-wider transition-colors duration-150 ' +
       (active
         ? ai
-          ? 'bg-gradient-to-r from-[#a855f7] to-[#3b82f6] text-white shadow'
+          ? 'bg-primary text-white shadow'
           : 'bg-foreground text-background'
-        : 'text-foreground/60 hover:text-foreground')
+        : 'text-foreground/60 hover:bg-foreground/5 hover:text-foreground')
     }
   >
     {icon}
@@ -228,7 +228,7 @@ const TabButton = ({
 const QuickSelect = ({ label }: { label: string }) => (
   <button
     type="button"
-    className="inline-flex h-10 items-center justify-between gap-2 rounded-lg border border-foreground/10 bg-foreground/[0.02] px-3 text-[12px] font-medium text-foreground/75 transition hover:border-foreground/25 hover:bg-foreground/[0.05] hover:text-foreground"
+    className="inline-flex h-10 items-center justify-between gap-2 rounded-lg border border-foreground/10 bg-foreground/2 px-3 text-[12px] font-medium text-foreground/75 transition-colors duration-150 hover:border-foreground/25 hover:bg-foreground/5 hover:text-foreground active:bg-foreground/8"
   >
     <span>{label}</span>
     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

@@ -83,7 +83,7 @@ const StyleTile = ({
     initial={{ opacity: 0, y: 12 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: '-40px' }}
-    transition={{ duration: 0.4, delay: index * 0.05, ease: [0.22, 0.61, 0.36, 1] }}
+    transition={{ duration: 0.35, delay: index * 0.04, ease: [0.22, 0.61, 0.36, 1] }}
     whileHover={{ y: -3 }}
     className="group flex shrink-0 flex-col items-center"
   >
@@ -103,7 +103,7 @@ const StyleTile = ({
         src={style.image}
         alt={label}
         className="relative size-full object-cover transition-transform duration-500 group-hover:scale-[1.1]"
-        loading="lazy"
+        loading={index <= 1 ? 'eager' : 'lazy'}
         onError={(e) => {
           // Hide the broken <img> so the emoji+gradient fallback shows
           e.currentTarget.style.display = 'none';
