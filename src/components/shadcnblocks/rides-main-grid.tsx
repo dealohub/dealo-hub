@@ -339,14 +339,14 @@ const SponsoredCard = () => {
       initial={{ y: 12, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-dashed border-[#F59E0B]/55 bg-gradient-to-br from-[#F59E0B]/[0.08] via-transparent to-transparent p-5 shadow-sm transition-all duration-300 hover:border-[#F59E0B]/80 hover:shadow-lg"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-dashed border-[#C8A84B]/55 bg-gradient-to-br from-[#C8A84B]/[0.08] via-transparent to-transparent p-5 shadow-sm transition-all duration-300 hover:border-[#C8A84B]/80 hover:shadow-lg"
     >
-      <div className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full border border-[#F59E0B]/65 bg-[#F59E0B]/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.18em] text-[#F59E0B]">
+      <div className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full border border-[#C8A84B]/65 bg-[#C8A84B]/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.18em] text-[#C8A84B]">
         {t('sponsored')}
       </div>
 
       <div className="mt-4 flex items-center gap-3">
-        <div className="grid size-12 place-items-center rounded-xl bg-[#F59E0B]/15 text-[14px] font-extrabold tracking-tight text-[#F59E0B]">
+        <div className="grid size-12 place-items-center rounded-xl bg-[#C8A84B]/15 text-[14px] font-extrabold tracking-tight text-[#C8A84B]">
           AL
         </div>
         <div className="min-w-0">

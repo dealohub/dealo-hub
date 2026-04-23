@@ -136,7 +136,7 @@ export const RidesHeroSplit = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
 
               {/* Award ribbon */}
-              <div className="absolute start-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-[#F59E0B]/75 bg-[#F59E0B]/28 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#FDE68A] backdrop-blur-md">
+              <div className="absolute start-4 top-4 inline-flex items-center gap-1.5 rounded-full border border-[#C8A84B]/75 bg-[#C8A84B]/28 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F0DCAB] backdrop-blur-md">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
