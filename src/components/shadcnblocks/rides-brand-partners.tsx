@@ -76,14 +76,14 @@ export const RidesBrandPartners = () => {
         <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C9A86A] opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#C9A86A]" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#D4A827] opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#D4A827]" />
             </span>
             <span className="h-px w-8 bg-foreground/25" />
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/70">
               {t('eyebrow')}
             </p>
-            <span className="inline-flex items-center gap-1 rounded-full border border-[#C9A86A]/30 bg-[#C9A86A]/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#C9A86A]">
+            <span className="inline-flex items-center gap-1 rounded-full border border-[#D4A827]/55 bg-[#D4A827]/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#D4A827]">
               {BRANDS.length}+ OEM
             </span>
           </div>
@@ -184,7 +184,7 @@ export const RidesBrandPartners = () => {
           </span>
           <span className="hidden h-3 w-px bg-foreground/15 md:inline-block" />
           <span className="inline-flex items-center gap-1.5">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#C9A86A]">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#D4A827]">
               <path d="M12 2l2.4 2.4 3.3-.4.6 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.6 3.3-3.3-.4L12 22l-2.4-2.4-3.3.4-.6-3.3-3-1.5 1.5-3-1.5-3 3-1.5.6-3.3 3.3.4L12 2z" />
             </svg>
             {t('trustVerified') /* "Verified dealer network" */}

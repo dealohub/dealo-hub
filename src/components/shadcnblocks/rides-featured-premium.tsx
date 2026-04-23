@@ -27,7 +27,7 @@ export const RidesFeaturedPremium = ({ items }: Props) => {
       <div className="mx-auto max-w-7xl px-6 pb-6 pt-6">
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#C9A86A]/40 bg-[#C9A86A]/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#C9A86A]">
+            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#D4A827]/60 bg-[#D4A827]/18 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#D4A827]">
               ◆ {t('eyebrow')}
             </div>
             <h2 className="font-calSans text-[26px] font-semibold tracking-tight text-foreground md:text-[32px]">
