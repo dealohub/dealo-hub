@@ -1,124 +1,300 @@
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import { ChevronRight, Home, Flame, Sparkle, Repeat } from 'lucide-react';
-import type { ElectronicsDetail } from '@/lib/electronics/types';
-import PropertyVerificationBadge from './property-verification-badge';
+'use client';
 
-/**
- * Electronics detail — header (centered hero).
- *
- * Mirrors property-detail-header: breadcrumb → badges strip → h1 →
- * meta row (device kind · brand model · city). Cross-vertical
- * verification badge reused from Properties (tier system is shared
- * via migration 0026).
- *
- * Doctrine surface:
- *   - Verification tier badge prominent (every listing declares its
- *     tier — "unverified" shows explicitly, per P2)
- *   - Cosmetic grade chip next to the tier so buyers see both
- *   - "Open to trade" badge (P8 — badal) when the seller opted in;
- *     the detail page's visible hook for the badal moat
- *   - Featured / hot flags as accent chips
- */
+import { motion } from 'framer-motion';
+import {
+  ChevronRight,
+  Eye,
+  Camera,
+  MessageSquare,
+  Heart,
+  ShieldCheck,
+  Flame,
+  Repeat,
+  MapPin,
+} from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import type { ElectronicsDetail } from '@/lib/electronics/types';
+
+const CAT_COLOR: Record<string, string> = {
+  'phones-tablets':    '#3b82f6',
+  'laptops-computers': '#8b5cf6',
+  'tvs-audio':         '#f59e0b',
+  'gaming':            '#ef4444',
+  'smart-watches':     '#10b981',
+  'cameras':           '#f97316',
+};
+
+const GRADE_BADGE: Record<string, string> = {
+  premium:   'border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  excellent: 'border-sky-500/20 bg-sky-500/10 text-sky-600 dark:text-sky-300',
+  good:      'border-foreground/10 bg-foreground/[0.06] text-foreground/75',
+  fair:      'border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-300',
+};
 
 interface Props {
   listing: ElectronicsDetail;
   locale: 'ar' | 'en';
 }
 
-const GRADE_BADGE_COLOR: Record<ElectronicsDetail['fields']['cosmeticGrade'], string> = {
-  premium: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 ring-1 ring-inset ring-emerald-500/20',
-  excellent: 'bg-sky-500/15 text-sky-700 dark:text-sky-300 ring-1 ring-inset ring-sky-500/20',
-  good: 'bg-foreground/[0.06] text-foreground/80 ring-1 ring-inset ring-foreground/10',
-  fair: 'bg-amber-500/15 text-amber-700 dark:text-amber-300 ring-1 ring-inset ring-amber-500/20',
-};
-
 export default function ElectronicsDetailHeader({ listing, locale }: Props) {
   const t = useTranslations('electronicsDetail');
   const tSell = useTranslations('sell.step.electronics');
   const f = listing.fields;
+  const catColor = CAT_COLOR[listing.subCat] ?? '#3b82f6';
+
+  const dealerLabel = listing.seller.dealerName?.trim() || listing.seller.displayName;
+  const initials = dealerLabel
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0] ?? '')
+    .join('');
+  const isVerifiedDealer = listing.seller.isDealer && Boolean(listing.seller.dealerVerifiedAt);
+  const deviceLabel = tSell(`deviceKind.${f.deviceKind}` as any);
 
   return (
-    <header className="border-b border-border/50 bg-gradient-to-b from-background to-background/50">
-      <div className="mx-auto max-w-7xl px-6 py-8">
-        {/* Breadcrumb */}
+    <section className="relative w-full overflow-hidden border-b border-foreground/10 bg-background">
+      {/* Ambient radial glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          background: `radial-gradient(700px 280px at 85% 0%, ${catColor}1a, transparent 55%), radial-gradient(500px 220px at 10% 100%, ${catColor}12, transparent 60%)`,
+        }}
+      />
+      {/* Shimmer scan line */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 -inset-x-full"
+        style={{
+          background:
+            'linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%)',
+        }}
+        initial={{ x: '-100%' }}
+        animate={{ x: '200%' }}
+        transition={{ duration: 3.8, repeat: Infinity, ease: 'linear', repeatDelay: 2 }}
+      />
+
+      <div className="relative mx-auto max-w-7xl px-6 pb-6 pt-5 md:pb-8 md:pt-6">
+        {/* Breadcrumb — centered */}
         <nav
           aria-label="Breadcrumb"
-          className="mb-5 flex items-center gap-1.5 text-xs text-foreground/60"
+          className="mb-6 flex min-w-0 flex-wrap items-center justify-center gap-1.5 text-[11.5px] text-foreground/55"
         >
-          <Link
-            href={`/${locale}`}
-            className="inline-flex items-center gap-1 hover:text-foreground"
-          >
-            <Home size={12} />
+          <Link href={`/${locale}`} className="transition hover:text-foreground">
             {t('crumbHome')}
           </Link>
-          <ChevronRight size={12} className="opacity-50 rtl:rotate-180" />
-          <Link href={`/${locale}/tech`} className="hover:text-foreground">
+          <ChevronRight size={12} className="shrink-0 text-foreground/30 rtl:rotate-180" />
+          <Link href={`/${locale}/tech`} className="transition hover:text-foreground">
             {t('crumbTech')}
           </Link>
-          <ChevronRight size={12} className="opacity-50 rtl:rotate-180" />
-          <span className="text-foreground/80">{tSell(`deviceKind.${f.deviceKind}` as any)}</span>
+          <ChevronRight size={12} className="shrink-0 text-foreground/30 rtl:rotate-180" />
+          <span
+            className="inline-flex items-center gap-1.5 font-medium"
+            style={{ color: catColor }}
+          >
+            <span
+              className="inline-block size-1.5 rounded-full"
+              style={{ background: catColor }}
+            />
+            {deviceLabel}
+          </span>
+          <ChevronRight size={12} className="shrink-0 text-foreground/30 rtl:rotate-180" />
+          <span className="truncate font-medium text-foreground/80">{listing.title}</span>
         </nav>
 
-        {/* Badges strip */}
-        <div className="mb-3 flex flex-wrap items-center gap-2">
-          <PropertyVerificationBadge
-            tier={listing.verificationTier}
-            verifiedAt={listing.verifiedAt}
-            verifiedBy={listing.verifiedBy}
-            size="md"
-          />
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${GRADE_BADGE_COLOR[f.cosmeticGrade]}`}
-          >
-            {t(`gradeBadge.${f.cosmeticGrade}` as any)}
-          </span>
-          {f.acceptsTrade && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-500/15 px-2.5 py-0.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300 ring-1 ring-inset ring-indigo-500/20">
-              <Repeat size={11} />
-              {t('tradeBadge')}
+        {/* Title block — centered hero */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 0.61, 0.36, 1] }}
+          className="mx-auto flex max-w-3xl flex-col items-center text-center"
+        >
+          {/* Badges row */}
+          <div className="mb-4 flex flex-wrap items-center justify-center gap-1.5">
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em]"
+              style={{
+                background: `${catColor}1a`,
+                color: catColor,
+                border: `1px solid ${catColor}44`,
+              }}
+            >
+              <span
+                className="inline-block size-1.5 rounded-full"
+                style={{ background: catColor }}
+              />
+              {deviceLabel}
             </span>
-          )}
-          {listing.isFeatured && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300 ring-1 ring-inset ring-amber-500/20">
-              <Sparkle size={11} />
-              {t('featured')}
-            </span>
-          )}
-          {listing.isHot && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/15 px-2.5 py-0.5 text-xs font-semibold text-rose-700 dark:text-rose-300 ring-1 ring-inset ring-rose-500/20">
-              <Flame size={11} />
-              Hot
-            </span>
-          )}
-        </div>
 
-        {/* Title */}
-        <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-          {listing.title}
-        </h1>
-
-        {/* Meta row — device kind chip + brand/model + city */}
-        <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-foreground/75">
-          <span className="font-medium text-foreground">{f.brand}</span>
-          <span className="text-foreground/80">{f.model}</span>
-          {f.storageGb != null && (
-            <>
-              <span className="text-foreground/30">·</span>
-              <span>{f.storageGb} GB</span>
-            </>
-          )}
-          {(listing.areaName || listing.cityName) && (
-            <>
-              <span className="text-foreground/30">·</span>
-              <span className="text-foreground/70">
-                {[listing.areaName, listing.cityName].filter(Boolean).join(' · ')}
+            {listing.verificationTier !== 'unverified' && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/30 bg-blue-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-blue-400">
+                <ShieldCheck size={10} strokeWidth={2.4} />
+                {listing.verificationTier === 'dealo_inspected'
+                  ? t('tierDealoInspected')
+                  : t('tierAiVerified')}
               </span>
-            </>
-          )}
-        </div>
+            )}
+
+            <span
+              className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] ${GRADE_BADGE[f.cosmeticGrade] ?? GRADE_BADGE.good}`}
+            >
+              {t(`gradeBadge.${f.cosmeticGrade}` as any)}
+            </span>
+
+            {f.acceptsTrade && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-indigo-400">
+                <Repeat size={10} strokeWidth={2.4} />
+                {t('tradeBadge')}
+              </span>
+            )}
+
+            {listing.isFeatured && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-[#C9A86A]/40 bg-[#C9A86A]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#C9A86A]">
+                ◆ {t('featured')}
+              </span>
+            )}
+
+            {listing.isHot && (
+              <motion.span
+                className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-500"
+                animate={{ scale: [1, 1.04, 1] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <Flame size={10} strokeWidth={2.4} />
+                Hot
+              </motion.span>
+            )}
+          </div>
+
+          {/* H1 */}
+          <h1 className="font-calSans text-[28px] font-extrabold leading-[1.1] tracking-tight text-foreground md:text-[36px] lg:text-[44px]">
+            {listing.title}
+          </h1>
+
+          {/* Spec line */}
+          <p className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[13px] text-foreground/65 md:text-[14px]">
+            <span className="font-semibold text-foreground/85">{f.brand}</span>
+            {f.model && (
+              <>
+                <Dot />
+                <span>{f.model}</span>
+              </>
+            )}
+            {f.storageGb != null && (
+              <>
+                <Dot />
+                <span>{f.storageGb} GB</span>
+              </>
+            )}
+            {(listing.areaName || listing.cityName) && (
+              <>
+                <Dot />
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin size={13} strokeWidth={2.2} className="text-foreground/40" />
+                  {[listing.areaName, listing.cityName].filter(Boolean).join(' · ')}
+                </span>
+              </>
+            )}
+          </p>
+        </motion.div>
+
+        {/* Seller + stats strip */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 0.61, 0.36, 1] }}
+          className="mt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-foreground/10 pt-4"
+        >
+          {/* Seller */}
+          <div className="flex items-center gap-3">
+            <div
+              className="grid size-10 place-items-center rounded-xl text-[11px] font-extrabold tracking-tight"
+              style={{ background: `${catColor}18`, color: catColor }}
+            >
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="truncate text-[13px] font-semibold text-foreground">
+                  {dealerLabel}
+                </span>
+                {isVerifiedDealer && (
+                  <svg width="12" height="12" viewBox="0 0 24 24" className="shrink-0">
+                    <path
+                      d="M12 2l2.4 2.4 3.3-.4.6 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.6 3.3-3.3-.4L12 22l-2.4-2.4-3.3.4-.6-3.3-3-1.5 1.5-3-1.5-3 3-1.5.6-3.3 3.3.4L12 2z"
+                      fill="#3B82F6"
+                    />
+                    <path
+                      d="M9 12l2 2 4-4"
+                      stroke="white"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </div>
+              <p className="text-[10px] uppercase tracking-wider text-foreground/45">
+                {listing.seller.isDealer ? t('dealerSeller') : t('privateSeller')}
+              </p>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11.5px]">
+            <StatChip
+              icon={<Eye size={12} strokeWidth={2.2} />}
+              value={listing.viewCount}
+              label={t('statViews')}
+            />
+            <StatChip
+              icon={<Heart size={12} strokeWidth={2.2} />}
+              value={listing.saveCount}
+              label={t('statSaves')}
+            />
+            <StatChip
+              icon={<MessageSquare size={12} strokeWidth={2.2} />}
+              value={listing.chatInitiationCount}
+              label={t('statInquiries')}
+            />
+            <StatChip
+              icon={<Camera size={12} strokeWidth={2.2} />}
+              value={listing.images.length}
+              label={t('statPhotos')}
+            />
+            <StatChip value={`#${listing.id}`} label={t('statListingId')} mono />
+          </div>
+        </motion.div>
       </div>
-    </header>
+    </section>
   );
 }
+
+const Dot = () => <span className="text-foreground/20">·</span>;
+
+const StatChip = ({
+  icon,
+  value,
+  label,
+  mono,
+}: {
+  icon?: React.ReactNode;
+  value: string | number;
+  label: string;
+  mono?: boolean;
+}) => (
+  <span className="inline-flex items-center gap-1.5 text-foreground/55">
+    {icon && <span className="text-foreground/40">{icon}</span>}
+    <span
+      className={
+        'font-semibold text-foreground/85 ' +
+        (mono ? 'font-mono text-[11px]' : 'tabular-nums')
+      }
+    >
+      {value}
+    </span>
+    <span className="text-foreground/45">{label}</span>
+  </span>
+);
