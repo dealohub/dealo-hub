@@ -50,6 +50,44 @@ Skipping skills on design work = regression. Non-negotiable.
 - **`stitch-design-taste`** — Design System من Google
 - **`canvas-design`** — تصميم إبداعي
 - **`shadcn`** — إدارة مكوّنات shadcn
+- **`tailwind-design-system`** — Design system بـ Tailwind (مخصّص للمشروع)
+- **`extract-design-system`** — استخراج design system من الكود الحالي
+- **`liquid-glass-design`** — تصميم عصري وجذّاب
+
+### صفحات · Pages
+- **`landing-page-design`** — تصميم صفحات الـ marketplace
+- **`sleek-design-mobile-apps`** — تصميم responsive + mobile
+- **`design-md`** — توثيق التصميم بأسلوب Google
+
+### ⚙️ Stack-Specific (Next.js + Supabase)
+- **`nextjs-app-router-patterns`** — App Router patterns لـ Next.js 14
+- **`nextjs-supabase-auth`** — Auth بين Next.js وSupabase
+- **`nextjs-best-practices`** — أفضل ممارسات Next.js
+
+### 🎬 Animation
+- **`ui-animation`** — حركات UI عامة
+- **`tailwindcss-animations`** — animations بـ Tailwind CSS
+
+### ⚡ Performance
+- **`performance`** — أداء الويب (من Addy Osmani · Google)
+
+### 🧪 Testing
+- **`webapp-testing`** — اختبار تطبيقات الويب (من Anthropic رسمياً)
+- **`e2e-testing-patterns`** — أنماط E2E testing مع Playwright
+
+### 🔒 Security
+- **`security-review`** — مراجعة أمنية شاملة للكود
+
+### 📘 TypeScript
+- **`typescript-advanced-types`** — أنواع TypeScript المتقدمة
+
+### ♿ Accessibility
+- **`accessibility`** — أفضل ممارسات إمكانية الوصول (من Addy Osmani · Google)
+- **`fixing-accessibility`** — إصلاح مشاكل الـ accessibility
+
+### 🔍 SEO
+- **`seo-audit`** — تدقيق SEO للمشروع (86K تثبيت)
+- **`seo`** — أفضل ممارسات SEO (من Addy Osmani · Google)
 
 ### مراجعة قبل الدمج · Pre-merge Review
 - **`/ultrareview`** — multi-agent bug hunt (v2.1.86+, Max plan, 3 free runs حتى 2026-05-05)
@@ -63,10 +101,25 @@ Skipping skills on design work = regression. Non-negotiable.
 | Planning a new surface | `shape` |
 | Building from scratch | `frontend-design` أو `impeccable` |
 | Redesigning existing | `redesign-existing-projects` أو `ui-ux-pro-max` |
+| Tailwind tokens / system | `tailwind-design-system` |
 | Spacing / hierarchy | `layout` |
 | Typography | `typeset` |
 | Color strategy | `colorize` |
 | Motion / micro-interactions | `animate` |
+| Landing / marketplace pages | `landing-page-design` |
+| Mobile / responsive | `sleek-design-mobile-apps` |
+| Modern trendy UI | `liquid-glass-design` |
+| Extract existing design system | `extract-design-system` |
+| Next.js App Router | `nextjs-app-router-patterns` |
+| Supabase auth flow | `nextjs-supabase-auth` |
+| Performance audit | `performance` |
+| UI animations | `ui-animation` أو `tailwindcss-animations` |
+| TypeScript types / generics | `typescript-advanced-types` |
+| Writing tests | `webapp-testing` |
+| E2E tests | `e2e-testing-patterns` |
+| Security review | `security-review` |
+| Accessibility audit | `accessibility` |
+| SEO audit | `seo-audit` + `seo` |
 | Final pass before commit | `polish` |
 | Independent UX audit | `critique` |
 | Pre-merge bug hunt | `/ultrareview` |
@@ -81,6 +134,22 @@ Skipping skills on design work = regression. Non-negotiable.
 - **Translations:** `messages/ar.json` + `messages/en.json` (16 namespaces under `marketplace.*`)
 - **Hook for logical CSS:** use `ms-*` / `pe-*` / `start-*` / `end-*` instead of `ml-*` / `pr-*` / `left-*` / `right-*` for RTL correctness
 - **Standing rule:** no `git push` to origin until design + polish + tests all green together
+
+## 🌐 Browser automation
+
+**Rule:** For any browser task (open URL, click, type, screenshot, scrape), ALWAYS use **Playwright MCP** — it runs directly inside Claude Code with no extra API key.
+
+```
+mcp__plugin_playwright_playwright__browser_navigate   ← فتح URL
+mcp__plugin_playwright_playwright__browser_snapshot   ← قراءة الصفحة
+mcp__plugin_playwright_playwright__browser_click      ← نقر
+mcp__plugin_playwright_playwright__browser_type       ← كتابة
+mcp__plugin_playwright_playwright__browser_take_screenshot ← لقطة شاشة
+mcp__plugin_playwright_playwright__browser_fill_form  ← ملء نماذج
+```
+
+- **لا تستخدم autobrowse** إلا إذا طُلب تحديداً (يحتاج ANTHROPIC_API_KEY منفصل)
+- Playwright MCP = Max plan مباشرة، بدون تكلفة إضافية
 
 ---
 
