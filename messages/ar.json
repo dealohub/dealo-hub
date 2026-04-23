@@ -1624,6 +1624,8 @@
           "groupIdentity": "الهوية",
           "groupMechanical": "الميكانيكا",
           "groupDocuments": "الوثائق والضمان",
+          "horsepower": "قوة المحرك",
+          "torque": "عزم الدوران",
           "fuelType": {
             "petrol": "بنزين",
             "diesel": "ديزل",

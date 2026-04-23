@@ -359,31 +359,38 @@ export const RideDetailGallery = ({ listing }: Props) => {
               value={t('sideUploadedValue')}
               small
             />
-            <div
-              className="relative flex-1 overflow-hidden rounded-2xl border border-foreground/10 p-4"
-              style={{
-                background: `linear-gradient(160deg, ${catColor}18, ${catColor}05 70%, transparent)`,
-              }}
-            >
+            <div className="relative flex-1 overflow-hidden rounded-2xl border border-foreground/10 bg-muted/40 p-4">
+              {/* Category accent — thin vertical bar on the start edge.
+                  Replaces the full-surface gradient that read as salmon
+                  pink when the category color (red) sat over the warm
+                  off-white background. A 3px edge line keeps the category
+                  identity legible without tinting the whole card. */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute start-0 top-0 h-full w-[3px]"
+                style={{
+                  background: `linear-gradient(to bottom, ${catColor}, ${catColor}00)`,
+                }}
+              />
               <Info size={14} className="mb-2 text-foreground/60" />
               <p className="text-[11px] leading-relaxed text-foreground/70">
                 {t('sideHintBody')}
               </p>
               <ul className="mt-3 space-y-1.5 text-[10.5px] text-foreground/55">
                 <li className="flex items-center gap-1.5">
-                  <kbd className="rounded border border-foreground/15 bg-foreground/[0.05] px-1.5 py-0.5 font-mono text-[9px] text-foreground/70">
+                  <kbd className="rounded border border-foreground/10 bg-muted/60 px-1.5 py-0.5 font-mono text-[9px] text-foreground/70">
                     ←
                   </kbd>
                   {t('shortcutPrev')}
                 </li>
                 <li className="flex items-center gap-1.5">
-                  <kbd className="rounded border border-foreground/15 bg-foreground/[0.05] px-1.5 py-0.5 font-mono text-[9px] text-foreground/70">
+                  <kbd className="rounded border border-foreground/10 bg-muted/60 px-1.5 py-0.5 font-mono text-[9px] text-foreground/70">
                     →
                   </kbd>
                   {t('shortcutNext')}
                 </li>
                 <li className="flex items-center gap-1.5">
-                  <kbd className="rounded border border-foreground/15 bg-foreground/[0.05] px-1.5 py-0.5 font-mono text-[9px] text-foreground/70">
+                  <kbd className="rounded border border-foreground/10 bg-muted/60 px-1.5 py-0.5 font-mono text-[9px] text-foreground/70">
                     Esc
                   </kbd>
                   {t('shortcutEsc')}
@@ -588,7 +595,7 @@ const SideStat = ({
   hint?: string;
   small?: boolean;
 }) => (
-  <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-3">
+  <div className="rounded-2xl border border-foreground/10 bg-muted/40 p-3">
     <p className="text-[9.5px] uppercase tracking-[0.15em] text-foreground/45">
       {label}
     </p>

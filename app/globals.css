@@ -3,21 +3,26 @@
 @tailwind utilities;
 
 @layer base {
-  /* Light palette — warm "stone" gray, the 2026 anti-stark-white trend
-     (Linear, Vercel, Arc, Notion). Off-white background with a
-     subtle warm hue, near-black text with the same warmth so the
-     two anchors feel related instead of contrasting. */
+  /* 2026-04-23 palette reset — cool-neutral slate.
+     Shared hue 240 with dark mode so the theme toggle reads as a
+     polarity flip rather than a redesign. All saturation ≤ 6% →
+     imperceptible tint, zero hue-shift in bg-foreground/[opacity]
+     surfaces (the fix for the pink-tint bug: previously fg hue 30
+     over bg hue 60 mixed toward salmon at low alpha).
+     Brand red #e30613 owns the accent lane via --primary,
+     replacing the inherited-from-shadcn purple (oklch 274) that
+     never matched Dealo's identity. */
   :root {
-    --background: 60 9% 98%;         /* warm off-white */
-    --foreground: 30 8% 12%;         /* warm near-black */
-    --muted: 60 5% 95%;
-    --muted-foreground: 30 5% 45%;
-    --popover: 60 9% 99%;
-    --popover-foreground: 30 8% 12%;
-    --border: 30 6% 88%;
-    --input: 30 6% 88%;
-    --ring: 30 8% 12%;
-    --primary: oklch(0.58 0.19 274);
+    --background: 0 0% 100%;           /* paper white */
+    --foreground: 240 10% 10%;         /* cool near-black */
+    --muted: 240 5% 96%;               /* neutral grey surface */
+    --muted-foreground: 240 4% 46%;    /* secondary text */
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 10%;
+    --border: 240 6% 90%;              /* hairline */
+    --input: 240 6% 90%;
+    --ring: 240 10% 10%;
+    --primary: #e30613;                /* Dealo brand red */
     --primary-foreground: 0 0% 100%;
     --radius: 0.625rem;
   }
