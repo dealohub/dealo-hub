@@ -195,7 +195,7 @@ export const RideDetailHeader = ({ listing, locale }: Props) => {
             )}
 
             {dropPct !== null && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#e30613] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-md shadow-[#e30613]/25">
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-md shadow-primary/25">
                 {dropPct}% {t('badgePriceDrop')}
               </span>
             )}

@@ -757,7 +757,7 @@ const SecondaryNav = () => {
       {/* Primary action for a C2C marketplace: post a listing. */}
       <a
         href={`/${locale}/sell/category`}
-        className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#e30613] px-3.5 text-[12px] font-semibold text-white shadow transition hover:bg-[#c80510]"
+        className="inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-3.5 text-[12px] font-semibold text-white shadow transition hover:bg-[#c80510]"
       >
         <Plus size={14} strokeWidth={2.5} />
         {t('sellNow')}

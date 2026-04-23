@@ -89,7 +89,7 @@ export const RidesHeroSplit = () => {
                 </button>
                 <button
                   type="submit"
-                  className="absolute end-1 inline-flex h-10 items-center gap-1.5 rounded-lg bg-[#e30613] px-4 text-[12px] font-semibold text-white shadow transition hover:bg-[#c80510]"
+                  className="absolute end-1 inline-flex h-10 items-center gap-1.5 rounded-lg bg-primary px-4 text-[12px] font-semibold text-white shadow transition hover:bg-[#c80510]"
                 >
                   {th('submit')}
                   <ArrowRight size={12} className="rtl:rotate-180" />

@@ -67,7 +67,7 @@ export const ListingCardEditorial = ({ item, priceDrop = false }: Props) => {
       className={
         'group relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-300 ' +
         (priceDrop
-          ? 'border-[#e30613]/25 bg-gradient-to-br from-[#e30613]/[0.06] to-transparent hover:border-[#e30613]/40'
+          ? 'border-primary/25 bg-gradient-to-br from-primary/[0.06] to-transparent hover:border-primary/40'
           : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04]')
       }
     >
@@ -102,7 +102,7 @@ export const ListingCardEditorial = ({ item, priceDrop = false }: Props) => {
 
         {/* Top-right: badge */}
         {priceDrop ? (
-          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md bg-[#e30613] px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white shadow-lg shadow-[#e30613]/30">
+          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md bg-primary px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white shadow-lg shadow-primary/30">
             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>
@@ -141,7 +141,7 @@ export const ListingCardEditorial = ({ item, priceDrop = false }: Props) => {
       <span
         aria-hidden
         className="absolute left-0 top-0 h-full w-[2px]"
-        style={{ background: priceDrop ? '#e30613' : catColor, opacity: priceDrop ? 0.7 : 0.35 }}
+        style={{ background: priceDrop ? 'var(--primary)' : catColor, opacity: priceDrop ? 0.7 : 0.35 }}
       />
 
       {/* ─── BODY ───────────────────────────────────────────── */}

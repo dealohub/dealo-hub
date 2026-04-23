@@ -55,7 +55,7 @@ export const ListingCardCompact = ({ item, priceDrop = false }: Props) => {
       className={
         'group relative flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors ' +
         (priceDrop
-          ? 'border-[#e30613]/25 bg-[#e30613]/[0.04] hover:border-[#e30613]/40'
+          ? 'border-primary/25 bg-primary/[0.04] hover:border-primary/40'
           : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04]')
       }
     >
@@ -63,7 +63,7 @@ export const ListingCardCompact = ({ item, priceDrop = false }: Props) => {
       <span
         aria-hidden
         className="absolute left-0 top-0 h-full w-[2px] rounded-l-lg"
-        style={{ background: priceDrop ? '#e30613' : catColor, opacity: priceDrop ? 0.7 : 0.4 }}
+        style={{ background: priceDrop ? 'var(--primary)' : catColor, opacity: priceDrop ? 0.7 : 0.4 }}
       />
 
       {/* Image — small 4:3 */}
@@ -88,7 +88,7 @@ export const ListingCardCompact = ({ item, priceDrop = false }: Props) => {
           </span>
         )}
         {priceDrop && (
-          <span className="absolute bottom-1 left-1 rounded-sm bg-[#e30613] px-1 py-px text-[9px] font-bold uppercase tracking-wider text-white">
+          <span className="absolute bottom-1 left-1 rounded-sm bg-primary px-1 py-px text-[9px] font-bold uppercase tracking-wider text-white">
             {Math.abs(item.drop ?? 0)}%
           </span>
         )}

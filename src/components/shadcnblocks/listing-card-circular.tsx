@@ -64,7 +64,7 @@ export const ListingCardCircular = ({ item, priceDrop = false }: Props) => {
       className={
         'group relative flex items-center gap-5 rounded-[2rem] border pl-3 pr-5 py-3.5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ' +
         (priceDrop
-          ? 'border-[#e30613]/25 bg-gradient-to-r from-[#e30613]/[0.06] via-transparent to-transparent hover:border-[#e30613]/40 hover:shadow-[#e30613]/10'
+          ? 'border-primary/25 bg-gradient-to-r from-primary/[0.06] via-transparent to-transparent hover:border-primary/40 hover:shadow-primary/10'
           : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04] hover:shadow-foreground/5')
       }
     >
@@ -74,7 +74,7 @@ export const ListingCardCircular = ({ item, priceDrop = false }: Props) => {
         style={
           {
             background: priceDrop
-              ? 'linear-gradient(135deg, #e30613, #ff6b6b)'
+              ? 'linear-gradient(135deg, var(--primary), #ff6b6b)'
               : `linear-gradient(135deg, ${catColor}, ${catColor}88)`,
             // CSS custom property consumed by the hover glow shadow above
             '--ring-glow': priceDrop ? '#e3061322' : `${catColor}22`,
@@ -109,7 +109,7 @@ export const ListingCardCircular = ({ item, priceDrop = false }: Props) => {
             className={
               'absolute -top-1 end-[-8px] z-10 inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider shadow-md ring-2 ring-background ' +
               (priceDrop
-                ? 'bg-[#e30613] text-white shadow-[#e30613]/30'
+                ? 'bg-primary text-white shadow-primary/30'
                 : 'bg-[#C9A86A] text-[#1a1306] shadow-[#C9A86A]/30')
             }
           >

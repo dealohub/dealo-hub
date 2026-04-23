@@ -37,7 +37,7 @@ const Feature283 = ({ className = '', images }: Feature283Props) => {
               className={
                 'whitespace-nowrap rounded-full transition ' +
                 (isActive
-                  ? 'bg-[#e30613] px-2.5 py-0.5 text-white shadow'
+                  ? 'bg-primary px-2.5 py-0.5 text-white shadow'
                   : 'px-1 py-0.5 text-foreground/80 hover:text-foreground')
               }
             >
@@ -57,7 +57,7 @@ const Feature283 = ({ className = '', images }: Feature283Props) => {
           />
           <Search size={14} className="absolute end-3 text-neutral-500" />
         </div>
-        <button className="inline-flex h-9 items-center justify-center rounded-md bg-[#e30613] px-4 text-xs font-semibold text-white shadow transition hover:bg-[#c80510]">
+        <button className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-xs font-semibold text-white shadow transition hover:bg-[#c80510]">
           {t('hero.searchButton')}
         </button>
       </div>

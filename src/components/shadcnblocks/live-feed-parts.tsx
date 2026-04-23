@@ -178,15 +178,15 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
       <div className="relative mx-auto flex max-w-7xl items-center gap-6 px-6 py-3 md:gap-8">
         {/* LIVE pill with wiggle */}
         <motion.div
-          className="flex items-center gap-2 rounded-full border border-[#e30613]/25 bg-[#e30613]/[0.08] px-2.5 py-0.5"
+          className="flex items-center gap-2 rounded-full border border-primary/25 bg-primary/[0.08] px-2.5 py-0.5"
           animate={{ rotate: [0, -1.2, 1.2, -1.2, 0] }}
           transition={{ duration: 0.7, repeat: Infinity, repeatDelay: 5, ease: 'easeInOut' }}
         >
           <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e30613] opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#e30613]" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
           </span>
-          <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#e30613]">
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
             {t('live')}
           </span>
         </motion.div>
@@ -242,12 +242,13 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
             height="28"
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
-            className="overflow-visible"
+            className="overflow-visible text-primary"
           >
+            {/* stopColor/stroke/fill all inherit currentColor → --primary via wrapper */}
             <defs>
               <linearGradient id="sparkFill" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="#e30613" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#e30613" stopOpacity="0" />
+                <stop offset="0%" stopColor="currentColor" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
               </linearGradient>
             </defs>
             <motion.path
@@ -260,7 +261,7 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
             <motion.path
               d={path}
               fill="none"
-              stroke="#e30613"
+              stroke="currentColor"
               strokeWidth="2"
               vectorEffect="non-scaling-stroke"
               strokeLinecap="round"
@@ -273,7 +274,7 @@ export const LiveStatusBar = ({ feed: _feed }: { feed: FeedItem[] }) => {
               cx="100"
               cy={lastY}
               r="3"
-              fill="#e30613"
+              fill="currentColor"
               animate={{ scale: [1, 1.6, 1], opacity: [1, 0.7, 1] }}
               transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
             />
@@ -342,7 +343,7 @@ export const FilterPills = ({ value, onChange }: { value: string; onChange: (v: 
           >
             {p.dot && <span className="inline-block size-1.5 rounded-full" style={{ background: p.dot }} />}
             {p.label}
-            {active && <span className="absolute inset-x-0 -bottom-px h-px bg-[#e30613]" />}
+            {active && <span className="absolute inset-x-0 -bottom-px h-px bg-primary" />}
           </button>
         );
       })}
@@ -400,14 +401,14 @@ export const ListingCard = ({ item, priceDrop = false }: { item: ListingItem; pr
       className={
         'group relative overflow-hidden rounded-xl border transition-all duration-300 ' +
         (priceDrop
-          ? 'border-[#e30613]/25 bg-gradient-to-br from-[#e30613]/[0.06] to-transparent hover:border-[#e30613]/40'
+          ? 'border-primary/25 bg-gradient-to-br from-primary/[0.06] to-transparent hover:border-primary/40'
           : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04]')
       }
     >
       <span
         aria-hidden
         className="absolute left-0 top-0 h-full w-[2px]"
-        style={{ background: priceDrop ? '#e30613' : catColor, opacity: priceDrop ? 0.7 : 0.4 }}
+        style={{ background: priceDrop ? 'var(--primary)' : catColor, opacity: priceDrop ? 0.7 : 0.4 }}
       />
 
       <div className="flex items-stretch gap-5 p-3 pl-4">
@@ -436,7 +437,7 @@ export const ListingCard = ({ item, priceDrop = false }: { item: ListingItem; pr
             </span>
           )}
           {priceDrop && (
-            <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-md bg-[#e30613] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white shadow-lg shadow-[#e30613]/30">
+            <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-md bg-primary px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white shadow-lg shadow-primary/30">
               <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                 <path d="M12 5v14M5 12l7 7 7-7" />
               </svg>

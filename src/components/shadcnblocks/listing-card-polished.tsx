@@ -61,7 +61,7 @@ export const ListingCardPolished = ({ item, priceDrop = false }: Props) => {
           </>
         ),
         className:
-          'bg-[#e30613] text-white shadow-lg shadow-[#e30613]/30',
+          'bg-primary text-white shadow-lg shadow-primary/30',
       }
     : item.featured
       ? {
@@ -81,7 +81,7 @@ export const ListingCardPolished = ({ item, priceDrop = false }: Props) => {
       className={
         'group relative overflow-hidden rounded-xl border transition-all duration-300 ' +
         (priceDrop
-          ? 'border-[#e30613]/25 bg-gradient-to-br from-[#e30613]/[0.06] to-transparent hover:border-[#e30613]/40'
+          ? 'border-primary/25 bg-gradient-to-br from-primary/[0.06] to-transparent hover:border-primary/40'
           : 'border-foreground/10 bg-foreground/[0.02] hover:border-foreground/20 hover:bg-foreground/[0.04]')
       }
     >
@@ -89,7 +89,7 @@ export const ListingCardPolished = ({ item, priceDrop = false }: Props) => {
       <span
         aria-hidden
         className="absolute left-0 top-0 h-full w-[2px]"
-        style={{ background: priceDrop ? '#e30613' : catColor, opacity: priceDrop ? 0.7 : 0.35 }}
+        style={{ background: priceDrop ? 'var(--primary)' : catColor, opacity: priceDrop ? 0.7 : 0.35 }}
       />
 
       <div className="flex items-stretch gap-5 p-3 pl-4">
