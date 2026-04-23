@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import * as React from 'react';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import {
@@ -62,7 +63,7 @@ const SUB_CATS: ElectronicsCategoryKey[] = [
   'cameras',
 ];
 
-type IconLike = (props: { size?: number; className?: string }) => JSX.Element;
+type IconLike = (props: { size?: number; className?: string }) => React.JSX.Element;
 
 const SUB_CAT_ICON: Record<ElectronicsCategoryKey, IconLike> = {
   'phones-tablets': Smartphone as unknown as IconLike,

@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 
 /**
  * Middleware Supabase helper — refreshes the auth session cookie and
@@ -7,6 +7,9 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
  *
  * Works with next-intl's composed middleware: call this AFTER next-intl has
  * produced its response, pass that response in, and we mutate its cookies.
+ *
+ * Uses @supabase/ssr 0.6+ getAll/setAll API (the older get/set/remove API
+ * is deprecated).
  */
 export async function refreshSession(request: NextRequest, response: NextResponse) {
   const supabase = createServerClient(
@@ -14,17 +17,15 @@ export async function refreshSession(request: NextRequest, response: NextRespons
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return request.cookies.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
+        setAll(cookiesToSet) {
           // Update both the request (for downstream reads) and the response.
-          request.cookies.set({ name, value, ...options });
-          response.cookies.set({ name, value, ...options });
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({ name, value: '', ...options });
-          response.cookies.set({ name, value: '', ...options });
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set({ name, value, ...options });
+            response.cookies.set({ name, value, ...options });
+          });
         },
       },
     }

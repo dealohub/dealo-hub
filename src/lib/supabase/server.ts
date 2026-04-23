@@ -1,4 +1,4 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 /**
@@ -7,6 +7,11 @@ import { cookies } from 'next/headers';
  *
  * Async since Next 15 — `cookies()` now returns `Promise<ReadonlyRequestCookies>`.
  * All callers must `await createClient()`.
+ *
+ * Uses @supabase/ssr 0.6+ getAll/setAll cookies API (old get/set/remove is
+ * deprecated). The setAll try/catch is expected: Server Components can't
+ * mutate cookies, so we swallow that error — session refresh happens in
+ * middleware instead (see middleware-auth.ts).
  */
 export async function createClient() {
   const cookieStore = await cookies();
@@ -16,21 +21,17 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        getAll() {
+          return cookieStore.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
+        setAll(cookiesToSet) {
           try {
-            cookieStore.set({ name, value, ...options });
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set({ name, value, ...options });
+            });
           } catch {
-            // Called from Server Component; set via middleware instead
-          }
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value: '', ...options });
-          } catch {
-            // Called from Server Component
+            // Called from Server Component — cookies are read-only there.
+            // Session refresh happens in middleware, so this is safe to ignore.
           }
         },
       },
@@ -57,9 +58,8 @@ export function createAdminClient() {
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     {
       cookies: {
-        get: () => undefined,
-        set: () => {},
-        remove: () => {},
+        getAll: () => [],
+        setAll: () => {},
       },
       auth: {
         autoRefreshToken: false,

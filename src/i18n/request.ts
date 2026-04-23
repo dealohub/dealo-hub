@@ -1,18 +1,21 @@
 import { getRequestConfig } from 'next-intl/server';
-import { notFound } from 'next/navigation';
 import { routing, type Locale } from './routing';
 
 /**
  * Per-request i18n configuration for next-intl.
  *
- * Loads translation messages for the current locale from /messages/{locale}.json
+ * Loads translation messages for the current locale from /messages/{locale}.json.
+ *
+ * next-intl 4 API: the callback now receives `{ requestLocale }` as a
+ * Promise (not `{ locale }` directly), and we must fall back to the
+ * default locale if it's missing or unsupported.
  */
 
-export default getRequestConfig(async ({ locale }) => {
-  // Validate locale
-  if (!routing.locales.includes(locale as Locale)) {
-    notFound();
-  }
+export default getRequestConfig(async ({ requestLocale }) => {
+  const requested = await requestLocale;
+  const locale: Locale = routing.locales.includes(requested as Locale)
+    ? (requested as Locale)
+    : routing.defaultLocale;
 
   return {
     locale,

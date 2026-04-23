@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import * as React from 'react';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import * as Icons from 'lucide-react';
@@ -57,7 +58,7 @@ export async function generateMetadata(
 // Lucide icons are typed as ForwardRefExoticComponent which doesn't
 // satisfy a plain ComponentType union — we cast through `any` here so
 // the dynamic resolver is callable in JSX without per-icon typing.
-type IconLike = (props: { size?: number; className?: string }) => JSX.Element;
+type IconLike = (props: { size?: number; className?: string }) => React.JSX.Element;
 
 function resolveIcon(name: string | null): IconLike {
   if (!name) return Package as unknown as IconLike;
