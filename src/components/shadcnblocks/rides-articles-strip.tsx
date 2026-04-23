@@ -78,8 +78,8 @@ export const RidesArticlesStrip = () => {
                   className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                <span className="absolute start-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white backdrop-blur-md">
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/35 via-transparent to-transparent" />
+                <span className="absolute start-3 top-3 inline-flex items-center gap-1 rounded-full bg-foreground/65 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-background backdrop-blur-md">
                   {t(`categories.${a.category}`)}
                 </span>
               </div>

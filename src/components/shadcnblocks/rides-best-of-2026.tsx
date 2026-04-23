@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Trophy } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -11,8 +12,6 @@ import { useTranslations } from 'next-intl';
  * editorial block but scaled for a richer marketplace.
  */
 
-// Winners intentionally span different vehicle categories so this block
-// communicates "we cover all of Rides", not just cars.
 const WINNERS = [
   {
     key: 'suv',
@@ -32,9 +31,9 @@ export const RidesBestOf2026 = () => {
   const t = useTranslations('marketplace.rides.best');
 
   return (
-    <section className="relative w-full bg-background">
+    <section className="relative w-full border-t border-foreground/8 bg-foreground/[0.015]">
       <div className="mx-auto max-w-7xl px-6 pt-14 pb-6">
-        <div className="overflow-hidden rounded-3xl border border-foreground/10 bg-gradient-to-br from-foreground/[0.03] to-foreground/[0.01] shadow-sm">
+        <div className="overflow-hidden rounded-3xl border border-foreground/10 bg-gradient-to-br from-foreground/6 to-foreground/[0.02] shadow-sm">
           <div className="grid gap-10 p-8 md:grid-cols-[1fr_1.4fr] md:p-12">
             {/* Left: editorial */}
             <motion.div
@@ -59,14 +58,14 @@ export const RidesBestOf2026 = () => {
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <a
                   href="#"
-                  className="inline-flex h-11 items-center gap-1.5 rounded-full bg-foreground px-5 text-[13px] font-semibold text-background transition hover:bg-foreground/90"
+                  className="inline-flex h-11 items-center gap-1.5 rounded-full bg-foreground px-5 text-[13px] font-semibold text-background transition-colors duration-150 hover:bg-foreground/90 active:scale-[0.98]"
                 >
                   {t('ctaPrimary')}
                   <ArrowRight size={13} className="rtl:rotate-180" />
                 </a>
                 <a
                   href="#"
-                  className="inline-flex h-11 items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/[0.03] px-5 text-[13px] font-semibold text-foreground/80 transition hover:border-foreground/30 hover:bg-foreground/[0.07] hover:text-foreground"
+                  className="inline-flex h-11 items-center gap-1.5 rounded-full border border-foreground/15 bg-foreground/3 px-5 text-[13px] font-semibold text-foreground/80 transition-colors duration-150 hover:border-foreground/30 hover:bg-foreground/7 hover:text-foreground active:scale-[0.98]"
                 >
                   {t('ctaSecondary')}
                 </a>
@@ -89,37 +88,60 @@ export const RidesBestOf2026 = () => {
               className="grid grid-cols-3 gap-3 md:gap-4"
             >
               {WINNERS.map((w, i) => (
-                <div
-                  key={w.key}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-foreground/10 bg-background shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div className="relative aspect-square w-full overflow-hidden bg-foreground/[0.05]">
-                    <img
-                      src={w.image}
-                      alt=""
-                      className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.08]"
-                      loading="lazy"
-                    />
-                    {/* Winner badge */}
-                    <span className="absolute start-2 top-2 inline-flex items-center gap-0.5 rounded-full bg-[#C9A86A] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#1a1306] shadow-md">
-                      #{i + 1}
-                    </span>
-                  </div>
-                  <div className="p-3">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-foreground/50">
-                      {t(`winners.${w.key}Category`)}
-                    </p>
-                    <p className="mt-1 line-clamp-2 text-[12px] font-semibold leading-tight text-foreground">
-                      {t(`winners.${w.key}Title`)}
-                    </p>
-                  </div>
-                </div>
+                <WinnerCard key={w.key} w={w} index={i} t={t} />
               ))}
             </motion.div>
           </div>
         </div>
       </div>
     </section>
+  );
+};
+
+type TranslationFn = ReturnType<typeof useTranslations>;
+
+const WinnerCard = ({
+  w,
+  index,
+  t,
+}: {
+  w: (typeof WINNERS)[0];
+  index: number;
+  t: TranslationFn;
+}) => {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-foreground/10 bg-background shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+      {/* Image with skeleton pulse until loaded */}
+      <div
+        className={`relative aspect-square w-full overflow-hidden bg-foreground/8 transition-colors duration-500 ${
+          loaded ? '' : 'animate-pulse'
+        }`}
+      >
+        <img
+          src={w.image}
+          alt=""
+          className={`size-full object-cover transition-all duration-700 group-hover:scale-[1.08] ${
+            loaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          loading="eager"
+          onLoad={() => setLoaded(true)}
+        />
+        {/* Winner badge — always visible above skeleton */}
+        <span className="absolute start-2 top-2 z-10 inline-flex items-center gap-0.5 rounded-full bg-[#C9A86A] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#1a1306] shadow-md">
+          #{index + 1}
+        </span>
+      </div>
+      <div className="p-3">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-foreground/50">
+          {t(`winners.${w.key}Category`)}
+        </p>
+        <p className="mt-1 line-clamp-2 text-[12px] font-semibold leading-tight text-foreground">
+          {t(`winners.${w.key}Title`)}
+        </p>
+      </div>
+    </div>
   );
 };
 
