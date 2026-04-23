@@ -3,30 +3,20 @@
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-/**
- * Properties hub — trust manifesto.
- *
- * Full-width editorial layout. Header 2-col, then 5 rows with large
- * decorative index numbers (52–68 px) as visual anchors. No icons,
- * no cards. Hover: number warms to primary/20, row gets a hairline
- * background wash, arrow slides in from the end edge.
- */
-export default function PropertiesTrustStrip() {
-  const t = useTranslations('marketplace.properties.hub.trustStrip');
+export default function TechTrustStrip() {
+  const t = useTranslations('electronicsHub');
 
   const pillars = [
-    { title: t('pillar1Title'), body: t('pillar1Body') },
-    { title: t('pillar2Title'), body: t('pillar2Body') },
-    { title: t('pillar3Title'), body: t('pillar3Body') },
-    { title: t('pillar4Title'), body: t('pillar4Body') },
-    { title: t('pillar5Title'), body: t('pillar5Body') },
+    { title: t('trust.catalog.title'), body: t('trust.catalog.body') },
+    { title: t('trust.imei.title'), body: t('trust.imei.body') },
+    { title: t('trust.battery.title'), body: t('trust.battery.body') },
+    { title: t('trust.provenance.title'), body: t('trust.provenance.body') },
   ];
 
   return (
     <section className="border-y border-border/40 py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-6">
 
-        {/* ── Section header ──────────────────────────────────── */}
         <motion.div
           className="mb-8 grid gap-8 md:mb-10 md:grid-cols-2 md:gap-20"
           initial={{ opacity: 0, y: 16 }}
@@ -34,7 +24,6 @@ export default function PropertiesTrustStrip() {
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.55, ease: [0.22, 0.61, 0.36, 1] }}
         >
-          {/* Left — title block */}
           <div>
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/[0.06] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
               <span className="relative flex h-1.5 w-1.5" aria-hidden>
@@ -44,14 +33,13 @@ export default function PropertiesTrustStrip() {
               Why Dealo
             </div>
             <h2 className="font-calSans text-[clamp(2.25rem,4.5vw,3.5rem)] font-semibold leading-[1.06] tracking-tight text-foreground">
-              {t('title')}
+              {t('trustTitle')}
             </h2>
           </div>
 
-          {/* Right — context */}
           <div className="flex flex-col justify-end">
             <p className="text-[15px] leading-relaxed text-foreground/50">
-              {t('subline')}
+              {t('trustSubline')}
             </p>
             <p className="mt-4 text-[11px] leading-loose tracking-wide text-foreground/25">
               Verified independently · Updated quarterly
@@ -59,7 +47,6 @@ export default function PropertiesTrustStrip() {
           </div>
         </motion.div>
 
-        {/* ── Manifesto rows ──────────────────────────────────── */}
         <div className="divide-y divide-border/25">
           {pillars.map((p, i) => (
             <motion.div
@@ -74,7 +61,6 @@ export default function PropertiesTrustStrip() {
               }}
               className="group -mx-3 flex items-start gap-6 rounded-xl px-3 py-5 transition-colors duration-300 hover:bg-foreground/[0.02] sm:gap-10 sm:py-6"
             >
-              {/* Large decorative index */}
               <span
                 aria-hidden
                 className="w-16 shrink-0 select-none font-calSans text-[52px] font-bold leading-none tabular-nums text-foreground/[0.08] transition-colors duration-500 group-hover:text-primary/25 sm:w-24 sm:text-[68px]"
@@ -82,7 +68,6 @@ export default function PropertiesTrustStrip() {
                 {String(i + 1).padStart(2, '0')}
               </span>
 
-              {/* Content */}
               <div className="flex-1 pt-2">
                 <h3 className="font-calSans text-[17px] font-semibold tracking-tight text-foreground sm:text-[19px]">
                   {p.title}
@@ -95,7 +80,6 @@ export default function PropertiesTrustStrip() {
                 </p>
               </div>
 
-              {/* Arrow — appears on hover */}
               <div className="shrink-0 self-center translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 rtl:-translate-x-1 rtl:group-hover:translate-x-0">
                 <svg
                   width="16"

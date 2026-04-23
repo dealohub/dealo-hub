@@ -83,11 +83,11 @@ export default function PropertiesMainGrid({ allCards, locale: _locale }: Props)
   ];
 
   return (
-    <section id="all-properties" className="border-b border-border/40 bg-background py-12 md:py-16">
+    <section id="all-properties" className="border-b border-border/40 bg-background py-10 md:py-14">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+            <h2 className="font-calSans text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
               {t('title')}
             </h2>
             <p className="mt-1 text-sm text-foreground/60">

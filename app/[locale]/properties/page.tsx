@@ -91,6 +91,8 @@ export default async function PropertiesHubPage(
         totalListings={allCards.length}
         inspectedCount={inspectedCount}
         chaletCount={chaletCount}
+        featuredCard={featured[0] ?? null}
+        locale={params.locale}
       />
 
       <PropertiesBrowseByType counts={typeCounts} locale={params.locale} />
