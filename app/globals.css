@@ -29,12 +29,42 @@
   --muted-foreground: 240 4% 46%; /* secondary text */
   --popover: 0 0% 100%;
   --popover-foreground: 240 10% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 10%;
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 10% 10%;
+  --accent: 240 5% 96%; /* hover surface */
+  --accent-foreground: 240 10% 10%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --success: 142 71% 36%; /* emerald-600 — positive KPI deltas */
+  --success-foreground: 0 0% 100%;
   --border: 240 6% 90%; /* hairline */
   --input: 240 6% 90%;
   --ring: 240 10% 10%;
   --primary: #e30613; /* Dealo brand red */
   --primary-foreground: 0 0% 100%;
   --radius: 0.625rem;
+
+  /* Chart palette — five distinct hues for recharts. Spaced around the
+     wheel so categorical series stay visually distinguishable even with
+     color-blind vision. */
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
+
+  /* Sidebar — slightly cooler surface than background so the rail reads
+     as a panel. Brand red drives the active-item accent. */
+  --sidebar: 240 6% 97%;
+  --sidebar-foreground: 240 10% 10%;
+  --sidebar-primary: #e30613;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 5% 93%;
+  --sidebar-accent-foreground: 240 10% 10%;
+  --sidebar-border: 240 6% 88%;
+  --sidebar-ring: 240 10% 10%;
 }
 
 .dark {
@@ -44,9 +74,38 @@
   --muted-foreground: 240 5% 65%;
   --popover: 240 10% 6%;
   --popover-foreground: 0 0% 98%;
+  --card: 240 10% 6%;
+  --card-foreground: 0 0% 98%;
+  --secondary: 240 6% 10%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 240 6% 14%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 0 0% 98%;
+  --success: 142 65% 45%; /* emerald — lifted for dark surfaces */
+  --success-foreground: 0 0% 100%;
   --border: 240 6% 14%;
   --input: 240 6% 14%;
   --ring: 240 5% 65%;
+
+  /* Chart palette tuned for dark backgrounds — higher lightness, cooler
+     primaries so the AreaChart fills stay legible on dark surfaces. */
+  --chart-1: 220 70% 50%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 30 80% 55%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 340 75% 55%;
+
+  /* Dark sidebar sits between background and surface — brand red again
+     as the active-item accent, same hue family otherwise. */
+  --sidebar: 240 10% 6%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: #e30613;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 6% 12%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 240 6% 14%;
+  --sidebar-ring: 240 5% 65%;
 }
 
 @theme inline {
@@ -66,6 +125,37 @@
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
 
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+
+  /* Recharts / ChartContainer expose `--chart-1..5` as hsl values */
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
   /* Border radii — derived from --radius so a single knob scales the system */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -75,6 +165,9 @@
   --font-sans: var(--font-geist-sans), 'Geist', ui-sans-serif, system-ui,
     sans-serif;
   --font-calSans: var(--font-bricolage), 'Bricolage Grotesque',
+    var(--font-geist-sans), 'Geist', ui-sans-serif, system-ui, sans-serif;
+  /* font-display is an alias for font-calSans — used across tech/services/electronics */
+  --font-display: var(--font-bricolage), 'Bricolage Grotesque',
     var(--font-geist-sans), 'Geist', ui-sans-serif, system-ui, sans-serif;
 }
 

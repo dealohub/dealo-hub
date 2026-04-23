@@ -113,7 +113,7 @@ export default async function LocaleLayout(
         >
           {locale === 'ar' ? 'تخطّى إلى المحتوى' : 'Skip to content'}
         </a>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           <NextIntlClientProvider locale={locale} messages={messages}>
             {children}
           </NextIntlClientProvider>

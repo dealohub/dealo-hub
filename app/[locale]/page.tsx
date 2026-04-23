@@ -6,8 +6,6 @@ import LiveFeed from '@/components/shadcnblocks/live-feed';
 import { FeaturedPartnersSection } from '@/components/shadcnblocks/live-feed-parts';
 import SiteFooter from '@/components/shadcnblocks/site-footer';
 import BackgroundPattern115 from '@/components/shadcnblocks/background-pattern-115';
-import ThemeToggle from '@/components/theme-toggle';
-import LocaleToggle from '@/components/locale-toggle';
 import { getLiveFeedListings, pickBalancedHero } from '@/lib/landing/queries';
 import { ACTIVITY_SIGNALS } from '@/lib/landing/constants';
 import { verticalPathForFeedCat, type HeroImage } from '@/lib/landing/types';
@@ -81,8 +79,6 @@ export default async function HomePage(
       <LiveFeed initialFeed={initialFeed} activitySignals={ACTIVITY_SIGNALS} />
       <FeaturedPartnersSection />
       <SiteFooter />
-      <ThemeToggle />
-      <LocaleToggle />
     </>
   );
 }
