@@ -16,6 +16,11 @@
       "sourceType": "github",
       "computedHash": "11a982752a0ae87f06de0385c88df8f33b0f0a21dba2d9b4e119f78d1167fa4b"
     },
+    "autobrowse": {
+      "source": "browserbase/skills",
+      "sourceType": "github",
+      "computedHash": "49d0f3011ece8211c89581f240a9ad392ef0fb72431c154e3dc54895153018fd"
+    },
     "bolder": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",

@@ -56,10 +56,17 @@ supabase/.temp/
 # Dealo Hub — design references (may be copyrighted)
 design/references/
 
-# Claude / Cursor
+# Claude / Cursor — local skill installs and settings
 .claude/settings.local.json
+.claude/skills/
 .qoder/
 .agents/
+
+# Autobrowse skill runtime output (screenshots, traces, tasks)
+autobrowse/
+
+# Design / UI scratch — standalone HTML prototypes, not part of the app
+experiments/
 
 # Logs
 logs/
