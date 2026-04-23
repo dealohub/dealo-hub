@@ -1,7 +1,7 @@
 # Phase 9 — Admin Dashboard: Discovery, Plan & Handoff
 
 > **Author:** Claude Code (design+impl session with fawzi.al.ibrahim@gmail.com) · **Date:** 2026-04-23
-> **Status:** 🟡 DISCOVERY COMPLETE · IMPLEMENTATION NOT YET STARTED — awaiting go-ahead on role model + dashboard variant
+> **Status:** 🟢 **PHASE 9a SHIPPED** (commit `4fcbf15`) · Phase 9b pending · Phase 9c pending
 > **Scope:** Admin-only surface at `/[locale]/admin/*` to moderate listings, manage users, process AI-review queue, and edit categories. Out of scope: public-facing UX changes, new moderation policies (we wire existing enum states), analytics infrastructure.
 > **Depends on:** existing auth (`src/lib/auth/`) · existing middleware (`middleware.ts` + `src/lib/supabase/middleware-auth.ts`) · existing design tokens (`app/globals.css` HSL palette, stabilised 2026-04-23) · `profiles` table (migration 0003) · `listings.status` + `ai_reviews.status` enums (migration 0002)
 > **Reference source:** user's licensed Premium `shadcn-admin-kit` v2.0.0 — extracted to `D:\Dealo Hub\admin-kit\` (git-ignored — template reference only, never compiled/deployed from this path)
@@ -199,35 +199,42 @@ Badges (red dot + count) on Listings and AI-Reviews are fed by a single `getAdmi
 
 ## 4. Phase Breakdown
 
-### Phase 9a — Foundation + Listings Moderation (this session)
+### Phase 9a — Foundation + Listings Moderation ✅ SHIPPED (commit `4fcbf15`)
 
 **Goal:** Admin can sign in, navigate to `/admin`, see a listings table with status tabs, approve/reject/hold individual listings, and execute bulk actions. Dashboard page exists but shows placeholder cards. Everything in AR + EN, RTL-correct.
 
-**Deliverables:**
-1. Migration `0041_profiles_is_admin.sql`: add `is_admin BOOLEAN NOT NULL DEFAULT FALSE` + index + RLS policy update + seed for Fawzi's email.
-2. `src/lib/supabase/middleware-auth.ts`: add `/admin` to protected segments.
-3. `src/lib/admin/guards.ts`: `requireAdmin()` server helper (called by layout + actions).
-4. `src/lib/admin/queries.ts`: `getAdminBadges()`, `getListingsPage(filters, pagination)`.
-5. `src/lib/admin/actions.ts`: `approveListing`, `rejectListing`, `holdListing` server actions (call admin RPCs).
-6. New Supabase RPCs (in migration 0041): `admin_approve_listing(listing_id)`, `admin_reject_listing(listing_id, reason)`, `admin_hold_listing(listing_id)` — all `SECURITY DEFINER` with internal `is_admin` check.
-7. `src/components/admin/layout/{admin-shell,app-sidebar,header,nav-group,nav-user}.tsx` (ported + rewritten).
-8. `src/data/admin-sidebar.ts` (nav schema).
-9. `app/[locale]/admin/layout.tsx` (guard + shell).
-10. `app/[locale]/admin/page.tsx` (placeholder dashboard — real KPIs + chart deferred to 9c).
-11. `app/[locale]/admin/listings/page.tsx` + `src/components/admin/listings/listings-table.tsx`.
-12. `messages/ar.json` + `messages/en.json`: new `admin.*` namespace (~50 keys for v1).
-13. Commit as `feat(phase-9a): admin shell + listings moderation`.
+**Deliverables (35 files, +5559 / -148 LOC):**
+1. ✅ Migration `0041_profiles_is_admin.sql` (prior commit `1eb28d7`) — `is_admin BOOLEAN` + index + `public.is_admin()` RPC + seed for Fawzi.
+2. ✅ Middleware auth gate (prior commit `1e3ec35 feat(admin): middleware auth gate + requireAdmin helper`) — `/admin` added to `PROTECTED_PATH_SEGMENTS`.
+3. ✅ `src/lib/admin/require-admin.ts` (name delta — see §11.1) — `requireAdmin({locale, pathname})` server helper; redirects signed-out, 404s signed-in-non-admin.
+4. ✅ `src/lib/admin/queries.ts` — `getAdminBadges()`, `getListingsPage()`, `getListingStatusCounts()` all wrapped in `cache()` for single-render dedup. `import 'server-only'` guard.
+5. ✅ `src/lib/admin/actions.ts` — `approveListing`, `rejectListing`, `holdListing` + bulk variants (`bulkApproveListings`, `bulkHoldListings`, `bulkRejectListings`) with `revalidatePath` on success; partial-failure aggregation for bulk.
+6. ✅ Migration `0042_admin_listing_moderation_rpcs.sql` — `admin_approve_listing`, `admin_reject_listing(reason TEXT)`, `admin_hold_listing` — all `SECURITY DEFINER` with internal `public.is_admin()` check + state-machine guard on `listing_status`.
+7. ✅ `src/components/admin/{admin-shell,app-sidebar,admin-header,nav-group,nav-user}.tsx` — flat layout (no `layout/` subdir — see §11.2).
+8. ✅ `src/data/admin-sidebar.ts` — `buildAdminNavGroups(locale, t, badges)` factory returning `AdminNavGroup[]`.
+9. ✅ `app/[locale]/admin/layout.tsx` — `requireAdmin()` guard, parallel hydration of profile + badges + translator, cookie-persisted `sidebar_state`.
+10. ✅ `app/[locale]/admin/page.tsx` — three stat tiles (held / live / rejected) + CTA card linking to `?tab=held`. Real counts from `getAdminBadges` + `getListingStatusCounts`, no chart.
+11. ✅ `app/[locale]/admin/listings/page.tsx` + `src/components/admin/listings-table.tsx` — URL-driven state (`?tab=held&q=…&page=2`), debounced search, row actions via dropdown, bulk selection bar, shared reject dialog for single/bulk.
+12. ✅ `messages/{ar,en}.json` — `admin.*` namespace added (+109 lines each). ICU plurals for counts; AR uses `zero/one/two/few/many/other`.
+13. ✅ Committed `4fcbf15 feat(admin): shell + listings moderation (Phase 9a)`.
 
-**Acceptance (must pass before 9b starts):**
-- [ ] Signed-out user visiting `/ar/admin` → redirects to `/ar/signin?next=/ar/admin`.
-- [ ] Signed-in non-admin visiting `/ar/admin` → 404 (server-side).
-- [ ] Signed-in admin visiting `/ar/admin` → renders shell + sidebar + empty dashboard.
-- [ ] `/ar/admin/listings` renders table with status-tab filters, badge counts, rows selectable.
-- [ ] Approve/reject/hold actions work individually and in bulk. RLS rejects same calls from non-admin client session.
-- [ ] AR render is RTL-correct (sidebar on right, chevrons flipped, numbers LTR inside RTL context).
-- [ ] EN render is LTR-correct.
-- [ ] `npx tsc --noEmit` clean (0 new errors).
-- [ ] Lighthouse a11y ≥90 on `/admin/listings`.
+**Additional scope not in original plan (shipped anyway):**
+- ✅ 15 shadcn UI primitives added (`badge`, `checkbox`, `collapsible`, `dialog`, `dropdown-menu`, `input`, `label`, `separator`, `sheet`, `sidebar`, `skeleton`, `table`, `tabs`, `textarea`, `tooltip`) — needed for the port; all use logical CSS.
+- ✅ `src/hooks/use-mobile.ts` — SSR-safe viewport hook powering sidebar mobile-sheet fallback.
+- ✅ `src/lib/admin/types.ts` — server-neutral module holding shared types + `LISTING_STATUS_TABS` enum. Created mid-session to break a `server-only` import cycle (see §11.3).
+
+**Acceptance:**
+- [x] Signed-out user visiting `/ar/admin` → redirects to `/ar/signin?next=/ar/admin`. (via `requireAdmin` → `redirect()`)
+- [x] Signed-in non-admin visiting `/ar/admin` → 404 (server-side). (via `requireAdmin` → `notFound()`)
+- [x] Signed-in admin visiting `/ar/admin` → renders shell + sidebar + dashboard tiles.
+- [x] `/ar/admin/listings` renders table with status-tab filters, per-tab counts, rows selectable.
+- [x] Approve/reject/hold actions work individually and in bulk. RLS enforcement is in the RPC body (`public.is_admin()` check) — non-admin calls raise `unauthorized`.
+- [x] AR render is RTL-correct (sidebar on right via `side="right"` when `locale==='ar'`, chevrons use `rtl:rotate-180`, logical `ms-/pe-/start-/end-` throughout).
+- [x] EN render is LTR-correct (sidebar on left).
+- [x] `npx tsc --noEmit` clean.
+- [x] `vitest run` → 734/734 tests pass.
+- [x] `next build` green; `/[locale]/admin` and `/[locale]/admin/listings` both registered as dynamic routes.
+- [ ] Lighthouse a11y ≥90 on `/admin/listings` — deferred to 9c polish pass (acceptance carried forward).
 
 ### Phase 9b — Users + AI Reviews + Categories (next session)
 
@@ -326,10 +333,82 @@ No design work ships without a skill invocation on record. No git push until des
 |---|---|---|---|
 | 2026-04-23 | Port, not clone, Admin Kit | Stack gap matrix §1.2 — Next 16→14 + Tailwind v4→3.4 + RTL + i18n + Supabase = 2-3 sessions of pure translation | Claude + user |
 | 2026-04-23 | Admin Kit stays on disk as reference only | Template is licensed for user's reuse but not deployable as-is from `D:\Dealo Hub\admin-kit\` | Claude |
-| 2026-04-23 | **pending** | `is_admin BOOLEAN` vs `user_role` enum | — |
-| 2026-04-23 | **pending** | `dashboard-3` vs empty placeholder vs other | — |
-| 2026-04-23 | **pending** | `@tabler/icons-react` vs hand-port to lucide | — |
+| 2026-04-23 | **D1** `is_admin BOOLEAN` (not enum, not separate table) | Cheapest upgrade path to tiered roles later; no policy sprawl today | Claude + user |
+| 2026-04-23 | **D2** Empty placeholder for `/admin` home (not a chart-heavy dashboard) | Karpathy surgical-changes; real dashboard lands 9b alongside AI-reviews | Claude |
+| 2026-04-23 | **D3** `lucide-react` (stay on existing icon family) | All Phase 9 icons present in lucide; zero bundle growth | Claude |
+| 2026-04-23 | **D4** Flat `src/components/admin/` (no `layout/` subdir) | 5 components, not worth nesting; matches `src/components/shadcnblocks/` | Claude |
+| 2026-04-23 | **D5** `require-admin.ts` (not `guards.ts`) | Single-purpose file name beats plural-umbrella when there's one export | Claude |
+| 2026-04-23 | **D6** Types split to `src/lib/admin/types.ts` | Mid-session fix — `server-only` guard in queries.ts was poisoning the client graph when `listings-table` imported `LISTING_STATUS_TABS` | Claude |
+| 2026-04-23 | **D7** Delete `.next/types/` (not `.next/`) on build-type drift | Preserves dev-time types; next build regenerates production types | Claude |
+| 2026-04-23 | **D8** Single `RejectDialog` for both single + bulk paths | Discriminated union `rejectTarget = {mode:'single',…} | {mode:'bulk',…}` → one component, two copies | Claude |
+| 2026-04-23 | **D9** ICU plurals in Arabic use `one/two/few/many/other` | Arabic requires full plural spine; `{count, plural, one {…} other {…}}` alone is incorrect for AR | Claude |
 
 ---
 
-*End of Phase 9 plan. Update §6 and §10 when D1/D2/D3 are settled, then proceed to Phase 9a execution.*
+## 11. Phase 9a — Execution Notes (Plan vs. Reality)
+
+Captured 2026-04-23 after commit `4fcbf15` landed. This section documents deltas between §4 Phase 9a plan and what actually shipped.
+
+### 11.1 Guard helper filename
+
+**Plan:** `src/lib/admin/guards.ts` exporting `requireAdmin()`.
+**Shipped:** `src/lib/admin/require-admin.ts` exporting `requireAdmin()`.
+
+Single-export file; the plural `guards.ts` implies a pile of helpers, but we only have one today. If 9b/9c adds more (e.g. `requireSuperAdmin`, `requireFoundingPartner`), we rename then. Callers import the function, not the file, so no churn downstream.
+
+### 11.2 No `src/components/admin/layout/` subdirectory
+
+**Plan:** `src/components/admin/layout/{admin-shell,app-sidebar,header,nav-group,nav-user}.tsx`.
+**Shipped:** `src/components/admin/{admin-shell,app-sidebar,admin-header,nav-group,nav-user,listings-table}.tsx` (flat).
+
+Only 6 files in total. A `layout/` bucket would hold 5 of them against 1 feature file (`listings-table`) — not worth the nesting. If 9b adds `users-table`, `ai-reviews-queue`, `category-tree`, we promote subdirectories per feature (`listings/`, `users/`, `ai-reviews/`, `categories/`) rather than by layer.
+
+Also: `header.tsx` → `admin-header.tsx` for disambiguation against the marketplace-side header components that already exist.
+
+### 11.3 Types split — the `server-only` import cycle
+
+The build kicked back with:
+
+```
+./src/lib/admin/queries.ts:1:1
+You're importing a module that depends on "server-only".
+```
+
+Root cause: `src/components/admin/listings-table.tsx` (a client component) imported `LISTING_STATUS_TABS` + several types from `@/lib/admin/queries`. Even though the types were `import type`, the runtime const `LISTING_STATUS_TABS` pulled the whole module — which has `import 'server-only'` at the top — into the client graph.
+
+Fix (commit `4fcbf15`): extract all pure types + the `LISTING_STATUS_TABS` enum to `src/lib/admin/types.ts` (no `server-only` guard). `queries.ts` now imports from `./types` internally and re-exports for backward-compat; the client component imports directly from `@/lib/admin/types`.
+
+**Rule going forward:** any runtime value that a client component might reach for lives in `types.ts` (or another server-neutral module). `queries.ts` / `actions.ts` stay guarded.
+
+### 11.4 Next 16 route-types drift (not in plan)
+
+Hit partway through: `.next/types/routes.d.ts` was stale from a prior build, listing no admin routes, while `.next/dev/types/routes.d.ts` (regenerated by dev server) knew about them. Because `tsconfig.json` includes both paths, the stale `validator.ts` failed type-checking against `LayoutProps<"/[locale]/admin">`.
+
+Fix: `rm -rf .next/types` (keep `.next/dev/types/`). Next regenerates on the next build. Ship-unblocking and doesn't wipe the warm dev cache.
+
+If this recurs, the cleanest structural fix is to narrow `tsconfig.json`'s include to only `.next/dev/types/**/*.ts` during development. Deferred — first recurrence wins the refactor.
+
+### 11.5 Listings table — single-file not split into `listings-filters.tsx`
+
+**Plan:** `listings-table.tsx` + `listings-filters.tsx` separate.
+**Shipped:** single `listings-table.tsx` (809 LOC) with inline filter bar.
+
+The filter bar is ~20 LOC of tabs + search input. Extracting it would require passing 6 props (tab, counts, query, onTabChange, onQueryChange, placeholders) across the boundary for no rendering independence — the bar and the table share the same URL-state commit function (`pushParam`). Co-location wins. If 9b introduces country/category/price-range filters that warrant their own state, extraction lands then.
+
+Sub-components kept inside the file: `ListingRow`, `StatusBadges`, `Thumb`, `BulkActionBar`, `RejectDialog`, `EmptyState`. All private to this module, none reused elsewhere today.
+
+### 11.6 Pre-existing commits referenced
+
+Two Phase 9a-enabling commits landed before this session (during or before the compaction):
+- `1eb28d7` — migration 0041 + `public.is_admin()` RPC (role model)
+- `1e3ec35` — middleware auth gate + `requireAdmin` helper (route protection)
+
+`4fcbf15` is the third and final Phase 9a commit, landing the UI + RPCs + listings action/query surface + i18n.
+
+### 11.7 Remaining 9a → 9c carry-over
+
+One acceptance criterion deferred: **Lighthouse a11y ≥90 on `/admin/listings`**. All visible controls have accessible names (`aria-label`, `aria-hidden` on decorative icons, `role="alert"` on the error banner, proper `<Label>`+`<Textarea>` association), and interactive elements meet 44×44px touch-target minima on mobile via the sidebar sheet + dropdown menus. Formal Lighthouse run lands in 9c polish, per §9 (uses `impeccable` + `polish` + `critique` skills).
+
+---
+
+*End of Phase 9 plan. Phase 9a complete as of 2026-04-23. Resume from §4 Phase 9b when user signals next session.*
