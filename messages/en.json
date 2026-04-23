@@ -436,7 +436,7 @@
       "subtitle": "We sent a confirmation link to your email.",
       "emailOnlyNote": "Open the email from Dealo Hub and click the link inside — you'll be signed in automatically.",
       "phoneComingSoon": "Phone verification arrives with our Kuwait SMS launch in Sprint 6.",
-      "backLink": "Return to <link>sign in</link>"
+      "backLink": "Return to sign in"
     },
     "reset": {
       "metaTitle": "Reset password",
@@ -447,7 +447,7 @@
       "submit": "Send reset link",
       "submitting": "Sending…",
       "emailSent": "If an account exists for that email, we sent a reset link. Check your inbox.",
-      "backLink": "Back to <link>sign in</link>"
+      "backLink": "Back to sign in"
     },
     "resetConfirm": {
       "metaTitle": "Set new password",
@@ -459,7 +459,7 @@
       "submit": "Update password",
       "submitting": "Updating…",
       "success": "Password updated. You can now sign in with your new password.",
-      "backLink": "Return to <link>sign in</link>"
+      "backLink": "Return to sign in"
     },
     "myListings": {
       "title": "My listings",
@@ -2336,6 +2336,142 @@
         "title": "Moderation queue",
         "body": "{count, plural, =0 {No listings waiting for review.} one {# listing waiting for review.} other {# listings waiting for review.}}",
         "cta": "Open queue"
+      }
+    },
+    "dashboard9": {
+      "brand": {
+        "title": "Dealo Admin",
+        "description": "Marketplace"
+      },
+      "header": {
+        "title": "Dashboard Overview",
+        "subtitle": "A summary for all the purchases, sales etc.",
+        "allPlatforms": "All Platforms",
+        "allProducts": "All Products",
+        "export": "Export",
+        "notifications": "Notifications",
+        "help": "Help"
+      },
+      "kpi": {
+        "inStoreSales": "In-store Sales",
+        "websiteSales": "Website Sales",
+        "wholesale": "Wholesale",
+        "fromLastMonth": "from last month",
+        "basedOn": "Based on {count} orders"
+      },
+      "pipeline": {
+        "title": "Sales Pipeline",
+        "totalOrders": "Total Orders",
+        "totalSales": "Total Sales",
+        "selectQuarter": "Select quarter",
+        "q1": "Quarter 1",
+        "q2": "Quarter 2",
+        "q3": "Quarter 3",
+        "q4": "Quarter 4"
+      },
+      "revenue": {
+        "title": "Total Revenue ({period})",
+        "last6Months": "Last 6 Months",
+        "lastYear": "Last Year",
+        "thisYear": "This Year",
+        "prevYear": "Previous Year",
+        "timePeriod": "Time Period",
+        "selectTimePeriod": "Select time period",
+        "ordersLabel": "Orders",
+        "salesLabel": "Sales"
+      },
+      "orders": {
+        "title": "Recent Orders",
+        "filterByStatus": "Filter by Status",
+        "all": "All",
+        "allStatuses": "All Statuses",
+        "orderRef": "Order Ref",
+        "buyer": "Buyer",
+        "total": "Total",
+        "status": "Status",
+        "empty": "No orders found.",
+        "pagination": "{from}-{to} of {total}",
+        "prevPage": "Go to previous page",
+        "nextPage": "Go to next page",
+        "statuses": {
+          "processing": "Processing",
+          "shipped": "Shipped",
+          "delivered": "Delivered",
+          "cancelled": "Cancelled"
+        }
+      },
+      "fulfillment": {
+        "title": "Order Fulfillment",
+        "order": "Order",
+        "status": "Status",
+        "delivery": "Del[%]",
+        "refresh": "Refresh",
+        "options": "Options",
+        "exportCsv": "Export CSV",
+        "viewAllOrders": "View All Orders"
+      },
+      "tooltip": {
+        "thisYear": "This Year:",
+        "prevYear": "Prev Year:",
+        "vsLastYear": "{pct}% vs last year"
+      },
+      "userMenu": {
+        "account": "Account",
+        "logout": "Log Out"
+      },
+      "a11y": {
+        "skipToMain": "Skip to main content"
+      },
+      "nav": {
+        "main": "Main",
+        "catalog": "Catalog",
+        "customers": "Customers",
+        "analytics": "Analytics",
+        "settings": "Settings",
+        "dashboard": "Dashboard",
+        "orders": "Orders",
+        "returns": "Returns",
+        "products": "Products",
+        "allProducts": "All Products",
+        "categories": "Categories",
+        "inventory": "Inventory",
+        "shipping": "Shipping",
+        "allCustomers": "All Customers",
+        "messages": "Messages",
+        "overview": "Overview",
+        "reports": "Reports",
+        "finances": "Finances"
+      }
+    },
+    "sidebar": {
+      "brand": "Dealo Admin",
+      "quickCreate": "Quick Create",
+      "inbox": "Inbox",
+      "more": "More",
+      "open": "Open",
+      "share": "Share",
+      "groups": {
+        "main": "Main",
+        "documents": "Documents"
+      },
+      "items": {
+        "dashboard": "Dashboard",
+        "lifecycle": "Lifecycle",
+        "analytics": "Analytics",
+        "projects": "Projects",
+        "team": "Team",
+        "dataLibrary": "Data Library",
+        "reports": "Reports",
+        "wordAssistant": "Word Assistant",
+        "settings": "Settings",
+        "getHelp": "Get Help",
+        "search": "Search"
+      },
+      "userMenu": {
+        "account": "Account",
+        "billing": "Billing",
+        "notifications": "Notifications",
+        "logOut": "Log out"
       }
     },
     "listings": {

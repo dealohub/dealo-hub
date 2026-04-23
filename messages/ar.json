@@ -436,7 +436,7 @@
       "subtitle": "أرسلنا رابط تأكيد إلى بريدك.",
       "emailOnlyNote": "افتح البريد من Dealo Hub واضغط على الرابط داخله — راح تدخل تلقائياً.",
       "phoneComingSoon": "تأكيد الهاتف يصل مع إطلاق SMS الكويت في Sprint 6.",
-      "backLink": "رجوع إلى <link>تسجيل الدخول</link>"
+      "backLink": "رجوع إلى تسجيل الدخول"
     },
     "reset": {
       "metaTitle": "استعادة كلمة المرور",
@@ -447,7 +447,7 @@
       "submit": "أرسل رابط الاستعادة",
       "submitting": "جاري الإرسال…",
       "emailSent": "إذا كان هناك حساب لهذا البريد، أرسلنا رابط استعادة. افحص صندوق الوارد.",
-      "backLink": "رجوع إلى <link>تسجيل الدخول</link>"
+      "backLink": "رجوع إلى تسجيل الدخول"
     },
     "resetConfirm": {
       "metaTitle": "تعيين كلمة مرور جديدة",
@@ -459,7 +459,7 @@
       "submit": "تحديث كلمة المرور",
       "submitting": "جاري التحديث…",
       "success": "تم تحديث كلمة المرور. تقدر الآن تسجّل دخول بكلمتك الجديدة.",
-      "backLink": "رجوع إلى <link>تسجيل الدخول</link>"
+      "backLink": "رجوع إلى تسجيل الدخول"
     },
     "myListings": {
       "title": "إعلاناتي",
@@ -2336,6 +2336,142 @@
         "title": "قائمة المراجعة",
         "body": "{count, plural, =0 {لا توجد إعلانات بانتظار المراجعة.} one {إعلان واحد بانتظار المراجعة.} two {إعلانان بانتظار المراجعة.} few {# إعلانات بانتظار المراجعة.} many {# إعلاناً بانتظار المراجعة.} other {# إعلان بانتظار المراجعة.}}",
         "cta": "فتح القائمة"
+      }
+    },
+    "dashboard9": {
+      "brand": {
+        "title": "ديلو — الإدارة",
+        "description": "منصّة التسوّق"
+      },
+      "header": {
+        "title": "نظرة عامة على اللوحة",
+        "subtitle": "ملخص لجميع المشتريات والمبيعات وغيرها.",
+        "allPlatforms": "كل المنصّات",
+        "allProducts": "كل المنتجات",
+        "export": "تصدير",
+        "notifications": "الإشعارات",
+        "help": "مساعدة"
+      },
+      "kpi": {
+        "inStoreSales": "مبيعات المتجر",
+        "websiteSales": "مبيعات الموقع",
+        "wholesale": "الجملة",
+        "fromLastMonth": "من الشهر الماضي",
+        "basedOn": "بناءً على {count} طلب"
+      },
+      "pipeline": {
+        "title": "خط المبيعات",
+        "totalOrders": "إجمالي الطلبات",
+        "totalSales": "إجمالي المبيعات",
+        "selectQuarter": "اختر الربع",
+        "q1": "الربع الأول",
+        "q2": "الربع الثاني",
+        "q3": "الربع الثالث",
+        "q4": "الربع الرابع"
+      },
+      "revenue": {
+        "title": "الإيرادات الإجمالية ({period})",
+        "last6Months": "آخر ٦ أشهر",
+        "lastYear": "السنة الماضية",
+        "thisYear": "هذه السنة",
+        "prevYear": "السنة السابقة",
+        "timePeriod": "الفترة الزمنية",
+        "selectTimePeriod": "اختر الفترة الزمنية",
+        "ordersLabel": "الطلبات",
+        "salesLabel": "المبيعات"
+      },
+      "orders": {
+        "title": "أحدث الطلبات",
+        "filterByStatus": "تصفية حسب الحالة",
+        "all": "الكل",
+        "allStatuses": "كل الحالات",
+        "orderRef": "رقم الطلب",
+        "buyer": "المشتري",
+        "total": "الإجمالي",
+        "status": "الحالة",
+        "empty": "لا توجد طلبات.",
+        "pagination": "{from}-{to} من {total}",
+        "prevPage": "الصفحة السابقة",
+        "nextPage": "الصفحة التالية",
+        "statuses": {
+          "processing": "قيد المعالجة",
+          "shipped": "تم الشحن",
+          "delivered": "تم التوصيل",
+          "cancelled": "ملغى"
+        }
+      },
+      "fulfillment": {
+        "title": "تنفيذ الطلبات",
+        "order": "الطلب",
+        "status": "الحالة",
+        "delivery": "التوصيل%",
+        "refresh": "تحديث",
+        "options": "خيارات",
+        "exportCsv": "تصدير CSV",
+        "viewAllOrders": "عرض كل الطلبات"
+      },
+      "tooltip": {
+        "thisYear": "السنة الحالية:",
+        "prevYear": "السنة السابقة:",
+        "vsLastYear": "{pct}٪ مقارنة بالسنة الماضية"
+      },
+      "userMenu": {
+        "account": "الحساب",
+        "logout": "تسجيل الخروج"
+      },
+      "a11y": {
+        "skipToMain": "تخطٍّ إلى المحتوى الرئيسي"
+      },
+      "nav": {
+        "main": "الرئيسية",
+        "catalog": "الكتالوج",
+        "customers": "العملاء",
+        "analytics": "التحليلات",
+        "settings": "الإعدادات",
+        "dashboard": "اللوحة",
+        "orders": "الطلبات",
+        "returns": "المرتجعات",
+        "products": "المنتجات",
+        "allProducts": "كل المنتجات",
+        "categories": "التصنيفات",
+        "inventory": "المخزون",
+        "shipping": "الشحن",
+        "allCustomers": "كل العملاء",
+        "messages": "الرسائل",
+        "overview": "نظرة عامة",
+        "reports": "التقارير",
+        "finances": "المالية"
+      }
+    },
+    "sidebar": {
+      "brand": "ديلو — الإدارة",
+      "quickCreate": "إنشاء سريع",
+      "inbox": "الوارد",
+      "more": "المزيد",
+      "open": "فتح",
+      "share": "مشاركة",
+      "groups": {
+        "main": "الرئيسية",
+        "documents": "المستندات"
+      },
+      "items": {
+        "dashboard": "اللوحة",
+        "lifecycle": "دورة الحياة",
+        "analytics": "التحليلات",
+        "projects": "المشاريع",
+        "team": "الفريق",
+        "dataLibrary": "مكتبة البيانات",
+        "reports": "التقارير",
+        "wordAssistant": "مساعد النصوص",
+        "settings": "الإعدادات",
+        "getHelp": "المساعدة",
+        "search": "بحث"
+      },
+      "userMenu": {
+        "account": "الحساب",
+        "billing": "الفوترة",
+        "notifications": "الإشعارات",
+        "logOut": "تسجيل الخروج"
       }
     },
     "listings": {
