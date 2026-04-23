@@ -1,9 +1,9 @@
 # Phase 8.5 — Stack Upgrade (Next 14 → 16, React 18 → 19, Tailwind 3 → 4)
 
-> **Status**: Planning — awaiting user approval before first commit
-> **Blocks**: Phase 9 (admin dashboard) — Phase 9a commits 1 & 2 already landed (SQL + middleware, both version-independent) and survive the upgrade untouched
-> **Estimated work**: 6–8 commits across 3–5 sessions
-> **Written**: 2026-04-23
+> **Status**: ✅ Complete — 2026-04-23
+> **Blocks**: Phase 9 (admin dashboard) — Phase 9a commits 1 & 2 already landed (SQL + `src/lib/supabase/middleware-auth.ts` helper, both version-independent) and survived the upgrade untouched
+> **Actual work**: 7 commits in 1 extended session (plan was 6–8 commits over 3–5 sessions — collapsed C+D+E+F+G once Next 15 proved stable; see execution notes at end)
+> **Written**: 2026-04-23 (plan) · **Executed**: same day
 > **Triggered by**: Admin Kit (admin-kit/) requires Next 16 + React 19 + Tailwind v4; user chose option A ("full upgrade now") over porting on current stack
 
 ---
@@ -96,7 +96,7 @@ Each commit: build + type-check + test must pass before moving to the next. No `
 - Run `npx @next/codemod@latest next-async-request-api .` to auto-convert `params` / `searchParams` / `cookies()` / `headers()` / `draftMode()`
 - Manual fixes for anything the codemod misses (Supabase server.ts cookies → async)
 - Update `next.config.js` if needed (experimental flags renamed)
-- Verify middleware still works (middleware API is stable across 14→15)
+- Verify middleware still works (middleware API is stable across 14→15; file still named `middleware.ts` at this stage — later renamed to `proxy.ts` in commit F per Next 16 convention)
 
 **Risk**: caching semantics — in Next 15, `fetch()` is no longer cached by default. Any silent reliance on fetch caching breaks. Audit all `fetch` + `revalidate` + route segment configs.
 
@@ -106,7 +106,7 @@ Each commit: build + type-check + test must pass before moving to the next. No `
 - `npm test` passes (should stay at 734)
 - Manual smoke: /ar, /en, /ar/browse/cars, /ar/listings/[slug] load correctly
 - Auth flow: signin, signout work
-- Admin middleware redirect: /ar/admin → /ar/signin (Phase 9a gate still holds)
+- Admin auth redirect: /ar/admin → /ar/signin (Phase 9a gate still holds — routing lives in `middleware.ts` here, moves to `proxy.ts` after commit F)
 
 ### Commit C — next-intl 3 → 4 (conditional)
 **Why conditional**: if Commit B reveals next-intl 3.26 still works on Next 15, defer to G. next-intl 4 requires mild config changes.
@@ -166,7 +166,7 @@ Each commit: build + type-check + test must pass before moving to the next. No `
 - Turbopack is the default bundler — test dev + build
 - `dynamicIO` / `cacheComponents` are experimental; leave off unless we have a specific need
 - Refactor `src/lib/admin/require-admin.ts` to use `forbidden()` from `next/navigation` instead of `notFound()` (Next 16 new primitive — semantically correct for "logged-in but not admin")
-- Check middleware compatibility (should be stable)
+- **Rename `middleware.ts` → `proxy.ts`** (Next 16 file convention change — same runtime behavior, new name better reflects that the file sits *between* client and app rather than *inside* a middleware chain). Default export function name also renames `middleware` → `proxy`. Missing this triggers a deprecation warning but not a build error.
 - Update `tsconfig.json` module resolution if needed
 
 **Validation**:
@@ -291,6 +291,7 @@ If things get deeply tangled, `git reset --hard 1e3ec35` (Phase 9a commit 2) ret
 
 ### Next 15 → 16
 - ❌ Webpack default → Turbopack default (opt-out via `--no-turbopack`)
+- ❌ `middleware.ts` file convention → `proxy.ts` (rename file + default export function name `middleware` → `proxy`); behavior unchanged, warning-only if missed
 - ➕ `forbidden()` from `next/navigation` → renders `forbidden.tsx`
 - ➕ `unauthorized()` from `next/navigation` → renders `unauthorized.tsx`
 - ❌ Some experimental flags promoted to stable, some removed
@@ -377,7 +378,7 @@ Once H lands and smoke passes:
 
 1. **Port test**: attempt to port `admin-kit/src/components/layout/app-sidebar.tsx` into `src/components/admin/app-sidebar.tsx` with ZERO translation effort (no class name rewrites, no react-19-to-18 shims). If it ports cleanly, the upgrade succeeded. If it doesn't, we missed something.
 2. **Resume Phase 9a**: continue from commit 3/4 (admin shell port) — now trivial.
-3. **Document in planning/PHASE-8.5-STACK-UPGRADE.md Appendix**: what broke, what took longer than expected, any leftover tech debt.
+3. **Document in this file** under "Execution notes + deviations from plan" (appended below): what broke, what took longer than expected, any leftover tech debt.
 
 ---
 
@@ -448,4 +449,179 @@ npm install
 
 ---
 
-*End of plan. Awaiting approval before commit B.*
+## Execution notes + deviations from plan
+
+Executed 2026-04-23 in one extended session. Final state on `master`:
+`a6eafb2` → `45e42b2` = **7 commits** (the plan assumed 6–8 across 3–5 sessions). Every gate green at each step: tsc clean, 734/734 tests, next build clean.
+
+### Commits actually landed
+
+```
+a6eafb2  docs(phase-8.5): stack upgrade plan                         (A)
+dc99aaa  feat(stack): Next 14.2.35 → 15.5.15 + async request API     (B)
+f3d095d  feat(stack): jump to Next 16 + React 19 + ecosystem         (C+E+F+G collapsed)
+868935c  feat(stack): Tailwind 3.4 → 4.2 CSS-first migration         (D)
+47d90b3  chore(stack): rename middleware.ts → proxy.ts               (F cleanup — missed on first pass)
+90eb970  chore: gitignore hygiene + skills-lock update               (H hygiene)
+45e42b2  chore(security): remove dead @google-cloud/vision + CLI     (post-audit cleanup)
+```
+
+### Deviation from planned commit order
+
+Plan: B → C → D → E → F → G → H (eight commits). Reality: once Next 15 was stable on `B`, the peer-dep graph (`next@16` requires `react@19`; `tailwindcss@4` pairs cleanly with Next 16; `next-intl@4` pairs with Next 16) made intermediate states noisy with peer-dep warnings that wouldn't resolve until all bumps landed. Collapsing C+E+F+G into one jump, with D isolated for visual smoke, turned out less risky than the planned staircase.
+
+The `proxy.ts` rename (F's file-convention change) got **missed** on the first pass — see (a) below.
+
+---
+
+### (a) Turbopack symlink panic — diagnosis + fix
+
+**Symptom**
+
+Immediately after the Next 16 upgrade, `npx next dev` crashed on startup:
+
+```
+FATAL: An unexpected Turbopack error occurred.
+Please report the content of D:\Dealo Hub\.next\panic.log
+```
+
+The panic log pointed at the file watcher:
+
+```
+'.agents/skills/autobrowse/node_modules/dealo-hub' is a symlink 
+that causes an infinite loop!
+```
+
+`next build` worked fine — the panic was specifically in Turbopack's dev-mode file watcher. Webpack (Next 14/15) had been more forgiving: it only walked files that were actually imported, so it never touched `.agents/`.
+
+**Root cause**
+
+The Autobrowse skill folder contained a self-referential `file:` dependency:
+
+```
+.agents/skills/autobrowse/package.json
+  "dependencies": {
+    "dealo-hub": "file:../../..",   ← points back to repo root
+    ...
+  }
+```
+
+Which produced:
+
+```
+.agents/skills/autobrowse/node_modules/dealo-hub
+  → [symlink to D:\Dealo Hub]
+    → .agents/skills/autobrowse/node_modules/dealo-hub/
+      → D:\Dealo Hub/
+        → ...∞ recursion...
+```
+
+Turbopack's eager file walker hit the loop on startup and panicked.
+
+**Fix applied**
+
+1. Removed `"dealo-hub": "file:../../.."` from `.agents/skills/autobrowse/package.json` (the self-reference was never needed — the skill operates via the Anthropic API, not via the hub app's source).
+2. Deleted the symlink `.agents/skills/autobrowse/node_modules/dealo-hub/`.
+3. Deleted `.agents/skills/autobrowse/node_modules/` + `package-lock.json` to force a clean re-resolve if the skill is ever re-installed.
+4. Added `.agents/` (and sibling `.claude/skills/`, `.qoder/`, `experiments/`, `autobrowse/`) to `.gitignore` so this class of runtime junk never enters git.
+
+Verified: re-ran `npx next dev` → Turbopack ready in **580ms**, no panic.
+
+**Prevention — run before the bundler swap on any future upgrade**
+
+```bash
+# 1. Audit every `file:` dep in skill/tool sub-packages
+grep -rl '"file:' .agents .claude 2>/dev/null | grep -v node_modules
+
+# 2. Symlink sanity — any symlink under the repo whose target is inside the repo is a potential loop
+find . -maxdepth 5 -type l 2>/dev/null | while read l; do
+  target=$(readlink "$l")
+  echo "$l -> $target"
+done | grep -iE "dealo-hub|Dealo Hub"
+```
+
+Both commands should return empty before trusting Turbopack (or any eager file walker).
+
+---
+
+### (b) Tailwind 4 utility renames
+
+Tailwind 4 renamed several utility classes. The old names still compile (no build error), but don't produce CSS — so components silently lose styling. Detection required a grep pass against the Tailwind upgrade guide's rename list, not reactive screenshot diffing.
+
+| Old (Tailwind 3.x) | New (Tailwind 4) | Occurrences in our codebase |
+|---|---|---|
+| `flex-shrink-0`, `flex-shrink` | `shrink-0`, `shrink` | **22 / 19 files** |
+| `flex-grow-0`, `flex-grow` | `grow-0`, `grow` | 0 |
+| `decoration-slice` | `box-decoration-slice` | 0 |
+| `decoration-clone` | `box-decoration-clone` | 0 |
+| `overflow-ellipsis` | `text-ellipsis` | 0 |
+| `flex-no-wrap` | `flex-nowrap` | 0 |
+
+**The sed command used** (word-boundary anchored — no substring matches):
+
+```bash
+cd "/d/Dealo Hub" && \
+  grep -rlE 'flex-shrink(-0|-| |"|$)' src | \
+  xargs sed -i -E 's/\bflex-shrink-0\b/shrink-0/g; s/\bflex-shrink\b/shrink/g'
+```
+
+Ran once. `git diff --stat` showed 19 files / 22 replacements, matching the pre-audit count. Zero collateral damage.
+
+**For the next Tailwind major**: audit the utility-rename section of the upgrade guide BEFORE starting the dev server. A silent-rename is the worst failure mode — no error, no warning, just a regression someone will notice in QA.
+
+---
+
+### (c) Orphan cleanup
+
+Surfaced while running `git status -u` after commit D, plus a repo-root `ls`. Not caused by the upgrade — pre-existing debt exposed by the audit discipline.
+
+**Files deleted:**
+
+1. **`Dealo`** (repo root) — a binary PNG saved without an extension. Confirmed via `file Dealo` → "PNG image data". Zero references anywhere. Drag-and-drop accident. Deleted.
+
+2. **`src/components/feature261.tsx`** (157 lines) — orphaned shadcnblocks installer artifact. Detection:
+   ```bash
+   grep -rn "feature261\|Feature261" src app --include="*.ts" --include="*.tsx"
+   # → only the file itself, zero imports
+   ```
+   The real component we use is `src/components/shadcnblocks/live-feed.tsx` (customized). The root-level `feature261.tsx` was leftover from an initial `npx shadcn add` that got superseded. Deleted.
+
+**Reusable orphan-hunter** for future hygiene passes:
+
+```bash
+# Find .tsx components with zero imports elsewhere
+for f in $(find src/components -name "*.tsx"); do
+  name=$(basename "$f" .tsx)
+  count=$(grep -rlE "from .+${name}['\"]|import.*\\b${name}\\b" \
+          src app --include="*.ts*" 2>/dev/null | grep -v "$f" | wc -l)
+  [ "$count" = "0" ] && echo "ORPHAN: $f"
+done
+```
+
+Runs in seconds. Add to pre-phase hygiene checks.
+
+---
+
+### (d) Lessons for the next upgrade
+
+**Harder than planned:**
+
+1. **Turbopack is stricter than webpack about repo hygiene.** Symlink loops, dangling `file:` deps, or nested `node_modules` that webpack silently ignored will crash Turbopack on startup. The pre-upgrade hygiene commands in (a) are non-optional before a future bundler swap.
+2. **Tailwind 4's silent class renames.** No compiler error, no HMR warning, just drift. Needs a proactive grep against the rename list.
+3. **The `proxy.ts` rename was missed on first pass.** A dev-server deprecation warning got initially misdiagnosed as a stale `.next/` cache artifact (which it partly was — the warning DID clear after `rm -rf .next`, but only because the stale manifest was re-pointing to the old file name; the real file convention change was separate). Lesson: read deprecation warnings literally on the FIRST dev-server run after a major, then verify by clearing caches — don't assume "it cleared, therefore it was fake."
+
+**Easier than planned:**
+
+1. **Async params codemod worked cleanly.** `npx @next/codemod@latest next-async-request-api .` handled 33/33 page files + 4 searchParams files with zero manual fixup. Budgeted half a day, took 10 minutes.
+2. **Tailwind `@theme` migration was mechanical.** Rewriting `globals.css` to CSS-first took ~1 hour, not the full day budgeted. The HSL-token pattern carried over unchanged — only the declaration syntax moved from `tailwind.config.ts` to an `@theme inline { ... }` block.
+3. **734 tests stayed green through every commit.** Vitest 1.6.1 on jsdom happened to be compatible with React 19 out of the box. No test-code adjustments needed.
+
+**Ad-hoc decisions made mid-execution:**
+
+1. **`sed` for the Tailwind utility rename** instead of individual Edits. 22 occurrences across 19 files made per-file editing pointless repetition. The word-boundary regex was simple enough to trust. Logged here so the pattern is reusable next time a similar mass-rename appears.
+2. **Collapsed C+E+F+G into one commit (`f3d095d`).** Plan had each as separate. Reality: keeping Next 15 + React 18 + Tailwind 4 as an intermediate state generated constant peer-dep warnings without meaningfully reducing risk. One jump, all peers resolved, tsc + tests re-verified — cleaner than the planned staircase.
+3. **Deferred vitest 1 → 4 entirely** to a separate session. Found in the post-upgrade audit (see `planning/SECURITY-AUDIT-2026-04-23.md`). The 3-major-version jump + 734-test revalidation exceeded the same-day risk budget. Documented as known-issue; threat model (dev-only esbuild CSRF, localhost-only usage) made the deferral defensible.
+
+---
+
+*End of plan + execution record. Phase 8.5 closed 2026-04-23.*
