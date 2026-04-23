@@ -70,11 +70,14 @@ describe('fromMinorUnits', () => {
 // ---------------------------------------------------------------------------
 
 describe('formatPrice', () => {
-  it('KWD en uses Western digits + 3 decimals', () => {
+  it('KWD en uses Western digits + trims trailing zeros', () => {
     const out = formatPrice(650_000_000n, 'KWD', 'en');
-    // English locale: "KWD 650,000.000" (allow NBSP or regular space)
-    expect(out).toMatch(/650[,،]000\.000/);
+    // English locale: "KWD 650,000" — whole-number majors drop the .000 tail
+    // since minimumFractionDigits is 0 (b25bdc5). Fractional KWD amounts
+    // still render up to 3 decimals — see maximumFractionDigits path.
+    expect(out).toMatch(/650[,،]000/);
     expect(out).toMatch(/KWD/i);
+    expect(out).not.toMatch(/650[,،]000\.000/); // no trailing-zero tail
   });
 
   it('KWD ar keeps Western digits (per Gulf convention)', () => {
@@ -85,15 +88,21 @@ describe('formatPrice', () => {
     expect(out).toMatch(/000/);
   });
 
-  it('AED uses 2 decimals', () => {
+  it('AED caps at 2 decimals and trims trailing zeros', () => {
     const out = formatPrice(3850n, 'AED', 'en');
-    expect(out).toMatch(/38\.50/);
-    expect(out).not.toMatch(/38\.500/); // NOT 3 decimals
+    // 3850 AED-minor = 38.50 major → trailing zero trimmed to "38.5"
+    expect(out).toMatch(/38\.5/);
+    expect(out).not.toMatch(/38\.500/); // NOT 3 decimals (KWD-style)
+    expect(out).not.toMatch(/38\.50\D/); // trailing zero stripped
   });
 
   it('handles zero minor units', () => {
     const out = formatPrice(0n, 'KWD', 'en');
-    expect(out).toMatch(/0\.000/);
+    // Zero renders as bare "KWD 0" now — no fractional tail since
+    // minimumFractionDigits is 0 (b25bdc5).
+    expect(out).toMatch(/KWD/i);
+    expect(out).toMatch(/\b0\b/);
+    expect(out).not.toMatch(/0\.000/); // old trailing-zero behavior
   });
 });
 
