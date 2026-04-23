@@ -1,10 +1,20 @@
 {
   "version": 1,
   "skills": {
+    "accessibility": {
+      "source": "addyosmani/web-quality-skills",
+      "sourceType": "github",
+      "computedHash": "494d59fffe67c87b485f4ee2fb1abd73fc9d0d508c4c8bd9c43a9edd3242f730"
+    },
     "adapt": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
       "computedHash": "44722c0ec8698cc0b57b7e1813e4e4c18db22a8015b243c03d06c1c7a02606e0"
+    },
+    "agent-browser": {
+      "source": "vercel-labs/agent-browser",
+      "sourceType": "github",
+      "computedHash": "c19a532a3777698b80b35270939a1dc559da451381971b3e1e78174d1ab54863"
     },
     "animate": {
       "source": "pbakaus/impeccable",
@@ -81,6 +91,11 @@
       "sourceType": "github",
       "computedHash": "03e0eaaa9bf13ba1e7ffa387f5893de6f324c0868c627001f179395a8feaa7c9"
     },
+    "design-md": {
+      "source": "google-labs-code/stitch-skills",
+      "sourceType": "github",
+      "computedHash": "44af3e6e89a42a765d9cebf943f1e2ff3cdf43d1958341eb43fb7b74116f6691"
+    },
     "design-taste-frontend": {
       "source": "Leonxlnx/taste-skill",
       "sourceType": "github",
@@ -91,10 +106,20 @@
       "sourceType": "github",
       "computedHash": "15645c6dccfebd541e5a7934fc0741a12c951ee306d61454708ae1f75c99d10e"
     },
+    "e2e-testing-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "3425e335940b8f1f4881452603252385f9119159632dc211bc8c8a375f4619cd"
+    },
     "emil-design-eng": {
       "source": "emilkowalski/skill",
       "sourceType": "github",
       "computedHash": "ac3fc5b4e206488ffc408a2806f829bb2e5eaf518fded09be34790685c2b3a0d"
+    },
+    "extract-design-system": {
+      "source": "arvindrk/extract-design-system",
+      "sourceType": "github",
+      "computedHash": "c66852c6bc6e0267dbcc9651fa698701387fc11c5058104bc33e67f495936f7e"
     },
     "full-output-enforcement": {
       "source": "Leonxlnx/taste-skill",
@@ -121,15 +146,40 @@
       "sourceType": "github",
       "computedHash": "e66e5a2a8b73cef79ab6546459c665e8b983645689c5f3772f7eed8b9f1e8e0e"
     },
+    "landing-page-design": {
+      "source": "skillssh/skills",
+      "sourceType": "github",
+      "computedHash": "d9194d6a3cd823ed41ebb3647294837aa8952106693b90aa5d7af0a019cce922"
+    },
     "layout": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
       "computedHash": "746432275018adb16be89276afa95cd6f868a38598cf7075294973ce0e757919"
     },
+    "liquid-glass-design": {
+      "source": "affaan-m/everything-claude-code",
+      "sourceType": "github",
+      "computedHash": "18c81c59796c6280db62d5fb9ac544c094259c51a9c69cfc225ba6c428b9ed57"
+    },
     "minimalist-ui": {
       "source": "Leonxlnx/taste-skill",
       "sourceType": "github",
       "computedHash": "7e88897e0371184e97a82b8d9ef080323c13f21eb067b58ef71eb05173a08ac2"
+    },
+    "nextjs-app-router-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "04c1df896cc2c9ef824d618b95d21686c5b8e24e5cb32b3d6fe9d97d4b661536"
+    },
+    "nextjs-best-practices": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "computedHash": "3c40a7ea604cdbee772bd7b3efe59aafd6fedf62252a76d43b9f835a6adc92cd"
+    },
+    "nextjs-supabase-auth": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "computedHash": "f2f8b00877ed450e4b5d1e040b52c1c4d312ec2264c75d2248253814c2a9e9ba"
     },
     "optimize": {
       "source": "pbakaus/impeccable",
@@ -140,6 +190,11 @@
       "source": "pbakaus/impeccable",
       "sourceType": "github",
       "computedHash": "16f80188b3e700f0b7761b08036f69bb463adb42de5cf91576db448c8e85c683"
+    },
+    "performance": {
+      "source": "addyosmani/web-quality-skills",
+      "sourceType": "github",
+      "computedHash": "9e0e29b7919bacfd2d0caae0f841fa53ae3d7b7427d27f4fdbacc76643d7d138"
     },
     "polish": {
       "source": "pbakaus/impeccable",
@@ -156,6 +211,21 @@
       "sourceType": "github",
       "computedHash": "47eced3e960a2c961d3cbee11fa1216264f589344b586a5cbd03967cd6b9c54b"
     },
+    "security-review": {
+      "source": "affaan-m/everything-claude-code",
+      "sourceType": "github",
+      "computedHash": "ea603d81b60a1d14d19e33895a33a540837a0470e33105c1024557937ac01704"
+    },
+    "seo": {
+      "source": "addyosmani/web-quality-skills",
+      "sourceType": "github",
+      "computedHash": "680cc12a17e9308b4592a2751db51615c618993f75362cb8e64207f6355a8c63"
+    },
+    "seo-audit": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "computedHash": "8d29f46f5d494dd41d65b7d1539b0e4bd7e1b5f4d73b8316cd1e744764705594"
+    },
     "shadcn": {
       "source": "shadcn-ui/ui",
       "sourceType": "github",
@@ -166,15 +236,40 @@
       "sourceType": "github",
       "computedHash": "45e5bb82c573fb95a86ef86f358d744575f0abe35e57d9e10143cf8d16a1aa2d"
     },
+    "sleek-design-mobile-apps": {
+      "source": "sleekdotdesign/agent-skills",
+      "sourceType": "github",
+      "computedHash": "0d992cd879dab83e8c91127858035dbd233bdb7851e5030975f37c9c41448d73"
+    },
     "stitch-design-taste": {
       "source": "Leonxlnx/taste-skill",
       "sourceType": "github",
       "computedHash": "acf2921a7e50c06e637f072ba52e36a994cbb44ecbe6e31435bc113b894f5499"
     },
+    "supabase-postgres-best-practices": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "computedHash": "8e41c7417894e6f394614ee7ca3ee5322b1e58d890255d441f42dea98732597f"
+    },
+    "tailwind-design-system": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "f54f39ce967af3a4bba1f662c3600f0253467508d5fbbc7c545c67e102da2253"
+    },
+    "typescript-advanced-types": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "ee8377c523a911be41c31037b477805773ca5ab5ade181e44ca7dd3cd8df6692"
+    },
     "typeset": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
       "computedHash": "26f31a4cbe25cbe70a3bc95ce4f229767bf1dce2f59e049fadde13fc56bfc815"
+    },
+    "ui-animation": {
+      "source": "mblode/agent-skills",
+      "sourceType": "github",
+      "computedHash": "f918842977d31fadccb206bd80163091b57294690cbb7351e91cf9c681de2310"
     },
     "ui-ux-pro-max": {
       "source": "nextlevelbuilder/ui-ux-pro-max-skill",
@@ -200,6 +295,11 @@
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
       "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474"
+    },
+    "webapp-testing": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "3f14af7f5690695209c22fbf8c8d133769a86d64892602c09bb13f135e14e857"
     }
   }
 }
