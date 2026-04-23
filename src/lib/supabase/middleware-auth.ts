@@ -54,3 +54,18 @@ export const PROTECTED_PATH_SEGMENTS = [
 export function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PATH_SEGMENTS.some(seg => pathname.includes(seg));
 }
+
+/**
+ * Admin-only paths. Auth is enforced here at the edge (middleware); the
+ * actual `is_admin = true` check is done inside /admin/layout.tsx via
+ * `requireAdmin()` so we don't run DB queries in the edge runtime.
+ *
+ * Stricter regex than isProtectedPath — we don't want accidental substring
+ * matches on user-generated paths (e.g., a listing titled "admin chair").
+ * Matches: /admin, /admin/*, /ar/admin, /ar/admin/*, /en/admin, /en/admin/*
+ */
+const ADMIN_PATH_REGEX = /^\/(?:ar\/|en\/)?admin(?:\/|$)/;
+
+export function isAdminPath(pathname: string): boolean {
+  return ADMIN_PATH_REGEX.test(pathname);
+}
