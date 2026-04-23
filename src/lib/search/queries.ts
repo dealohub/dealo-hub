@@ -28,7 +28,7 @@ export async function searchListings(
     return { result, semanticUsed: false };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // ---- 1. Keyword: ILIKE on title + description, capped to 100 hits. ----
   const keywordPromise = (async () => {

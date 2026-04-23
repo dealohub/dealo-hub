@@ -68,7 +68,7 @@ export type DraftActionResult =
   | { ok: false; error: string };
 
 export async function saveDraft(state: DraftState): Promise<DraftActionResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -117,7 +117,7 @@ export async function saveDraft(state: DraftState): Promise<DraftActionResult> {
 }
 
 export async function deleteDraft(): Promise<DraftActionResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -145,7 +145,7 @@ export async function deleteDraft(): Promise<DraftActionResult> {
 export async function ensureDraftId(): Promise<
   { ok: true; user_id: string; draft_id: string } | { ok: false; error: string }
 > {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -166,7 +166,7 @@ export async function ensureDraftId(): Promise<
 }
 
 export async function setDraftStep(step: WizardStep): Promise<DraftActionResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -191,7 +191,7 @@ export async function setDraftStep(step: WizardStep): Promise<DraftActionResult>
 export async function fetchAreasForCity(
   cityId: number
 ): Promise<{ id: number; name_ar: string; name_en: string }[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase
     .from('areas')
     .select('id, name_ar, name_en, sort_order')
@@ -209,7 +209,7 @@ export type PublishResult =
   | { ok: false; error: string; fieldErrors?: Record<string, string> };
 
 export async function publishListing(locale: 'ar' | 'en' = 'ar'): Promise<PublishResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

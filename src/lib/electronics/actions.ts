@@ -59,7 +59,7 @@ export async function checkImeiUnique(imei: string): Promise<ImeiCheckStatus> {
   // at ≥6 characters alphanumeric before bothering the RPC.
   if (!/^[0-9A-Z]{6,20}$/.test(normalised)) return 'invalid';
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

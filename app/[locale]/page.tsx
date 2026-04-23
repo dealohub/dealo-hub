@@ -28,11 +28,12 @@ import { verticalPathForFeedCat, type HeroImage } from '@/lib/landing/types';
  */
 export const revalidate = 60;
 
-export default async function HomePage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
+export default async function HomePage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
   const locale = params.locale;
 
   // One query serves both the hero scatters and the feed. Single

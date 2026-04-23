@@ -35,11 +35,12 @@ import { getServiceBySlug, getSimilarServices } from '@/lib/services/queries';
 
 export const revalidate = 60;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en'; slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en'; slug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const listing = await getServiceBySlug(params.slug, { locale: params.locale });
   if (!listing) return { title: 'Dealo Hub', robots: { index: false, follow: false } };
   const description = listing.description.slice(0, 160);
@@ -59,11 +60,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function ServiceDetailPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en'; slug: string };
-}) {
+export default async function ServiceDetailPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en'; slug: string }>;
+  }
+) {
+  const params = await props.params;
   const t = await getTranslations('servicesDetail');
   const listing = await getServiceBySlug(params.slug, { locale: params.locale });
   if (!listing) notFound();

@@ -28,7 +28,7 @@ export interface RateLimitOpts {
  * was bumped). Returns FALSE if they've exhausted the window.
  */
 export async function checkRateLimit(opts: RateLimitOpts): Promise<boolean> {
-  const supabase = createClient();
+  const supabase = await createClient();
   try {
     const { data, error } = await supabase.rpc('check_rate_limit', {
       p_action: opts.action,

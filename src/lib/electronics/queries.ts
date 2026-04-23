@@ -267,7 +267,7 @@ export const getElectronicsBySlug = cache(
     slugOrId: string | number,
     opts: { locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<ElectronicsDetail | null> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const filterKey = isNumericInput(slugOrId) ? 'id' : 'slug';
 
     const { data, error } = await supabase
@@ -298,7 +298,7 @@ export const getSimilarElectronics = cache(
     limit: number,
     opts: { locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<ElectronicsCard[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Pull the source row's category + brand to anchor the similarity
     const { data: src } = await supabase
@@ -391,7 +391,7 @@ export async function getElectronicsCatalogSearch(
   limit = 20,
 ): Promise<DeviceCatalogRow[]> {
   const trimmed = query.trim();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   let q = supabase
     .from('electronics_device_catalog')
@@ -428,7 +428,7 @@ export const getElectronicsCatalogBySlug = cache(
   async function getElectronicsCatalogBySlug(
     slug: string,
   ): Promise<DeviceCatalogRow | null> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('electronics_device_catalog')
       .select(
@@ -451,7 +451,7 @@ export const getFeaturedElectronics = cache(
   async function getFeaturedElectronics(
     opts: { locale: 'ar' | 'en'; limit?: number } = { locale: 'ar' },
   ): Promise<ElectronicsCard[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const parent = await supabase
       .from('categories')
       .select('id')
@@ -492,7 +492,7 @@ export const getElectronicsForGrid = cache(
       subCat?: ElectronicsCategoryKey;
     } = { locale: 'ar' },
   ): Promise<ElectronicsCard[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const parent = await supabase
       .from('categories')
@@ -578,7 +578,7 @@ export const getRecentElectronicsActivity = cache(
     opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<ElectronicsActivityItem[]> {
     const limit = opts.limit ?? 12;
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const parent = await supabase
       .from('categories')
@@ -668,7 +668,7 @@ export const getRecentElectronicsActivity = cache(
 export async function getElectronicsSubCatCounts(): Promise<
   Record<ElectronicsCategoryKey, number>
 > {
-  const supabase = createClient();
+  const supabase = await createClient();
   const parent = await supabase
     .from('categories')
     .select('id')

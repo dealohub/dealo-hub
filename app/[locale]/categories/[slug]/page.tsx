@@ -49,11 +49,12 @@ const VALID_SORTS: SortOption[] = ['newest', 'price_asc', 'price_desc', 'most_sa
 // Metadata
 // ---------------------------------------------------------------------------
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en'; slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en'; slug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const cat = await getCategoryBySlug(params.slug);
   if (!cat) return { title: 'Dealo Hub', robots: { index: false, follow: false } };
 
@@ -72,13 +73,14 @@ export async function generateMetadata({
 // Page
 // ---------------------------------------------------------------------------
 
-export default async function CategoryBrowsePage({
-  params,
-  searchParams,
-}: {
-  params: { locale: 'ar' | 'en'; slug: string };
-  searchParams: { sub?: string; sort?: string; page?: string };
-}) {
+export default async function CategoryBrowsePage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en'; slug: string }>;
+    searchParams: Promise<{ sub?: string; sort?: string; page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   // Vertical redirects first — keeps the canonical hub URLs.
   const verticalTarget = VERTICAL_REDIRECTS[params.slug];
   if (verticalTarget) {
@@ -319,7 +321,7 @@ async function getAllChildListings(
   opts: { sort: SortOption; page: number; locale: 'ar' | 'en' },
 ) {
   const { createClient } = await import('@/lib/supabase/server');
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const ids = [cat.id, ...cat.subCategories.map(s => s.id)];
   let query = supabase

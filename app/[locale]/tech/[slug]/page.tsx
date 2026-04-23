@@ -41,11 +41,12 @@ import ElectronicsDetailMobileActionBar from '@/components/shadcnblocks/electron
 
 export const revalidate = 60;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en'; slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en'; slug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const listing = await getElectronicsBySlug(params.slug, {
     locale: params.locale,
   });
@@ -72,11 +73,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function ElectronicsDetailPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en'; slug: string };
-}) {
+export default async function ElectronicsDetailPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en'; slug: string }>;
+  }
+) {
+  const params = await props.params;
   const listing = await getElectronicsBySlug(params.slug, {
     locale: params.locale,
   });

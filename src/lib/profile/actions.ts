@@ -39,7 +39,7 @@ function fieldErrorsFromZod(err: import('zod').ZodError): Record<string, string>
 // ---------------------------------------------------------------------------
 
 export async function updateProfile(formData: FormData): Promise<ProfileActionResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -106,7 +106,7 @@ export async function updateProfile(formData: FormData): Promise<ProfileActionRe
 // ---------------------------------------------------------------------------
 
 export async function uploadAvatar(formData: FormData): Promise<ProfileActionResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -172,7 +172,7 @@ export async function uploadAvatar(formData: FormData): Promise<ProfileActionRes
 export async function checkHandleAvailabilityAction(
   handle: string
 ): Promise<HandleAvailabilityResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

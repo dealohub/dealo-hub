@@ -73,7 +73,7 @@ export async function joinWaitlist(formData: FormData): Promise<WaitlistResult> 
 
   // Insert
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const { error } = await supabase.from('waitlist').insert({
       email: data.email,

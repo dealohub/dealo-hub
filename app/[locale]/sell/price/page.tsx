@@ -6,21 +6,23 @@ import WizardShell from '@/components/sell/wizard-shell';
 import PriceForm from '@/components/sell/price-form';
 import type { PriceMode } from '@/lib/listings/validators';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const t = await getTranslations({ locale: params.locale, namespace: 'sell.steps.price' });
   return { title: `${t('metaTitle')} · Dealo Hub`, robots: { index: false, follow: false } };
 }
 
-export default async function SellPricePage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
-  const supabase = createClient();
+export default async function SellPricePage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

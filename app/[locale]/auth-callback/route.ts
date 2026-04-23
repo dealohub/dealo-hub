@@ -19,10 +19,9 @@ import { createClient } from '@/lib/supabase/server';
  * a session exchange + redirect.
  */
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { locale: 'ar' | 'en' } },
-): Promise<NextResponse> {
+export async function GET(request: NextRequest, props: { params: Promise<{ locale: string }> }): Promise<NextResponse> {
+  const { locale: rawLocale } = await props.params;
+  const params = { locale: (rawLocale === 'en' ? 'en' : 'ar') as 'ar' | 'en' };
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
   const origin = url.origin;
@@ -34,7 +33,7 @@ export async function GET(
     );
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {

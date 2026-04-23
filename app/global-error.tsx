@@ -101,6 +101,7 @@ export default function GlobalError({
             >
               إعادة المحاولة
             </button>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- global-error must work even when root layout fails, so <Link> is unsafe here */}
             <a
               href="/"
               style={{

@@ -76,7 +76,7 @@ export async function sendQuoteRequest(args: {
 }): Promise<
   ServiceActionResult<{ conversationId: number; messageId: number }>
 > {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -164,7 +164,7 @@ export async function respondWithQuote(args: {
   conversationId: number;
   payload: QuoteResponsePayload;
 }): Promise<ServiceActionResult<{ messageId: number }>> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -232,7 +232,7 @@ export async function proposeBooking(args: {
 }): Promise<
   ServiceActionResult<{ messageId: number; bookingId: number }>
 > {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -315,7 +315,7 @@ export async function markCompletion(args: {
     bothMarked: boolean;
   }>
 > {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

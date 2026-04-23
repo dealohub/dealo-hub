@@ -45,7 +45,7 @@ export async function uploadListingImageBlob(
   path: string,
   blob: Blob
 ): Promise<{ url: string; path: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.storage.from(LISTING_IMAGES_BUCKET).upload(path, blob, {
     contentType: blob.type || 'image/webp',
     cacheControl: '3600',
@@ -60,7 +60,7 @@ export async function uploadListingVideoBlob(
   path: string,
   blob: Blob
 ): Promise<{ url: string; path: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.storage.from(LISTING_VIDEOS_BUCKET).upload(path, blob, {
     contentType: blob.type || 'video/mp4',
     cacheControl: '3600',
@@ -73,14 +73,14 @@ export async function uploadListingVideoBlob(
 
 export async function deleteListingImageObjects(paths: string[]): Promise<void> {
   if (!paths.length) return;
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.storage.from(LISTING_IMAGES_BUCKET).remove(paths);
   if (error) console.error('[storage-listings] image remove failed:', error.message);
 }
 
 export async function deleteListingVideoObjects(paths: string[]): Promise<void> {
   if (!paths.length) return;
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.storage.from(LISTING_VIDEOS_BUCKET).remove(paths);
   if (error) console.error('[storage-listings] video remove failed:', error.message);
 }
@@ -92,7 +92,7 @@ export async function moveDraftImagesToListing(
   listingId: number,
   urls: string[]
 ): Promise<string[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const next: string[] = [];
   const draftPrefix = `${userId}/drafts/${draftId}/`;
   const listingPrefix = `${userId}/listings/${listingId}/`;

@@ -26,11 +26,12 @@ import RideDetailMobileActionBar from '@/components/shadcnblocks/ride-detail-mob
 // ISR: each path is rendered on demand and cached for 60s.
 export const revalidate = 60;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en'; id: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en'; id: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const listing = await getRideById(params.id, { locale: params.locale });
   if (!listing) {
     return { title: 'Dealo Hub', robots: { index: false, follow: false } };
@@ -56,11 +57,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function RideDetailPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en'; id: string };
-}) {
+export default async function RideDetailPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en'; id: string }>;
+  }
+) {
+  const params = await props.params;
   const listing = await getRideById(params.id, { locale: params.locale });
   if (!listing) notFound();
 

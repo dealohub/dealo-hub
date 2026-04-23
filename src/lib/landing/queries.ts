@@ -7,7 +7,7 @@ import type { FeedCategoryKey, FeedListing } from './types';
  * Read-side queries for the Landing page.
  *
  * Conventions mirror src/lib/rides/queries.ts:
- *   - createClient() from @/lib/supabase/server (RLS-respecting).
+ *   - await createClient() from @/lib/supabase/server (RLS-respecting).
  *   - React cache() so the same args resolve once per render pass.
  *   - Errors go through console.error + null/[]; Server Components
  *     degrade gracefully instead of throwing.
@@ -279,7 +279,7 @@ export const getLiveFeedListings = cache(
     opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<FeedListing[]> {
     const limit = opts.limit ?? 12;
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Order by published_at (story-time), not created_at (row-insert
     // time). Before 2026-04-22 these were nearly identical so ordering

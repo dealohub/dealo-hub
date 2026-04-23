@@ -102,7 +102,7 @@ export async function getFilteredListings(
   }
 ): Promise<ListingQueryResult> {
   const pageSize = opts.pageSize ?? DEFAULT_PAGE_SIZE;
-  const supabase = createClient();
+  const supabase = await createClient();
 
   let query = supabase
     .from('listings')
@@ -162,7 +162,7 @@ export async function getFilteredListings(
 export async function getFeaturedListings(
   opts: { locale: 'ar' | 'en'; limit?: number; categoryId?: number } = { locale: 'ar' }
 ): Promise<ListingCardData[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   let query = supabase
     .from('listings')
     .select(LISTING_CARD_SELECT)
@@ -183,7 +183,7 @@ export async function getFeaturedListings(
 /** Listing IDs the signed-in user has favorited — batched for grid rendering. */
 export async function getSavedListingIdSet(listingIds: number[]): Promise<Set<number>> {
   if (listingIds.length === 0) return new Set();
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

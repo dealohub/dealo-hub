@@ -34,11 +34,12 @@ export const revalidate = 60;
 // Metadata
 // ---------------------------------------------------------------------------
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const t = await getTranslations({
     locale: params.locale,
     namespace: 'browse.index',
@@ -75,11 +76,12 @@ function resolveIcon(name: string | null): IconLike {
 // Page
 // ---------------------------------------------------------------------------
 
-export default async function CategoriesIndexPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
+export default async function CategoriesIndexPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
   const t = await getTranslations({
     locale: params.locale,
     namespace: 'browse.index',

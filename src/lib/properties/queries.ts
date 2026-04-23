@@ -21,7 +21,7 @@ import { purposeFromSubCat } from './types';
  * Read-side queries for the Properties vertical.
  *
  * Conventions mirror src/lib/rides/queries.ts:
- *   - createClient() from @/lib/supabase/server (RLS-respecting).
+ *   - await createClient() from @/lib/supabase/server (RLS-respecting).
  *   - React cache() wrapper — single server-render pass resolves args once.
  *   - Errors log to console, return null / [] instead of throwing.
  *   - Mappers convert snake_case DB rows → camelCase PropertyDetail /
@@ -413,7 +413,7 @@ export const getPropertyBySlug = cache(
     slugOrId: string | number,
     opts: { locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<PropertyDetail | null> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const filterKey = isNumericInput(slugOrId) ? 'id' : 'slug';
 
     const { data, error } = await supabase
@@ -459,7 +459,7 @@ export const getSimilarProperties = cache(
     limit: number = 4,
     opts: { locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<PropertyCard[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // First, fetch the source row to extract sub_cat + city + property_type
     const { data: source } = await supabase
@@ -499,7 +499,7 @@ export const getSimilarProperties = cache(
       .order('published_at', { ascending: false })
       .limit(limit);
 
-    let rows = ((tightRes.data as unknown as RawCardRow[]) ?? [])
+    const rows = ((tightRes.data as unknown as RawCardRow[]) ?? [])
       .map(r => mapCard(r, opts.locale))
       .filter((c): c is PropertyCard => c !== null);
 
@@ -556,7 +556,7 @@ export const getFeaturedProperties = cache(
     opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<PropertyCard[]> {
     const limit = opts.limit ?? 6;
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Get real-estate parent's child ids
     const { data: catData } = await supabase
@@ -616,7 +616,7 @@ export const getPropertiesForGrid = cache(
     } = { locale: 'ar' },
   ): Promise<PropertyCard[]> {
     const limit = opts.limit ?? 24;
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Resolve category scope
     let categoryIds: number[];
@@ -685,7 +685,7 @@ export const getPropertiesForGrid = cache(
  */
 export const getPropertyTypeCounts = cache(
   async function getPropertyTypeCounts(): Promise<Record<string, number>> {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const parent = await supabase
       .from('categories')
@@ -762,7 +762,7 @@ export const getRecentPropertyActivity = cache(
     opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<PropertyActivityItem[]> {
     const limit = opts.limit ?? 12;
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const parent = await supabase
       .from('categories')

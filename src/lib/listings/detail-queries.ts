@@ -152,7 +152,7 @@ export const getGenericListingBySlug = cache(
     slugOrId: string | number,
     opts: { locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<GenericListingDetail | null> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const filterKey = isNumericInput(slugOrId) ? 'id' : 'slug';
 
     const { data, error } = await supabase

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Search, Sparkles, Mic, ArrowRight, ChevronLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -37,10 +38,10 @@ export const RidesHeroSplit = () => {
       <div className="relative mx-auto max-w-7xl px-6 pt-10 pb-14">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1.5 text-[12px] text-foreground/55">
-          <a href="/" className="inline-flex items-center gap-1 hover:text-foreground">
+          <Link href="/" className="inline-flex items-center gap-1 hover:text-foreground">
             <ChevronLeft size={12} className="rtl:rotate-180" />
             {t('header.breadcrumbHome')}
-          </a>
+          </Link>
           <span className="text-foreground/25">/</span>
           <span className="font-medium text-foreground/85">{t('header.breadcrumbCurrent')}</span>
         </nav>

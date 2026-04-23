@@ -4,9 +4,12 @@ import { cookies } from 'next/headers';
 /**
  * Server-side Supabase client (respects RLS).
  * Use in Server Components, Route Handlers, Server Actions.
+ *
+ * Async since Next 15 — `cookies()` now returns `Promise<ReadonlyRequestCookies>`.
+ * All callers must `await createClient()`.
  */
-export function createClient() {
-  const cookieStore = cookies();
+export async function createClient() {
+  const cookieStore = await cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

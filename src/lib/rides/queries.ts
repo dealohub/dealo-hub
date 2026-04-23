@@ -13,7 +13,7 @@ import type {
  * Read-side queries for the rides (automotive) vertical.
  *
  * Conventions:
- *   - `createClient()` from `@/lib/supabase/server` (RLS-respecting).
+ *   - `await createClient()` from `@/lib/supabase/server` (RLS-respecting).
  *   - `cache()` wraps each function so a single server-render pass
  *     doesn't re-hit the DB for the same args.
  *   - Errors logged via console.error; return null / [] instead of
@@ -341,7 +341,7 @@ export const getRideById = cache(async function getRideById(
   idOrSlug: string | number,
   opts: { locale: 'ar' | 'en' } = { locale: 'ar' },
 ): Promise<RideDetail | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const column = isNumericInput(idOrSlug) ? 'id' : 'slug';
   const value = column === 'id' ? Number(idOrSlug) : String(idOrSlug);
@@ -381,7 +381,7 @@ export const getSimilarRides = cache(async function getSimilarRides(
   limit: number = 4,
   opts: { locale: 'ar' | 'en' } = { locale: 'ar' },
 ): Promise<RideCard[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Step 1: look up the input listing's category + price for distance sort.
   const { data: current, error: currentErr } = await supabase
@@ -442,7 +442,7 @@ export const getSimilarRides = cache(async function getSimilarRides(
  * Cached for the render pass so featured + grid + counts share one DB hit.
  */
 const getAutomotiveSubCategoryIds = cache(async function getAutomotiveSubCategoryIds(): Promise<number[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: parent, error: parentErr } = await supabase
     .from('categories')
@@ -492,7 +492,7 @@ export const getFeaturedRides = cache(async function getFeaturedRides(
   const subIds = await getAutomotiveSubCategoryIds();
   if (subIds.length === 0) return [];
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('listings')
     .select(CARD_SELECT)
@@ -549,7 +549,7 @@ export const getRidesForGrid = cache(async function getRidesForGrid(params: {
   offset: number;
   locale: 'ar' | 'en';
 }): Promise<{ items: RideCard[]; total: number }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const sortBy = params.sortBy ?? 'relevance';
 
   // Resolve the target category ids — either a single sub-cat or
@@ -638,7 +638,7 @@ export const getRideTypeCounts = cache(async function getRideTypeCounts(
 ): Promise<
   Array<{ slug: string; nameAr: string; nameEn: string; count: number }>
 > {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: parent, error: parentErr } = await supabase
     .from('categories')

@@ -60,21 +60,23 @@ function asElectronicsSubCat(
     : null;
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const t = await getTranslations({ locale: params.locale, namespace: 'sell.steps.details' });
   return { title: `${t('metaTitle')} · Dealo Hub`, robots: { index: false, follow: false } };
 }
 
-export default async function SellDetailsPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
-  const supabase = createClient();
+export default async function SellDetailsPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

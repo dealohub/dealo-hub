@@ -63,11 +63,12 @@ const TASK_LABELS_EN: Record<string, string> = {
   handyman_other: 'Other tasks',
 };
 
-export default async function ServicesHubPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
+export default async function ServicesHubPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
   const t = await getTranslations('servicesHub');
   const locale = params.locale;
 

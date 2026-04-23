@@ -71,7 +71,7 @@ export async function startOrResumeConversation(
   const parsed = StartConversationSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: 'validation_failed' };
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -180,7 +180,7 @@ export async function sendMessage(
   const gate = checkMessageContent(parsed.data.body);
   if (!gate.ok) return { ok: false, error: gate.error };
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -250,7 +250,7 @@ export async function sendMessage(
 export async function markConversationRead(
   conversationId: number,
 ): Promise<ChatActionResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.rpc('mark_conversation_read', {
     p_conversation_id: conversationId,
   });
@@ -271,7 +271,7 @@ async function setParticipantFlag(
   field: 'buyer_archived' | 'seller_archived' | 'buyer_blocked' | 'seller_blocked',
   value: boolean,
 ): Promise<ChatActionResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

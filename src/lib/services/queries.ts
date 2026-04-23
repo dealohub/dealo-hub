@@ -20,7 +20,7 @@ import { isServiceSubCat, SERVICE_SUB_CATS } from './types';
  * Read-side queries for the Services vertical (Phase 8a).
  *
  * Mirrors src/lib/electronics/queries.ts + src/lib/properties/queries.ts:
- *   - RLS-respecting client via createClient()
+ *   - RLS-respecting client via await createClient()
  *   - React `cache()` de-dup on detail + provider lookups
  *   - snake_case DB → camelCase consumer mappers
  *
@@ -237,7 +237,7 @@ export const getServiceBySlug = cache(
     slugOrId: string | number,
     opts: { locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<ServiceDetail | null> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const filterKey = isNumericInput(slugOrId) ? 'id' : 'slug';
 
     const { data, error } = await supabase
@@ -284,7 +284,7 @@ export const getFeaturedServices = cache(
   async function getFeaturedServices(
     opts: { locale: 'ar' | 'en'; limit?: number } = { locale: 'ar' },
   ): Promise<ServiceCard[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const parent = await supabase
       .from('categories')
       .select('id')
@@ -326,7 +326,7 @@ export const getServicesForGrid = cache(
       governorate?: KwGovernorate;
     } = { locale: 'ar' },
   ): Promise<ServiceCard[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const parent = await supabase
       .from('categories')
@@ -402,7 +402,7 @@ export async function getServiceTaskTypeCounts(): Promise<
     handyman_other: 0,
   };
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const parent = await supabase
     .from('categories')
     .select('id')
@@ -454,7 +454,7 @@ export const getReviewsForProvider = cache(
     profileId: string,
     limit = 10,
   ): Promise<ServiceReviewRow[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('service_reviews')
       .select(
@@ -493,7 +493,7 @@ export const getSimilarServices = cache(
     limit: number,
     opts: { locale: 'ar' | 'en' } = { locale: 'ar' },
   ): Promise<ServiceCard[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Step 1 — same task_type (tight match)
     const { data: tight } = await supabase

@@ -11,21 +11,23 @@ import { createClient } from '@/lib/supabase/server';
 import { getSavedListings } from '@/lib/account/queries';
 import SearchResultCard from '@/components/search/search-result-card';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const t = await getTranslations({ locale: params.locale, namespace: 'saved' });
   return { title: `${t('metaTitle')} · Dealo Hub`, robots: { index: false, follow: false } };
 }
 
-export default async function SavedListingsPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
-  const supabase = createClient();
+export default async function SavedListingsPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

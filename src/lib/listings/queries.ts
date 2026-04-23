@@ -34,7 +34,7 @@ export interface SubCategorySummary {
 }
 
 export const getCategoriesWithSubs = cache(async (): Promise<ParentCategory[]> => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('categories')
     .select(
@@ -91,7 +91,7 @@ export const getCategoriesWithSubs = cache(async (): Promise<ParentCategory[]> =
 // ---------------------------------------------------------------------------
 
 export const getCurrentDraft = cache(async (): Promise<DraftState | null> => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -137,7 +137,7 @@ export const getCurrentDraft = cache(async (): Promise<DraftState | null> => {
 // ---------------------------------------------------------------------------
 
 export const getKuwaitCities = cache(async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase
     .from('cities')
     .select('id, slug, name_ar, name_en, sort_order')
@@ -148,7 +148,7 @@ export const getKuwaitCities = cache(async () => {
 });
 
 export async function getAreasForCity(cityId: number) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase
     .from('areas')
     .select('id, slug, name_ar, name_en, sort_order')

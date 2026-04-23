@@ -71,7 +71,7 @@ export async function signUpWithEmail(formData: FormData): Promise<AuthActionRes
   }
 
   const { email, password, display_name, locale } = parsed.data;
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -120,7 +120,7 @@ export async function signInWithEmail(formData: FormData): Promise<AuthActionRes
     return { ok: false, error: 'validation_failed', fieldErrors: fieldErrorsFromZod(parsed.error) };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
@@ -146,7 +146,7 @@ export async function signInWithEmail(formData: FormData): Promise<AuthActionRes
 // ---------------------------------------------------------------------------
 
 export async function signOut(formData?: FormData): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath('/', 'layout');
   const locale = (formData?.get('locale') as string) ?? 'ar';
@@ -166,7 +166,7 @@ export async function requestPasswordReset(formData: FormData): Promise<AuthActi
   }
 
   const locale = (formData.get('locale') as string) ?? 'ar';
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${getAppOrigin()}${localePrefix(locale)}/reset-password/confirm`,
   });
@@ -188,7 +188,7 @@ export async function updatePassword(formData: FormData): Promise<AuthActionResu
     return { ok: false, error: 'validation_failed', fieldErrors: fieldErrorsFromZod(parsed.error) };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
 
   if (error) {

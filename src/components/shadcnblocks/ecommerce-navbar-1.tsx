@@ -9,7 +9,6 @@ import {
   ChevronRight,
   ChevronDown,
   Search,
-  CircleUserRound,
   Plus,
   Phone,
   Send,

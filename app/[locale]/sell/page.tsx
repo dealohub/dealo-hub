@@ -13,12 +13,13 @@ import { ensureDraftId } from '@/lib/listings/actions';
  * This is a Server Component with no UI — it only routes.
  */
 
-export default async function SellEntryPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
-  const supabase = createClient();
+export default async function SellEntryPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

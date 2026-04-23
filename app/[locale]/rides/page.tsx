@@ -43,11 +43,12 @@ import {
  */
 export const revalidate = 60;
 
-export default async function RidesPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
+export default async function RidesPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
   const locale = params.locale;
 
   const [featured, grid, typeCounts] = await Promise.all([

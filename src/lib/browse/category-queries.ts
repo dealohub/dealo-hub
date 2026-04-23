@@ -51,7 +51,7 @@ export interface CategoryDetail extends TopLevelCategory {
 
 export const getTopLevelCategoriesWithCounts = cache(
   async function getTopLevelCategoriesWithCounts(): Promise<TopLevelCategory[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Step 1 — every active category (parent + children). One round-trip.
     const { data: catRows, error: catErr } = await supabase
@@ -127,7 +127,7 @@ export const getCategoryBySlug = cache(
   async function getCategoryBySlug(
     slug: string,
   ): Promise<CategoryDetail | null> {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const { data: parent, error: parentErr } = await supabase
       .from('categories')

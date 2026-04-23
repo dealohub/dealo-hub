@@ -35,7 +35,7 @@ export async function requireAdmin(opts: {
   locale: 'ar' | 'en';
   pathname: string;
 }): Promise<{ userId: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

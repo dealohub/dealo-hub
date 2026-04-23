@@ -38,11 +38,12 @@ import PropertiesArticlesStrip from '@/components/shadcnblocks/properties-articl
 
 export const revalidate = 60;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const title =
     params.locale === 'ar'
       ? 'عقارات الكويت — كل منزل موثّق · ديلو هَب'
@@ -64,11 +65,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function PropertiesHubPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
+export default async function PropertiesHubPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
   const [featured, allCards, typeCounts, activity] = await Promise.all([
     getFeaturedProperties({ limit: 6, locale: params.locale }),
     getPropertiesForGrid({ limit: 24, locale: params.locale }),

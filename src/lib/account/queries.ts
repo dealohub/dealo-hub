@@ -86,7 +86,7 @@ export const getMyListings = cache(
   async function getMyListings(
     locale: 'ar' | 'en' = 'ar',
   ): Promise<MyListingRow[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -119,7 +119,7 @@ export const getSavedListings = cache(
   async function getSavedListings(
     locale: 'ar' | 'en' = 'ar',
   ): Promise<ListingCardData[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();

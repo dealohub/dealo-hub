@@ -13,11 +13,12 @@ import SearchResultCard from '@/components/search/search-result-card';
 import ListingActionsMenu from '@/components/my-listings/listing-actions-menu';
 import type { ListingStatus } from '@/lib/listings/manage-transitions';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const t = await getTranslations({ locale: params.locale, namespace: 'auth' });
   return { title: `${t('myListings')} · Dealo Hub`, robots: { index: false, follow: false } };
 }
@@ -32,12 +33,13 @@ const STATUS_TINT: Record<string, string> = {
   deleted: 'bg-foreground/5 text-foreground/50',
 };
 
-export default async function MyListingsPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
-  const supabase = createClient();
+export default async function MyListingsPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

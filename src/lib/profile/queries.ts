@@ -47,7 +47,7 @@ export type PublicProfile = {
 
 /** Look up a profile by its public handle. Returns null if not found or banned. */
 export const getProfileByHandle = cache(async (handle: string): Promise<PublicProfile | null> => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase
     .from('profiles')
     .select(PUBLIC_PROFILE_COLUMNS)
@@ -60,7 +60,7 @@ export const getProfileByHandle = cache(async (handle: string): Promise<PublicPr
 
 /** Fallback lookup for users without a handle — visible via /profile/u/[uuid]. */
 export const getProfileByUuid = cache(async (uuid: string): Promise<PublicProfile | null> => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data } = await supabase
     .from('profiles')
     .select(PUBLIC_PROFILE_COLUMNS)
@@ -73,7 +73,7 @@ export const getProfileByUuid = cache(async (uuid: string): Promise<PublicProfil
 
 /** Full current-user profile — safe to return email here since it's owner-only. */
 export const getCurrentProfile = cache(async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

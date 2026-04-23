@@ -47,11 +47,12 @@ import PropertyOwnershipBanner from '@/components/shadcnblocks/property-ownershi
 
 export const revalidate = 60;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en'; slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en'; slug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const listing = await getPropertyBySlug(params.slug, { locale: params.locale });
   if (!listing) return { title: 'Dealo Hub' };
   const locale = params.locale;
@@ -76,11 +77,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function PropertyDetailPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en'; slug: string };
-}) {
+export default async function PropertyDetailPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en'; slug: string }>;
+  }
+) {
+  const params = await props.params;
   const listing = await getPropertyBySlug(params.slug, { locale: params.locale });
   if (!listing) notFound();
 

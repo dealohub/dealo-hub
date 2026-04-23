@@ -14,7 +14,7 @@ export type ToggleFavoriteResult =
  * `favorites`, so this action only upserts/deletes the row.
  */
 export async function toggleFavorite(listingId: number): Promise<ToggleFavoriteResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

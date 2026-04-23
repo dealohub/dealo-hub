@@ -21,7 +21,7 @@ export async function uploadAvatarBlob(
   blob: Blob,
   extension: 'webp' | 'jpg' | 'png' = 'webp'
 ): Promise<{ url: string; path: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const path = avatarObjectPath(userId, extension);
 
   const { error } = await supabase.storage.from(AVATARS_BUCKET).upload(path, blob, {
@@ -39,7 +39,7 @@ export async function uploadAvatarBlob(
 /** Best-effort delete of an old avatar object. Never throws — logs + swallows. */
 export async function deleteAvatarObject(path: string): Promise<void> {
   if (!path) return;
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.storage.from(AVATARS_BUCKET).remove([path]);
   if (error) console.error('[storage] delete old avatar failed:', error.message);
 }

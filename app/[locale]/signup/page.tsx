@@ -4,11 +4,12 @@ import { getTranslations } from 'next-intl/server';
 import AuthCard from '@/components/auth/auth-card';
 import SignupForm from '@/components/auth/signup-form';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const t = await getTranslations({ locale: params.locale, namespace: 'auth.signup' });
   return {
     title: `${t('metaTitle')} · Dealo Hub`,
@@ -16,11 +17,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function SignupPage({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}) {
+export default async function SignupPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+) {
+  const params = await props.params;
   const t = await getTranslations({ locale: params.locale, namespace: 'auth.signup' });
   return (
     <AuthCard

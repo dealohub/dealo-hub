@@ -21,13 +21,14 @@ import { parseFiltersFromSearchParams } from '@/lib/browse/filters';
  * LLM is down or not configured.
  */
 
-export async function generateMetadata({
-  params,
-  searchParams,
-}: {
-  params: { locale: 'ar' | 'en' };
-  searchParams: Record<string, string | string[] | undefined>;
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+  }
+): Promise<Metadata> {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const t = await getTranslations({ locale: params.locale, namespace: 'search' });
   const q = (searchParams.q as string | undefined)?.trim();
   return {
@@ -36,13 +37,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function SearchPage({
-  params,
-  searchParams,
-}: {
-  params: { locale: 'ar' | 'en' };
-  searchParams: Record<string, string | string[] | undefined>;
-}) {
+export default async function SearchPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const t = await getTranslations({ locale: params.locale, namespace: 'search' });
   const q = ((searchParams.q as string | undefined) ?? '').trim();
   const filters = parseFiltersFromSearchParams(

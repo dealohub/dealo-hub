@@ -41,7 +41,7 @@ export interface SitemapListingEntry {
  * self-FK gotcha (already noted across the codebase).
  */
 export async function getAllPublicListingEntries(): Promise<SitemapListingEntry[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('listings')
@@ -102,7 +102,7 @@ export async function getAllPublicListingEntries(): Promise<SitemapListingEntry[
 export async function getAllPublicCategorySlugs(): Promise<
   Array<{ slug: string; updatedAt: string }>
 > {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('categories')
     .select('slug, created_at')

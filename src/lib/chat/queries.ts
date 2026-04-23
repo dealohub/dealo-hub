@@ -180,7 +180,7 @@ const CONVERSATION_SELECT = `
 
 /** Batch-fetch parent slugs for a set of parent_ids (one DB round-trip). */
 async function fetchParentSlugMap(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   parentIds: number[],
 ): Promise<Map<number, string>> {
   const map = new Map<number, string>();
@@ -210,7 +210,7 @@ async function fetchParentSlugMap(
 export const getInbox = cache(async function getInbox(opts: {
   includeArchived?: boolean;
 } = {}): Promise<InboxConversation[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -247,7 +247,7 @@ export const getInbox = cache(async function getInbox(opts: {
  * Drives the navbar messages badge.
  */
 export const getUnreadCount = cache(async function getUnreadCount(): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -273,7 +273,7 @@ export const getUnreadCount = cache(async function getUnreadCount(): Promise<num
 export const getThread = cache(async function getThread(
   conversationId: number,
 ): Promise<ChatThread | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

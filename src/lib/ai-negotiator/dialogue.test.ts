@@ -27,7 +27,6 @@ import type { PromptContext } from './prompts';
 
 const KWD_650K = 650_000_000;
 const KWD_600K = 600_000_000; // seller's floor in tests — must NEVER appear in prompt
-const KWD_580K = 580_000_000;
 
 const baseCtx: PromptContext = {
   tone: 'warm',

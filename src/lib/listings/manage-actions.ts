@@ -67,7 +67,7 @@ async function loadOwnListing(listingId: number) {
     return { ok: false as const, error: 'not_found' as const };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false as const, error: 'not_authenticated' as const };
 

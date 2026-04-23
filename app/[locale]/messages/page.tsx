@@ -8,23 +8,25 @@ import { getInbox } from '@/lib/chat/queries';
 import ConversationListItem from '@/components/chat/conversation-list-item';
 import EcommerceNavbar1 from '@/components/shadcnblocks/ecommerce-navbar-1';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: 'ar' | 'en' };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const t = await getTranslations({ locale: params.locale, namespace: 'marketplace.chat' });
   return { title: t('metaTitle'), robots: { index: false, follow: false } };
 }
 
-export default async function MessagesInboxPage({
-  params,
-  searchParams,
-}: {
-  params: { locale: 'ar' | 'en' };
-  searchParams: { tab?: string };
-}) {
-  const supabase = createClient();
+export default async function MessagesInboxPage(
+  props: {
+    params: Promise<{ locale: 'ar' | 'en' }>;
+    searchParams: Promise<{ tab?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
