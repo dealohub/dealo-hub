@@ -214,7 +214,7 @@ const LiveFeed = ({ initialFeed, activitySignals }: Props) => {
         <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-6 lg:grid-cols-12">
 
           {/* ─── Tile 1 · LIVE FEED (swapped in place of first hero image) ─── */}
-          <div className="relative overflow-hidden rounded-3xl border bg-muted md:col-span-2 md:row-span-2 md:h-[400px] lg:col-span-4 lg:h-full">
+          <div className="relative overflow-hidden rounded-3xl bg-muted md:col-span-2 md:row-span-2 md:h-[400px] lg:col-span-4 lg:h-full">
             <div className="flex items-center justify-between px-6 pt-6">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
@@ -247,7 +247,7 @@ const LiveFeed = ({ initialFeed, activitySignals }: Props) => {
           </div>
 
           {/* ─── Tile 2 · Build your interface (Feature 261 original) ─── */}
-          <div className="relative h-60 overflow-hidden rounded-3xl border md:col-span-2 md:row-span-2 md:h-[400px] lg:col-span-4 lg:h-full">
+          <div className="relative h-60 overflow-hidden rounded-3xl md:col-span-2 md:row-span-2 md:h-[400px] lg:col-span-4 lg:h-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-1.svg"
@@ -262,7 +262,7 @@ const LiveFeed = ({ initialFeed, activitySignals }: Props) => {
           </div>
 
           {/* ─── Tile 3 · 95% ─── */}
-          <Card className="col-span-1 rounded-3xl md:col-span-2 md:row-span-1 md:h-[192px] lg:col-span-2">
+          <Card className="col-span-1 rounded-3xl border-0 md:col-span-2 md:row-span-1 md:h-[192px] lg:col-span-2">
             <CardContent className="flex h-full flex-col justify-center p-4 md:p-6">
               <div className="mb-2 text-4xl font-bold md:text-4xl lg:text-6xl">
                 95
@@ -277,7 +277,7 @@ const LiveFeed = ({ initialFeed, activitySignals }: Props) => {
           </Card>
 
           {/* ─── Tile 4 · placeholder image ─── */}
-          <div className="relative col-span-1 h-60 overflow-hidden rounded-3xl border md:col-span-2 md:row-span-1 md:h-[192px] lg:col-span-2">
+          <div className="relative col-span-1 h-60 overflow-hidden rounded-3xl md:col-span-2 md:row-span-1 md:h-[192px] lg:col-span-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-2.svg"
@@ -287,7 +287,7 @@ const LiveFeed = ({ initialFeed, activitySignals }: Props) => {
           </div>
 
           {/* ─── Tile 5 · $299 ─── */}
-          <Card className="col-span-1 rounded-3xl bg-muted md:col-span-4 md:row-span-1 md:h-[300px] lg:col-span-4">
+          <Card className="col-span-1 rounded-3xl border-0 bg-muted md:col-span-4 md:row-span-1 md:h-[300px] lg:col-span-4">
             <CardContent className="h-full p-4 md:p-5">
               <div className="flex h-full flex-col justify-end">
                 <div className="space-y-2">
@@ -304,7 +304,7 @@ const LiveFeed = ({ initialFeed, activitySignals }: Props) => {
           </Card>
 
           {/* ─── Tile 6 · 300+ developers ─── */}
-          <Card className="col-span-1 rounded-3xl md:col-span-2 md:row-span-1 md:h-[300px] lg:col-span-3">
+          <Card className="col-span-1 rounded-3xl border-0 md:col-span-2 md:row-span-1 md:h-[300px] lg:col-span-3">
             <CardContent className="flex h-full flex-col justify-center p-4 md:p-5">
               <div className="mb-3">
                 <span className="text-4xl font-bold md:text-3xl lg:text-6xl">
@@ -332,7 +332,7 @@ const LiveFeed = ({ initialFeed, activitySignals }: Props) => {
           </Card>
 
           {/* ─── Tile 7 · placeholder image ─── */}
-          <Card className="relative col-span-1 h-60 overflow-hidden rounded-3xl md:col-span-3 md:row-span-1 md:h-[300px] lg:col-span-5">
+          <Card className="relative col-span-1 h-60 overflow-hidden rounded-3xl border-0 md:col-span-3 md:row-span-1 md:h-[300px] lg:col-span-5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-3.svg"
@@ -342,7 +342,7 @@ const LiveFeed = ({ initialFeed, activitySignals }: Props) => {
           </Card>
 
           {/* ─── Tile 8 · Rapid Development ─── */}
-          <Card className="relative col-span-1 h-60 overflow-hidden rounded-3xl md:col-span-3 md:row-span-1 md:h-[300px] lg:col-span-4">
+          <Card className="relative col-span-1 h-60 overflow-hidden rounded-3xl border-0 md:col-span-3 md:row-span-1 md:h-[300px] lg:col-span-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/photos/Geometric Staircase and Concrete Wall.jpeg"
