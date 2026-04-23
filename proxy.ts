@@ -8,7 +8,12 @@ import {
 } from '@/lib/supabase/middleware-auth';
 
 /**
- * Next.js Middleware — runs on every request.
+ * Next.js proxy — runs on every request at the edge.
+ *
+ * File name was `middleware.ts` pre-Next-16; the convention was renamed
+ * to `proxy.ts` in Next 16 to better reflect what this file does (it
+ * sits between the client and the app, like a proxy — it doesn't sit
+ * IN the middle of the app). Behavior is unchanged.
  *
  * Responsibilities:
  * 1. Locale detection + routing (next-intl)
@@ -20,7 +25,7 @@ import {
 
 const intlMiddleware = createMiddleware(routing);
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   // 1. Locale routing
   const response = intlMiddleware(request);
 
