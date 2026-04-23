@@ -20,7 +20,7 @@ const ARTICLES = [
     key: 'used-suv',
     category: 'buying',
     minutes: 6,
-    image: 'https://images.unsplash.com/photo-1519440938413-ef91a6a76342?w=600&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&auto=format&fit=crop',
   },
   {
     key: 'boat-first',
@@ -77,6 +77,7 @@ export const RidesArticlesStrip = () => {
                   alt=""
                   className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                   loading="lazy"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/35 via-transparent to-transparent" />
                 <span className="absolute start-3 top-3 inline-flex items-center gap-1 rounded-full bg-foreground/65 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-background backdrop-blur-md">
