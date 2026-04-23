@@ -1,5 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
-import { LayoutDashboard, ListChecks } from 'lucide-react';
 import type { AdminBadges } from '@/lib/admin/types';
 
 /**
@@ -11,21 +9,33 @@ import type { AdminBadges } from '@/lib/admin/types';
  * `items` array; the NavGroup renderer already supports that nested shape.
  *
  * The schema is built server-side (inside `app/[locale]/admin/layout.tsx`)
- * so icons stay as real component references rather than strings, and so
- * badge counts are hydrated once per request from a single RPC round-trip.
+ * so titles can be translated once per request and badge counts are
+ * hydrated from a single RPC round-trip.
+ *
+ * Icons are referenced by NAME (string union below), not by component
+ * import. This keeps the schema a plain serializable object — required
+ * because Next 16 / React 19 refuses to pass component references from
+ * a Server Component to a Client Component ("Only plain objects can be
+ * passed…"). The NavGroup client component maps names → lucide-react
+ * components via a local lookup table.
  */
+
+/** Icon names supported by the admin sidebar. Add new names here AND
+ *  extend the `ICONS` map inside `nav-group.tsx`. Keeping both in the
+ *  same module would drag `lucide-react` into the server graph. */
+export type AdminIconName = 'LayoutDashboard' | 'ListChecks';
 
 export interface AdminNavLeaf {
   title: string;
   url: string;
-  icon?: LucideIcon;
+  icon?: AdminIconName;
   /** Rendered inside a `<Badge>` on the right edge of the row. */
   badge?: string | null;
 }
 
 export interface AdminNavGroupedItem {
   title: string;
-  icon?: LucideIcon;
+  icon?: AdminIconName;
   badge?: string | null;
   items: AdminNavLeaf[];
 }
@@ -63,12 +73,12 @@ export function buildAdminNavGroups(
         {
           title: t('nav.dashboard'),
           url: prefix,
-          icon: LayoutDashboard,
+          icon: 'LayoutDashboard',
         },
         {
           title: t('nav.listings'),
           url: `${prefix}/listings`,
-          icon: ListChecks,
+          icon: 'ListChecks',
           badge: heldBadge,
         },
       ],

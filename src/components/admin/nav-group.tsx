@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, LayoutDashboard, ListChecks, type LucideIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   Collapsible,
@@ -20,7 +20,20 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import type { AdminNavGroup as AdminNavGroupType } from '@/data/admin-sidebar';
+import type {
+  AdminIconName,
+  AdminNavGroup as AdminNavGroupType,
+} from '@/data/admin-sidebar';
+
+/**
+ * Icon name → lucide component. Kept client-side because Server Components
+ * can't pass component references to Client Components in React 19/Next 16.
+ * Extend here + in the `AdminIconName` union in `admin-sidebar.ts` together.
+ */
+const ICONS: Record<AdminIconName, LucideIcon> = {
+  LayoutDashboard,
+  ListChecks,
+};
 
 interface NavGroupProps {
   group: AdminNavGroupType;
@@ -43,6 +56,8 @@ export function NavGroup({ group }: NavGroupProps) {
       <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
       <SidebarMenu>
         {group.items.map((item) => {
+          const ItemIcon = item.icon ? ICONS[item.icon] : null;
+
           // Leaf item → direct link.
           if (!('items' in item)) {
             return (
@@ -56,7 +71,7 @@ export function NavGroup({ group }: NavGroupProps) {
                     href={item.url}
                     onClick={() => setOpenMobile(false)}
                   >
-                    {item.icon && <item.icon />}
+                    {ItemIcon && <ItemIcon />}
                     <span>{item.title}</span>
                     {item.badge && <NavBadge>{item.badge}</NavBadge>}
                   </Link>
@@ -81,7 +96,7 @@ export function NavGroup({ group }: NavGroupProps) {
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton tooltip={item.title}>
-                    {item.icon && <item.icon />}
+                    {ItemIcon && <ItemIcon />}
                     <span>{item.title}</span>
                     {item.badge && <NavBadge>{item.badge}</NavBadge>}
                     {/* ms-auto so the chevron sits on the end side in
@@ -92,23 +107,26 @@ export function NavGroup({ group }: NavGroupProps) {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
-                    {item.items.map((sub) => (
-                      <SidebarMenuSubItem key={sub.title}>
-                        <SidebarMenuSubButton
-                          asChild
-                          isActive={isLeafActive(pathname, sub.url)}
-                        >
-                          <Link
-                            href={sub.url}
-                            onClick={() => setOpenMobile(false)}
+                    {item.items.map((sub) => {
+                      const SubIcon = sub.icon ? ICONS[sub.icon] : null;
+                      return (
+                        <SidebarMenuSubItem key={sub.title}>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={isLeafActive(pathname, sub.url)}
                           >
-                            {sub.icon && <sub.icon />}
-                            <span>{sub.title}</span>
-                            {sub.badge && <NavBadge>{sub.badge}</NavBadge>}
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
+                            <Link
+                              href={sub.url}
+                              onClick={() => setOpenMobile(false)}
+                            >
+                              {SubIcon && <SubIcon />}
+                              <span>{sub.title}</span>
+                              {sub.badge && <NavBadge>{sub.badge}</NavBadge>}
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      );
+                    })}
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </SidebarMenuItem>

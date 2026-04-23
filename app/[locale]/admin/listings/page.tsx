@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { AdminShell } from '@/components/admin/admin-shell';
+import { SiteHeader } from '@/components/site-header';
 import { AdminHeader } from '@/components/admin/admin-header';
 import { ListingsTable } from '@/components/admin/listings-table';
+import LocaleToggle from '@/components/locale-toggle';
+import { getAdminContext } from '@/lib/admin/admin-context';
 import {
   LISTING_STATUS_TABS,
   getListingStatusCounts,
@@ -29,9 +33,14 @@ interface SearchParams {
 /**
  * Admin listings moderation page.
  *
- * URL-driven state: `?tab=held&q=toyota&page=2` — so refreshing the page
- * and deep-linking both work. The client table mutates these query params
- * via `router.replace()` when the admin filters or paginates.
+ * Phase 9c: now owns its own shell. The parent layout is shell-less (so the
+ * `/admin` dashboard can host the self-contained `dashboard9` block), which
+ * means the moderation routes bring their own `AdminShell` —
+ * `SidebarProvider` + dashboard-01 `AppSidebar` + `SidebarInset` — directly.
+ *
+ * Shell data (auth + profile + persisted sidebar cookie) comes from the
+ * same `getAdminContext` the layout's auth gate uses; React's `cache()`
+ * deduplicates the Supabase round-trips for us.
  */
 export default async function AdminListingsPage(props: {
   params: Promise<{ locale: 'ar' | 'en' }>;
@@ -45,13 +54,15 @@ export default async function AdminListingsPage(props: {
   const q = (searchParams.q ?? '').trim();
   const page = parsePage(searchParams.page);
 
-  const [pageResult, counts] = await Promise.all([
+  const [pageResult, counts, { sidebarUser, defaultOpen }] = await Promise.all([
     getListingsPage({ tab, q, page }),
     getListingStatusCounts(),
+    getAdminContext({ locale, pathname: '/admin/listings' }),
   ]);
 
   return (
-    <>
+    <AdminShell defaultOpen={defaultOpen} user={sidebarUser}>
+      <SiteHeader title={t('listings.title')} />
       <AdminHeader
         title={t('listings.title')}
         subtitle={t('listings.subtitle')}
@@ -66,7 +77,8 @@ export default async function AdminListingsPage(props: {
           counts={counts}
         />
       </main>
-    </>
+      <LocaleToggle />
+    </AdminShell>
   );
 }
 

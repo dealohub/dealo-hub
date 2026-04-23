@@ -1,50 +1,40 @@
 'use client';
 
+import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/admin/app-sidebar';
-import type { AdminNavGroup, AdminUser } from '@/data/admin-sidebar';
+
+type SidebarUser = {
+  name: string;
+  email: string;
+  avatar: string;
+};
 
 interface AdminShellProps {
-  /** Locale for locale-aware bits (dropdown side, sign-out form). */
-  locale: 'ar' | 'en';
-  /** Nav groups with already-prefixed URLs + translated titles. */
-  navGroups: AdminNavGroup[];
-  /** Current admin for the footer nav-user widget. */
-  user: AdminUser;
   /** Persisted sidebar open/closed state from the `sidebar_state` cookie. */
   defaultOpen: boolean;
+  /** Current admin — drives the footer NavUser widget. */
+  user: SidebarUser;
   children: React.ReactNode;
 }
 
 /**
- * Outer chrome for `/admin/*`. Wires the sidebar primitive, hydrates the
- * nav schema + user, and hands the rest of the route tree to `SidebarInset`
- * so `<header>` / `<main>` flex correctly next to the sidebar.
+ * Outer chrome for `/admin/*`.
  *
- * Why client-side:
- *   The sidebar primitive uses React context + a keyboard shortcut and a
- *   cookie write-back on toggle — all client-only. The layout's server
- *   component pre-computes data and hands it down as props, so we don't
- *   re-fetch in the browser.
+ * This now delegates to the original shadcn `dashboard-01` AppSidebar
+ * (installed at `src/components/app-sidebar.tsx`) so every feature from
+ * the reference kit — nav groups, documents list, quick create, nav-user
+ * dropdown — ships as-is. The only integration point is the `user` prop,
+ * which we fill from the live admin's profile so NavUser shows the real
+ * account rather than the demo "shadcn / m@example.com".
  *
- * Side selection:
- *   Arabic is RTL so the sidebar lives on the right edge of the viewport;
- *   English (LTR) keeps it on the left. The `Sidebar` primitive's `side`
- *   prop is physical (`"left"` | `"right"`) because Radix Dialog's slide
- *   animation pins to a physical edge — the consumer picks based on dir.
+ * Dealo-specific customization (branding, locale-aware nav, RTL side)
+ * happens on top of this scaffold in later passes — the current goal is
+ * the original, full-featured design intact.
  */
-export function AdminShell({
-  locale,
-  navGroups,
-  user,
-  defaultOpen,
-  children,
-}: AdminShellProps) {
-  const side = locale === 'ar' ? 'right' : 'left';
-
+export function AdminShell({ defaultOpen, user, children }: AdminShellProps) {
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <AppSidebar side={side} locale={locale} navGroups={navGroups} user={user} />
+      <AppSidebar variant="inset" user={user} />
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   );

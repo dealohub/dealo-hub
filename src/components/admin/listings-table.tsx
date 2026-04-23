@@ -323,7 +323,7 @@ export function ListingsTable({
         />
       )}
 
-      <div className="border-border/60 overflow-hidden rounded-xl border">
+      <div className="border-border/60 overflow-x-auto rounded-xl border">
         <Table>
           <TableHeader className="bg-muted/40">
             <TableRow>
@@ -482,16 +482,20 @@ function ListingRow({
       <TableCell>
         <Thumb url={row.thumbnail_url} alt={row.title} />
       </TableCell>
-      <TableCell className="max-w-[260px]">
-        <Link
-          href={publicHref}
-          className="group/title inline-flex items-center gap-1.5 font-medium hover:underline"
-          target="_blank"
-        >
-          <span className="truncate">{row.title}</span>
-          <ExternalLink className="size-3 opacity-0 transition-opacity group-hover/title:opacity-60" />
-        </Link>
-        <p className="text-muted-foreground text-[11px] tabular-nums">#{row.id}</p>
+      <TableCell>
+        {/* Fixed-width block so `truncate` actually clips; table-cell
+            `max-width` alone is ignored by HTML table auto layout. */}
+        <div className="w-[14rem] md:w-[16rem] xl:w-[20rem]">
+          <Link
+            href={publicHref}
+            className="group/title flex min-w-0 items-center gap-1.5 font-medium hover:underline"
+            target="_blank"
+          >
+            <span className="truncate">{row.title}</span>
+            <ExternalLink className="size-3 shrink-0 opacity-0 transition-opacity group-hover/title:opacity-60" />
+          </Link>
+          <p className="text-muted-foreground text-[11px] tabular-nums">#{row.id}</p>
+        </div>
       </TableCell>
       <TableCell className="hidden md:table-cell">
         <p className="truncate text-sm">{sellerLabel}</p>
