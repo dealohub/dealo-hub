@@ -130,7 +130,7 @@ Skipping skills on design work = regression. Non-negotiable.
 
 - **Stack:** Next.js 14 App Router · Supabase · Tailwind (RTL with `tailwind-logical`) · next-intl
 - **Locales:** Arabic (default, RTL) · English
-- **Live Feed section:** `src/components/shadcnblocks/live-feed.tsx` — Feature 261 bento, 1 tile live feed + 7 placeholders queued for marketplace customization
+- **Live Feed section:** `src/components/shadcnblocks/live-feed.tsx` — Feature 284 bento (5 tiles, shadcnblocks) + `LiveStatusBar` + `FeedHeader`. Swapped from Feature 261 on 2026-04-24; tiles still carry default shadcnblocks demo copy/images pending marketplace content.
 - **Translations:** `messages/ar.json` + `messages/en.json` (16 namespaces under `marketplace.*`)
 - **Hook for logical CSS:** use `ms-*` / `pe-*` / `start-*` / `end-*` instead of `ml-*` / `pr-*` / `left-*` / `right-*` for RTL correctness
 - **Standing rule:** no `git push` to origin until design + polish + tests all green together
