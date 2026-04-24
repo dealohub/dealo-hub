@@ -261,6 +261,11 @@ Items deferred from today, ranked roughly by impact:
 ## Commit log
 
 ```
+6d22688 fix(perf): mark hero cover image as eager + fetchPriority high (4 hubs)
+a720575 fix(toggles): hide floating theme + locale toggles on mobile
+4caee59 fix(electronics-live-feed): wrap-around windowing instead of plain slice
+094f64b fix(banners): make sponsored-banner triplet visible on mobile
+94aba77 docs: 2026-04-24 progress report
 4c6ea77 refactor(services): compact trust strip + dedup featured from grid
 60b683a feat(properties): add KFH Home Finance affordability banner
 c11b4e1 refactor(properties): compact trust strip + dedup featured from grid
@@ -280,4 +285,73 @@ fbed276 polish(feature76): tighten vertical spacing
 
 ---
 
-*End of report.*
+## Phase E — Post-Report Audit Pass (added afterwards)
+
+The progress report above was written at the natural pause after `4c6ea77`. The session continued with a **fresh-eyes audit pass** that found four real bugs not reachable by reading diffs alone. Each was uncovered by browsing the live site critically, not by code review — they're the kind of issue a code-review agent would systematically miss because the surface is fine and the bug only shows on a specific viewport or scroll pattern.
+
+### E.1 — Sponsored-banner triplet invisible on mobile (commit `094f64b`)
+
+**Symptom:** All three banners (NBK Finance, Dealo Cash, KFH Home Finance) rendered as blank black boxes on mobile viewports. The article element stayed at `opacity: 0, translateY(24px)` indefinitely.
+
+**Root cause:** `useInView({ margin: '-120px', amount: 0.25 })` is unreachable on mobile. The banners stack to ~870 px tall, the viewport is 844 px, and the −240 px effective margin shrinks the trigger zone to 604 px — narrower than 25 % of the element. Framer-motion's IntersectionObserver never fires.
+
+**Fix:** Drop the negative margin and lower the amount threshold to `0.1` on all three banners. Any 10 % of the element in the real viewport now triggers the entrance animation. Desktop behaviour unchanged — those viewports were already wide enough for the original threshold.
+
+**Diagnostic worth keeping:** `articleOpacity` was still `"0"` even after `scrollIntoView({ block: 'start' })` plus a 1.5 s wait — proof the issue wasn't timing, it was geometry.
+
+### E.2 — Floating theme + locale toggles obscured the mobile action bar (commit `a720575`)
+
+**Symptom:** On `/tech/[slug]` (and every detail page, the same template), the bottom-right `Contact seller` CTA inside `ElectronicsDetailMobileActionBar` was clipped/obscured by the floating `ThemeToggle` (`bottom-4 end-4`) and `LocaleToggle` (`bottom-4 end-16`).
+
+**Geometry:** Action bar at `bottom: 0, height: 65 px` spans y=779–844 on a 844-tall viewport. Toggles at `bottom-4` (y=788) sit *inside* that range. The most important CTA on the most important screen at the moment of conversion was visually fighting two redundant utility buttons.
+
+**Redundancy verification:** Verified live via `evaluate` that the navbar already exposes both `Switch to ar` and `Toggle theme` buttons in its top bar — so the floating duplicates added zero discoverability and only cost visibility.
+
+**Fix:** Add `hidden md:grid` to both toggle components. Desktop unchanged (grid is the original display value). On mobile they collapse to `display: none` and the action bar reclaims its space.
+
+### E.3 — `LiveFeed` rotation slice goes out of bounds (commit `4caee59`)
+
+**Symptom:** Code-review surfaced (and live trace confirmed) that the rotation tick produces a partial visible window every 8 s when items.length is between 5 and 7 (or 13–15, etc.). The adaptive grid added in `deee7af` re-derives column count from `visible.length` each render, so the layout would thrash from `grid-cols-4 → 3 → 2 → 1` then snap back. Visible as periodic flicker in the `Happening now` section.
+
+**Root cause:** `rotation = [...items, ...items]` (length 2N), but `visible = rotation.slice(tick, tick + VISIBLE_COUNT)`. When `tick` lands in the last `VISIBLE_COUNT − 1` positions, `slice` returns fewer than `VISIBLE_COUNT` items because the slice end exceeds the array length.
+
+**Fix:** Replace the slice with wrap-around windowing:
+
+```ts
+const visible = Array.from(
+  { length: Math.min(VISIBLE_COUNT, rotation.length) },
+  (_, i) => rotation[(tick + i) % rotation.length],
+);
+```
+
+Modulo guarantees a full window regardless of `tick` position. `Math.min` preserves the thin-inventory case where rotation just equals items (no doubling) and we want fewer than `VISIBLE_COUNT` cards.
+
+### E.4 — LCP performance regression + broken Unsplash seed image (commit `6d22688`)
+
+Two issues from the same root cause (a system-wide audit of console output):
+
+**E.4a — LCP without `loading="eager"`:**
+- Next.js fired a console warning for `/tech` flagging the featured-card cover as the LCP element with no eager-loading hint.
+- All four hero-split components (`tech`, `properties`, `rides`, `services`) render the cover with a plain `<img>` — not `next/image` — so Next.js can't auto-prioritize it.
+- **Fix:** Added `loading="eager"` + `fetchPriority="high"` to the hero cover `<img>` in all four hubs. Conservative — kept the plain `<img>` to preserve the existing `onError` fallback behaviour.
+
+**E.4b — Broken Unsplash seed image (404):**
+- `supabase/migrations/0036_seed_electronics_listing_images.sql:87` referenced `photo-1663487117747-4a076c91ac4e` (iPhone 14 Pro front), which Unsplash deleted. Next.js image optimizer returned 404 every time the iPhone-14-Pro-Badal listing rendered.
+- **Verification:** `curl -sI` confirmed 4 candidate replacement URLs return 200; picked `photo-1591337676887-a217a6970a8a` (147 KB JPEG, popular iPhone shot, low deletion risk).
+- **Fix landed in two places:** updated the seed migration for future deploys, then ran an `UPDATE listing_images SET url = ... WHERE url = ...` via the Supabase MCP against the live DB so the fix takes effect immediately (1 row affected, image id 99 / listing id 32). Verified clean: console shows 0 errors and 0 warnings on `/`, `/tech`, and `/properties`.
+
+### Audit lesson
+
+Three of these four bugs (E.1, E.2, E.4) are invisible to code-review agents because they only manifest on a specific viewport or screen position. The fourth (E.3) was the only one a code-review pass actually flagged, and the same audit independently confirmed it via traced execution.
+
+The takeaway: **diff-only review catches code-shape issues; visual / instrumented review catches geometry issues**. Both are necessary. Today's sequence was right — wrote, then reviewed, then audited live. None of the three would have caught the others' bugs alone.
+
+---
+
+## Final commit count
+
+20 commits pushed today (16 substantive + 4 polish/swap from the morning + the docs commit). Net result: every hub page on the site has been touched, the sponsored-banner triplet is complete and renders on every viewport, the trust-strip pattern is consistent across all four verticals, and the console is clean.
+
+---
+
+*End of report (revised after audit pass).*
