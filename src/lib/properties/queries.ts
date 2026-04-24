@@ -553,7 +553,9 @@ export const getSimilarProperties = cache(
  */
 export const getFeaturedProperties = cache(
   async function getFeaturedProperties(
-    opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
+    opts: { limit?: number; locale: 'ar' | 'en'; excludeIds?: number[] } = {
+      locale: 'ar',
+    },
   ): Promise<PropertyCard[]> {
     const limit = opts.limit ?? 6;
     const supabase = await createClient();
@@ -569,14 +571,18 @@ export const getFeaturedProperties = cache(
     const subCatIds = (catData ?? []).map((c: any) => c.id);
     if (subCatIds.length === 0) return [];
 
-    const { data, error } = await supabase
+    let q = supabase
       .from('listings')
       .select(CARD_SELECT)
       .in('category_id', subCatIds)
       .eq('status', 'live')
       .eq('is_featured', true)
       .not('fraud_status', 'in', '(held,rejected)')
-      .is('soft_deleted_at', null)
+      .is('soft_deleted_at', null);
+    if (opts.excludeIds && opts.excludeIds.length > 0) {
+      q = q.not('id', 'in', `(${opts.excludeIds.join(',')})`);
+    }
+    const { data, error } = await q
       .order('verification_tier', { ascending: false }) // dealo_inspected > ai_verified > unverified
       .order('published_at', { ascending: false })
       .limit(limit);
@@ -613,6 +619,7 @@ export const getPropertiesForGrid = cache(
       propertyType?: string;
       cityId?: number;
       locale: 'ar' | 'en';
+      excludeIds?: number[];
     } = { locale: 'ar' },
   ): Promise<PropertyCard[]> {
     const limit = opts.limit ?? 24;
@@ -657,6 +664,9 @@ export const getPropertiesForGrid = cache(
     }
     if (opts.cityId) {
       q = q.eq('city_id', opts.cityId);
+    }
+    if (opts.excludeIds && opts.excludeIds.length > 0) {
+      q = q.not('id', 'in', `(${opts.excludeIds.join(',')})`);
     }
 
     const { data, error } = await q
@@ -759,7 +769,9 @@ export interface PropertyActivityItem {
 
 export const getRecentPropertyActivity = cache(
   async function getRecentPropertyActivity(
-    opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
+    opts: { limit?: number; locale: 'ar' | 'en'; excludeIds?: number[] } = {
+      locale: 'ar',
+    },
   ): Promise<PropertyActivityItem[]> {
     const limit = opts.limit ?? 12;
     const supabase = await createClient();
@@ -778,13 +790,17 @@ export const getRecentPropertyActivity = cache(
     const categoryIds = (kids.data ?? []).map((c: any) => c.id);
     if (categoryIds.length === 0) return [];
 
-    const { data, error } = await supabase
+    let q = supabase
       .from('listings')
       .select(CARD_SELECT + ', is_hot, old_price_minor_units')
       .in('category_id', categoryIds)
       .eq('status', 'live')
       .not('fraud_status', 'in', '(held,rejected)')
-      .is('soft_deleted_at', null)
+      .is('soft_deleted_at', null);
+    if (opts.excludeIds && opts.excludeIds.length > 0) {
+      q = q.not('id', 'in', `(${opts.excludeIds.join(',')})`);
+    }
+    const { data, error } = await q
       .order('published_at', { ascending: false })
       .limit(limit);
 

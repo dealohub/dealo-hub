@@ -71,11 +71,27 @@ export default async function PropertiesHubPage(
   }
 ) {
   const params = await props.params;
-  const [featured, allCards, typeCounts, activity] = await Promise.all([
+  // Dedup chain — but the main grid is the catalog itself, so it only
+  // excludes the curated Featured set (not the Activity ticker, since
+  // "recent" listings rightfully belong to the catalog too). This keeps
+  // Featured / Activity visually distinct while preserving the grid as
+  // the page's center of gravity even with thin inventory.
+  const [featured, typeCounts] = await Promise.all([
     getFeaturedProperties({ limit: 6, locale: params.locale }),
-    getPropertiesForGrid({ limit: 24, locale: params.locale }),
     getPropertyTypeCounts(),
-    getRecentPropertyActivity({ limit: 12, locale: params.locale }),
+  ]);
+  const featuredIds = featured.map(f => f.id);
+  const [activity, allCards] = await Promise.all([
+    getRecentPropertyActivity({
+      limit: 12,
+      locale: params.locale,
+      excludeIds: featuredIds,
+    }),
+    getPropertiesForGrid({
+      limit: 24,
+      locale: params.locale,
+      excludeIds: featuredIds,
+    }),
   ]);
 
   const inspectedCount = allCards.filter(
