@@ -69,7 +69,15 @@ export default function ElectronicsLiveFeed({ items }: Props) {
 
   if (items.length === 0) return null;
 
-  const visible = rotation.slice(tick, tick + VISIBLE_COUNT);
+  // Wrap-around windowing instead of plain slice — slice(tick, tick + N)
+  // returns fewer than N items when `tick` lands in the last N - 1
+  // positions, which would make the adaptive grid (added in deee7af)
+  // thrash from grid-cols-4 → 3 → 2 → 1 every rotation tick. Modulo
+  // keeps the window full at all times.
+  const visible = Array.from(
+    { length: Math.min(VISIBLE_COUNT, rotation.length) },
+    (_, i) => rotation[(tick + i) % rotation.length],
+  );
 
   return (
     <section className="border-y border-border/40 bg-background py-12 md:py-14">
