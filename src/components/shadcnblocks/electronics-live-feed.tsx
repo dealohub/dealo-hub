@@ -52,6 +52,10 @@ export default function ElectronicsLiveFeed({ items }: Props) {
 
   const rotation = useMemo(() => {
     if (items.length === 0) return [];
+    // Only double the array when we actually have enough items to
+    // rotate — padding with duplicates when items.length < VISIBLE_COUNT
+    // shows the same card twice side-by-side, which reads as a bug.
+    if (items.length <= VISIBLE_COUNT) return items;
     return [...items, ...items];
   }, [items]);
 
