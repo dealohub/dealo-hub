@@ -29,7 +29,7 @@ export default function LocaleToggle() {
           router.replace(pathname, { locale: next });
         });
       }}
-      className="fixed bottom-4 end-16 z-50 grid h-10 min-w-10 place-items-center rounded-full border border-border bg-background/80 px-3 text-xs font-semibold uppercase tracking-wider text-foreground shadow-lg backdrop-blur transition hover:bg-muted disabled:opacity-60"
+      className="fixed bottom-4 end-16 z-50 hidden md:grid h-10 min-w-10 place-items-center rounded-full border border-border bg-background/80 px-3 text-xs font-semibold uppercase tracking-wider text-foreground shadow-lg backdrop-blur transition hover:bg-muted disabled:opacity-60"
     >
       {label}
     </button>
