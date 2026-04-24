@@ -35,17 +35,17 @@ export const AIProtectionStrip = () => {
               {t('headline')}
             </h2>
 
-            <p className="mt-5 max-w-[22rem] text-[15px] leading-relaxed text-foreground/50">
+            <p className="mt-5 max-w-[22rem] text-[15px] leading-relaxed text-foreground/75">
               {t('subline')}
             </p>
 
-            <p className="mt-10 text-[11px] leading-loose text-foreground/30">
+            <p className="mt-10 text-[11px] leading-loose text-foreground/55">
               {t('reassurance')}
             </p>
           </motion.div>
 
           {/* Right: numbered feature list */}
-          <div className="flex flex-col justify-center divide-y divide-foreground/[0.07]">
+          <div className="flex flex-col justify-center divide-y divide-foreground/15">
             {FEATURE_KEYS.map((key, i) => (
               <FeatureRow key={key} featureKey={key} index={i} />
             ))}
@@ -82,7 +82,7 @@ const FeatureRow = ({
       {/* Index number */}
       <span
         aria-hidden
-        className="mt-0.5 shrink-0 font-mono text-[11px] font-bold tabular-nums tracking-[0.12em] text-foreground/25 transition-colors duration-300 group-hover:text-[#e30613]"
+        className="mt-0.5 shrink-0 font-mono text-[11px] font-bold tabular-nums tracking-[0.12em] text-foreground/55 transition-colors duration-300 group-hover:text-[#e30613]"
       >
         {num}
       </span>
@@ -92,10 +92,10 @@ const FeatureRow = ({
         <h3 className="text-[15px] font-semibold tracking-tight text-foreground">
           {t(`features.${featureKey}.title`)}
         </h3>
-        <p className="mt-1 text-[13px] leading-relaxed text-foreground/50">
+        <p className="mt-1 text-[13px] leading-relaxed text-foreground/75">
           {t(`features.${featureKey}.desc`)}
         </p>
-        <div className="mt-3 inline-flex items-center gap-1 text-[11px] font-medium text-foreground/30 transition-colors duration-300 group-hover:text-foreground/60">
+        <div className="mt-3 inline-flex items-center gap-1 text-[11px] font-medium text-foreground/55 transition-colors duration-300 group-hover:text-foreground/85">
           <span>{t('learnMore')}</span>
           <svg
             width="10"
