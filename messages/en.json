@@ -1490,40 +1490,6 @@
           }
         }
       },
-      "dealers": {
-        "eyebrow": "Top verified dealers",
-        "title": "The names you already trust",
-        "subtitle": "Authorized, multi-year Gulf dealers with thousands of verified listings on Dealo Hub.",
-        "viewInventory": "View inventory",
-        "browseAll": "Browse all dealers",
-        "stats": {
-          "listings": "listings",
-          "active": "active",
-          "rating": "rating"
-        },
-        "items": {
-          "alFuttaim": {
-            "name": "Al-Futtaim Motors",
-            "specialty": "Automotive",
-            "tagline": "Official Toyota, Lexus, Honda distributor across the Gulf."
-          },
-          "gargash": {
-            "name": "Gargash Motors",
-            "specialty": "Automotive",
-            "tagline": "Official Mercedes-Benz dealer in the UAE since 1964."
-          },
-          "alTayer": {
-            "name": "Al Tayer Motors",
-            "specialty": "Luxury",
-            "tagline": "Ferrari, Maserati, Land Rover and Jaguar partner."
-          },
-          "audiDubai": {
-            "name": "Audi Dubai",
-            "specialty": "Premium",
-            "tagline": "Authorized Audi dealer with complete RS / e-tron lineup."
-          }
-        }
-      },
       "empty": {
         "title": "No rides match your filters yet",
         "subtitle": "Try widening the price range, clearing a filter, or switching sub-type above."

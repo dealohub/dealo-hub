@@ -11,7 +11,6 @@ import RidesFeaturedPremium from '@/components/shadcnblocks/rides-featured-premi
 import RidesMainGrid from '@/components/shadcnblocks/rides-main-grid';
 import RidesFinanceBanner from '@/components/shadcnblocks/rides-finance-banner';
 import RidesArticlesStrip from '@/components/shadcnblocks/rides-articles-strip';
-import RidesDealerSpotlight from '@/components/shadcnblocks/rides-dealer-spotlight';
 import {
   getFeaturedRides,
   getRidesForGrid,
@@ -31,8 +30,7 @@ import {
  *   7. Featured Premium — DB-backed (getFeaturedRides)
  *   8. Main browse grid — DB-backed (getRidesForGrid + getRideTypeCounts)
  *   9. Latest from our experts (articles strip) — editorial
- *  10. Top verified dealers (directory) — editorial
- *  11. Footer
+ *  10. Footer
  *
  * The hub's dynamic sections are pre-fetched server-side and passed
  * down as props. The main grid stays client-side for filter / sort /
@@ -76,7 +74,6 @@ export default async function RidesPage(
       <RidesMainGrid items={grid.items} typeCounts={typeCounts} />
       <RidesFinanceBanner />
       <RidesArticlesStrip />
-      <RidesDealerSpotlight />
       <SiteFooter />
       <ThemeToggle />
       <LocaleToggle />
