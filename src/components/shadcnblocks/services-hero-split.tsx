@@ -203,10 +203,14 @@ export default function ServicesHeroSplit({
               <div className="absolute inset-0 flex items-center justify-center text-[80px]">
                 <span style={{ filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.3))' }}>{emoji}</span>
               </div>
+              {/* LCP image — render eagerly so Next.js doesn't lazy-load
+                  the hero card cover and tank the LCP score. */}
               <img
                 src={photo}
                 alt={featuredCard?.title ?? ''}
                 className="relative size-full object-cover"
+                loading="eager"
+                fetchPriority="high"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = 'none';
                 }}

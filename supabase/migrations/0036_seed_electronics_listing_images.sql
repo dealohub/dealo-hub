@@ -84,7 +84,7 @@ BEGIN
   IF FOUND THEN
     DELETE FROM listing_images WHERE listing_id = v_id;
     INSERT INTO listing_images (listing_id, url, width, height, position, category, alt_text) VALUES
-      (v_id, 'https://images.unsplash.com/photo-1663487117747-4a076c91ac4e?w=1600&auto=format&fit=crop&q=80', 1600, 1200, 0, 'exterior',        'iPhone 14 Pro — front'),
+      (v_id, 'https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=1600&auto=format&fit=crop&q=80', 1600, 1200, 0, 'exterior',        'iPhone 14 Pro — front'),
       (v_id, 'https://images.unsplash.com/photo-1676419172770-ec2c2b9a6f62?w=1600&auto=format&fit=crop&q=80', 1600, 1200, 1, 'exterior',        'iPhone 14 Pro — Dynamic Island'),
       (v_id, 'https://images.unsplash.com/photo-1592286927505-1def25115558?w=1600&auto=format&fit=crop&q=80', 1600, 1200, 2, 'details',         'iPhone 14 Pro — camera bump'),
       (v_id, 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=1600&auto=format&fit=crop&q=80', 1600, 1200, 3, 'power_on_screen', 'iPhone 14 Pro — powered on in hand');

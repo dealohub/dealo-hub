@@ -149,11 +149,15 @@ export default function PropertiesHeroSplit({
 
             {/* Image */}
             <div className="relative aspect-[16/10] w-full overflow-hidden">
+              {/* LCP image — render eagerly so Next.js doesn't lazy-load
+                  the hero card cover and tank the LCP score. */}
               {featuredCard?.cover ? (
                 <img
                   src={featuredCard.cover}
                   alt={featuredCard.title}
                   className="size-full object-cover"
+                  loading="eager"
+                  fetchPriority="high"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).src =
                       'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop';
@@ -164,6 +168,8 @@ export default function PropertiesHeroSplit({
                   src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop"
                   alt=""
                   className="size-full object-cover"
+                  loading="eager"
+                  fetchPriority="high"
                 />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />

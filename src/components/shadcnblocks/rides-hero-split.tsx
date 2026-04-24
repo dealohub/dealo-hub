@@ -128,10 +128,14 @@ export const RidesHeroSplit = () => {
 
             {/* Image */}
             <div className="relative aspect-[16/10] w-full overflow-hidden">
+              {/* LCP image — render eagerly so Next.js doesn't lazy-load
+                  the hero card cover and tank the LCP score. */}
               <img
                 src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1200&auto=format&fit=crop"
                 alt=""
                 className="size-full object-cover"
+                loading="eager"
+                fetchPriority="high"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
 
