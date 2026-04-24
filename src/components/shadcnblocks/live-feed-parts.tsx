@@ -520,101 +520,88 @@ export const SignalRow = ({ item }: { item: SignalItem }) => {
 };
 
 // ─── Featured Partners (standalone full-width section) ────────
-const PARTNERS = [
-  { name: 'Al-Futtaim Motors', kind: 'Automotive',  tagline: 'Official Toyota, Lexus, Honda distributor',      logo: 'AF', tint: '#ef4444', stats: { listings: '1,248', years: '24 yrs', rating: '4.9' } },
-  { name: 'Emaar Properties',  kind: 'Real Estate', tagline: 'Developer of Downtown Dubai & Marina',           logo: 'EM', tint: '#3b82f6', stats: { listings: '892',   years: '28 yrs', rating: '4.8' } },
-  { name: 'Damac Properties',  kind: 'Real Estate', tagline: 'Luxury developer · 12,000+ units delivered',     logo: 'DM', tint: '#3b82f6', stats: { listings: '634',   years: '22 yrs', rating: '4.7' } },
-  { name: 'Gargash Motors',    kind: 'Automotive',  tagline: 'Official Mercedes-Benz dealer',                  logo: 'GM', tint: '#ef4444', stats: { listings: '446',   years: '61 yrs', rating: '4.9' } },
+type PartnerKind = 'automotive' | 'realEstate';
+const PARTNERS: Array<{ name: string; kind: PartnerKind; established: number; tint: string; listings: string }> = [
+  { name: 'Al-Futtaim Motors', kind: 'automotive', established: 2002, tint: '#ef4444', listings: '1,248' },
+  { name: 'Emaar Properties',  kind: 'realEstate', established: 1998, tint: '#3b82f6', listings: '892'   },
+  { name: 'Damac Properties',  kind: 'realEstate', established: 2004, tint: '#3b82f6', listings: '634'   },
+  { name: 'Gargash Motors',    kind: 'automotive', established: 1965, tint: '#ef4444', listings: '446'   },
 ];
 
 export const FeaturedPartnersSection = () => {
   const t = useTranslations('marketplace.partners');
   return (
     <section className="relative w-full bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        {/* Centered header */}
-        <div className="mb-10 flex flex-col items-center text-center">
-          <div className="mb-3 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/50">
-            <span className="h-px w-6 bg-foreground/20" />
-            {t('eyebrow')}
-            <span className="h-px w-6 bg-foreground/20" />
+      <div className="mx-auto max-w-7xl px-6 py-20 lg:py-28">
+        {/* Editorial split: sticky narrative + wordmark grid */}
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-6 lg:gap-16">
+          {/* Sticky editorial column */}
+          <div className="lg:col-span-2 lg:sticky lg:top-28 lg:self-start">
+            <div className="inline-flex items-center gap-2.5">
+              <span className="size-2 rounded-full bg-[#e30613]" aria-hidden />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/50">
+                {t('eyebrow')}
+              </span>
+            </div>
+            <h2 className="mt-5 font-calSans text-3xl font-semibold leading-[1.05] tracking-tight text-foreground sm:text-4xl lg:text-[44px]">
+              {t('headline')}
+            </h2>
+            <p className="mt-4 max-w-sm text-[14px] leading-relaxed text-foreground/55">
+              {t('subline')}
+            </p>
+            <a
+              href="#"
+              className="group mt-7 inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/[0.04] px-4 py-2 text-[12px] font-medium text-foreground/75 transition hover:border-foreground/30 hover:bg-foreground/[0.08] hover:text-foreground"
+            >
+              {t('browseAll')}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5">
+                <path d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </a>
           </div>
-          <h2 className="font-calSans text-3xl font-semibold tracking-tight text-foreground md:text-[34px]">
-            {t('headline')}
-          </h2>
-          <p className="mt-2 max-w-xl text-sm text-foreground/55">
-            {t('subline')}
-          </p>
+
+          {/* Wordmark grid — partners as typeset names, not avatars */}
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-4">
+            {PARTNERS.map((p) => (
+              <li
+                key={p.name}
+                className="group relative flex h-44 items-center justify-center overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.025] transition-all duration-500 hover:border-foreground/25 hover:bg-foreground/[0.045] sm:h-56"
+              >
+                {/* Category microtag — top start */}
+                <div className="absolute start-5 top-5 inline-flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full" style={{ background: p.tint }} aria-hidden />
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/40">
+                    {t(`kinds.${p.kind}`)}
+                  </span>
+                </div>
+
+                {/* Verified tick — top end */}
+                <svg width="14" height="14" viewBox="0 0 24 24" className="absolute end-5 top-5 opacity-70 transition-opacity group-hover:opacity-100" aria-hidden>
+                  <path d="M12 2l2.4 2.4 3.3-.4.6 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.6 3.3-3.3-.4L12 22l-2.4-2.4-3.3.4-.6-3.3-3-1.5 1.5-3-1.5-3 3-1.5.6-3.3 3.3.4L12 2z" fill="#3B82F6" />
+                  <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+
+                {/* Wordmark — typography IS the logo */}
+                <span className="px-8 text-center font-calSans text-[26px] font-semibold leading-[1.05] tracking-tight text-foreground/85 transition-colors duration-300 group-hover:text-foreground sm:text-[32px]">
+                  {p.name}
+                </span>
+
+                {/* Listings count — bottom start (mono) */}
+                <span className="absolute bottom-4 start-5 font-mono text-[11px] tabular-nums tracking-tight text-foreground/35">
+                  <span className="text-foreground/60">{p.listings}</span> {t('stats.listings')}
+                </span>
+
+                {/* Established year — bottom end (mono) */}
+                <span className="absolute bottom-4 end-5 font-mono text-[11px] tabular-nums tracking-tight text-foreground/35">
+                  {t('established')} {p.established}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
 
-      {/* 4-col partner grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {PARTNERS.map((p) => (
-          <article
-            key={p.name}
-            className="group relative overflow-hidden rounded-xl border border-foreground/10 bg-foreground/[0.02] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-foreground/[0.04] hover:shadow-lg hover:shadow-foreground/5"
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className="flex size-11 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold tracking-tight"
-                style={{ background: `${p.tint}1a`, color: p.tint }}
-              >
-                {p.logo}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5">
-                  <p className="truncate text-[13px] font-semibold text-foreground">{p.name}</p>
-                  <svg width="12" height="12" viewBox="0 0 24 24" className="shrink-0">
-                    <path d="M12 2l2.4 2.4 3.3-.4.6 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.6 3.3-3.3-.4L12 22l-2.4-2.4-3.3.4-.6-3.3-3-1.5 1.5-3-1.5-3 3-1.5.6-3.3 3.3.4L12 2z" fill="#3B82F6" />
-                    <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-                <p className="text-[10px] uppercase tracking-wider text-foreground/40">{p.kind}</p>
-              </div>
-            </div>
-
-            <p className="mt-3 text-[12px] leading-relaxed text-foreground/55 line-clamp-2 min-h-[2.4em]">
-              {p.tagline}
-            </p>
-
-            <div className="mt-4 flex items-center gap-3 border-t border-foreground/5 pt-3 text-[10px]">
-              <div>
-                <div className="font-semibold tabular-nums text-foreground/90">{p.stats.listings}</div>
-                <div className="text-foreground/40">{t('stats.listings')}</div>
-              </div>
-              <div className="h-7 w-px bg-foreground/10" />
-              <div>
-                <div className="font-semibold tabular-nums text-foreground/90">{p.stats.years}</div>
-                <div className="text-foreground/40">{t('stats.active')}</div>
-              </div>
-              <div className="h-7 w-px bg-foreground/10" />
-              <div>
-                <div className="inline-flex items-center gap-0.5 font-semibold tabular-nums text-foreground/90">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="#F59E0B">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                  {p.stats.rating}
-                </div>
-                <div className="text-foreground/40">{t('stats.rating')}</div>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-
-      {/* Browse-all CTA */}
-      <a
-        href="#"
-        className="mx-auto mt-8 flex w-fit items-center gap-1.5 rounded-full border border-foreground/10 bg-foreground/[0.03] px-5 py-2.5 text-[12px] font-medium text-foreground/70 transition hover:border-foreground/25 hover:bg-foreground/[0.06] hover:text-foreground"
-      >
-        {t('browseAll')}
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
-          <path d="M5 12h14M13 5l7 7-7 7" />
-        </svg>
-      </a>
-
       {/* Market pulse — asymmetric trust strip */}
-      <div className="mx-auto mt-12 flex max-w-3xl flex-col items-center gap-3 sm:flex-row sm:items-end sm:gap-8">
+      <div className="mx-auto mt-16 flex max-w-3xl flex-col items-center gap-3 sm:flex-row sm:items-end sm:gap-8 lg:mt-20">
         {/* Primary: listing depth */}
         <div className="shrink-0 text-center sm:text-start">
           <div className="font-calSans text-[52px] font-semibold leading-none tabular-nums text-foreground">
