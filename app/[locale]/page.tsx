@@ -3,7 +3,6 @@ import Feature283 from '@/components/shadcnblocks/feature-283';
 import FeaturedBrandsStrip from '@/components/shadcnblocks/featured-brands-strip';
 import { Feature76 } from '@/components/feature76';
 import LiveFeed from '@/components/shadcnblocks/live-feed';
-import { FeaturedPartnersSection } from '@/components/shadcnblocks/live-feed-parts';
 import SiteFooter from '@/components/shadcnblocks/site-footer';
 import BackgroundPattern115 from '@/components/shadcnblocks/background-pattern-115';
 import { getLiveFeedListings, pickBalancedHero } from '@/lib/landing/queries';
@@ -77,7 +76,6 @@ export default async function HomePage(
       <FeaturedBrandsStrip />
       <Feature76 />
       <LiveFeed initialFeed={initialFeed} activitySignals={ACTIVITY_SIGNALS} />
-      <FeaturedPartnersSection />
       <SiteFooter />
     </>
   );

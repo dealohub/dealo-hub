@@ -1318,27 +1318,6 @@
         "actionOpen": "Open listing"
       }
     },
-    "partners": {
-      "eyebrow": "Featured partners",
-      "headline": "The names you already trust",
-      "subline": "Verified dealers and developers who have chosen Dealo Hub as a listing channel — because our buyers are pre-qualified.",
-      "browseAll": "Browse all 240+ partners",
-      "established": "Est.",
-      "kinds": {
-        "automotive": "Automotive",
-        "realEstate": "Real Estate"
-      },
-      "stats": {
-        "listings": "listings",
-        "active": "active",
-        "rating": "rating"
-      },
-      "marketPulse": {
-        "total": "Total partners",
-        "premium": "Premium listings",
-        "growth": "Partner growth"
-      }
-    },
     "footerSite": {
       "tagline": "Premium C2C marketplace for the Gulf. Every listing verified by AI + humans — sell with trust, buy with confidence.",
       "trustChip": "AI + Human verified marketplace",
