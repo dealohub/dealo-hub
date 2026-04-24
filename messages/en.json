@@ -245,6 +245,25 @@
       }
     },
     "trustFootnote": "Dealo doesn't ship counterfeit. Sixteen trigger terms (Arabic + English) are rejected at submit.",
+    "tradeIn": {
+      "sponsored": "Sponsored · Dealo Cash",
+      "upTo": "up to",
+      "pitch": "Sell your phone, laptop, or watch in minutes. We quote you now, you confirm at pickup. No haggling, no flake.",
+      "pillar1": "Instant cash payout",
+      "pillar2": "No inspection fee",
+      "pillar3": "Same-day GCC pickup",
+      "calcEyebrow": "Quick quote",
+      "calcTag": "Live",
+      "fieldDevice": "Device",
+      "fieldStorage": "Storage",
+      "fieldCondition": "Condition",
+      "fieldBattery": "Battery",
+      "conditionLikeNew": "Like new",
+      "estimate": "Estimated payout",
+      "cta": "Get my quote",
+      "disclosure": "Quote by",
+      "disclosureTail": "AI-graded. Final pickup inspection adjusts ±10% max."
+    },
     "liveFeed": {
       "eyebrow": "Live · last 24h",
       "title": "Happening now",

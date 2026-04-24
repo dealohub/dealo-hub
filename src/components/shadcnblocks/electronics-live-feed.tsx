@@ -89,7 +89,21 @@ export default function ElectronicsLiveFeed({ items }: Props) {
           <p className="mt-1 text-sm text-foreground/60">{t('subline')}</p>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <div
+          className={
+            // Adapt column count to items.length so 1-2 cards don't
+            // float in the left half of an empty 4-col grid. Tailwind
+            // safelist-friendly via static class strings.
+            'grid gap-3 ' +
+            (visible.length === 1
+              ? 'md:grid-cols-1 lg:grid-cols-1'
+              : visible.length === 2
+                ? 'md:grid-cols-2 lg:grid-cols-2'
+                : visible.length === 3
+                  ? 'md:grid-cols-2 lg:grid-cols-3'
+                  : 'md:grid-cols-2 lg:grid-cols-4')
+          }
+        >
           {visible.map((item, i) => (
             <ActivityCard
               key={`${item.id}-${tick}-${i}`}

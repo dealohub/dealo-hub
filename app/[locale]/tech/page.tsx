@@ -11,6 +11,7 @@ import ElectronicsArticlesStrip from '@/components/shadcnblocks/electronics-arti
 import TechHeroSplit from '@/components/shadcnblocks/tech-hero-split';
 import TechBrowseByType from '@/components/shadcnblocks/tech-browse-by-type';
 import TechTrustStrip from '@/components/shadcnblocks/tech-trust-strip';
+import TechTradeInBanner from '@/components/shadcnblocks/tech-trade-in-banner';
 import {
   getFeaturedElectronics,
   getElectronicsForGrid,
@@ -108,6 +109,8 @@ export default async function ElectronicsHubPage(
             </div>
           </section>
         )}
+
+        <TechTradeInBanner />
 
         {activity.length > 0 && <ElectronicsLiveFeed items={activity} />}
 
