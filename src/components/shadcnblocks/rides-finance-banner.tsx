@@ -21,7 +21,11 @@ export const RidesFinanceBanner = () => {
   // Retrigger entry animations each time the banner scrolls back into
   // view — previously `once: true` meant the counter played once and
   // then the banner looked totally static on every subsequent visit.
-  const inView = useInView(sectionRef, { margin: '-120px', amount: 0.25 });
+  // Permissive trigger: any 10% of the section in the real viewport, no
+  // negative margin. The previous (-120px, 0.25) combo was unreachable
+  // on mobile where the stacked banner is taller than the viewport, so
+  // the article stayed at opacity 0 and the entire banner read as blank.
+  const inView = useInView(sectionRef, { amount: 0.1 });
 
   return (
     <section ref={sectionRef} className="relative w-full bg-background">

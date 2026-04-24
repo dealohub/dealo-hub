@@ -28,7 +28,10 @@ import { useTranslations } from 'next-intl';
 export const TechTradeInBanner = () => {
   const t = useTranslations('electronicsHub.tradeIn');
   const sectionRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(sectionRef, { margin: '-120px', amount: 0.25 });
+  // Permissive trigger: any 10% of the section in the real viewport, no
+  // negative margin. The previous (-120px, 0.25) combo was unreachable
+  // on mobile where the stacked banner is taller than the viewport.
+  const inView = useInView(sectionRef, { amount: 0.1 });
 
   return (
     <section ref={sectionRef} className="relative w-full bg-background">
