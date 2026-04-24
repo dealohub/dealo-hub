@@ -23,8 +23,8 @@ const Feature76 = ({ className }: Feature76Props) => {
   const t = useTranslations("marketplace.ai");
 
   return (
-    <section className={cn("relative pt-32", className)}>
-      <div className="relative z-10 container flex flex-col space-y-14">
+    <section className={cn("relative pt-20 pb-8 md:pt-24", className)}>
+      <div className="relative z-10 container flex flex-col space-y-10">
         <div className="flex flex-col px-6 lg:px-10">
           <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-foreground/10 bg-foreground/[0.03] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/60">
             <span className="relative flex h-1.5 w-1.5" aria-hidden>
@@ -33,27 +33,27 @@ const Feature76 = ({ className }: Feature76Props) => {
             </span>
             {t("eyebrow")}
           </div>
-          <h2 className="text-3xl font-semibold md:mb-4 md:text-5xl lg:mb-6 lg:max-w-md">
+          <h2 className="mb-3 text-3xl font-semibold md:text-5xl lg:max-w-md">
             {t("headline")}
           </h2>
           <p className="max-w-xl text-[15px] leading-relaxed text-foreground/75">
             {t("subline")}
           </p>
         </div>
-        <div className="relative mt-6 md:mt-10">
+        <div className="relative mt-2 md:mt-4">
           <div className="absolute top-0 right-0 left-0 h-px bg-border" />
           <div className="grid divide-border md:grid-cols-4 md:divide-x">
             {featureOrder.map((feature) => (
               <div
                 key={feature.id}
-                className="relative px-6 pb-20 md:pb-10 lg:px-10"
+                className="relative px-6 pb-10 md:pb-6 lg:px-10"
               >
                 <div className="absolute top-0 right-0 left-0 h-px bg-border md:hidden" />
-                <div className="relative -mt-6 mb-10 flex aspect-square w-12 items-center justify-center bg-background md:-mt-10 md:mb-10 md:w-20">
+                <div className="relative -mt-6 mb-6 flex aspect-square w-12 items-center justify-center bg-background md:-mt-10 md:mb-8 md:w-20">
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="mb-3 max-w-[12rem] text-lg font-semibold md:mb-4 md:text-2xl lg:mb-6">
+                  <h3 className="mb-2 max-w-[12rem] text-lg font-semibold md:mb-3 md:text-2xl lg:mb-4">
                     {t(`features.${feature.id}.title`)}
                   </h3>
                   <p className="text-muted-foreground">
