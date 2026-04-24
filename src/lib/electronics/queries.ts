@@ -490,6 +490,7 @@ export const getElectronicsForGrid = cache(
       locale: 'ar' | 'en';
       limit?: number;
       subCat?: ElectronicsCategoryKey;
+      excludeIds?: number[];
     } = { locale: 'ar' },
   ): Promise<ElectronicsCard[]> {
     const supabase = await createClient();
@@ -520,13 +521,17 @@ export const getElectronicsForGrid = cache(
     }
     if (categoryIds.length === 0) return [];
 
-    const { data } = await supabase
+    let q = supabase
       .from('listings')
       .select(CARD_SELECT)
       .in('category_id', categoryIds)
       .eq('status', 'live')
       .not('fraud_status', 'in', '(held,rejected)')
-      .is('soft_deleted_at', null)
+      .is('soft_deleted_at', null);
+    if (opts.excludeIds && opts.excludeIds.length > 0) {
+      q = q.not('id', 'in', `(${opts.excludeIds.join(',')})`);
+    }
+    const { data } = await q
       .order('published_at', { ascending: false })
       .limit(opts.limit ?? 24);
 
@@ -575,7 +580,9 @@ export interface ElectronicsActivityItem {
 
 export const getRecentElectronicsActivity = cache(
   async function getRecentElectronicsActivity(
-    opts: { limit?: number; locale: 'ar' | 'en' } = { locale: 'ar' },
+    opts: { limit?: number; locale: 'ar' | 'en'; excludeIds?: number[] } = {
+      locale: 'ar',
+    },
   ): Promise<ElectronicsActivityItem[]> {
     const limit = opts.limit ?? 12;
     const supabase = await createClient();
@@ -594,13 +601,17 @@ export const getRecentElectronicsActivity = cache(
     const ids = (kids.data ?? []).map((c: any) => c.id);
     if (ids.length === 0) return [];
 
-    const { data, error } = await supabase
+    let q = supabase
       .from('listings')
       .select(CARD_SELECT + ', is_hot, old_price_minor_units')
       .in('category_id', ids)
       .eq('status', 'live')
       .not('fraud_status', 'in', '(held,rejected)')
-      .is('soft_deleted_at', null)
+      .is('soft_deleted_at', null);
+    if (opts.excludeIds && opts.excludeIds.length > 0) {
+      q = q.not('id', 'in', `(${opts.excludeIds.join(',')})`);
+    }
+    const { data, error } = await q
       .order('published_at', { ascending: false })
       .limit(limit);
 

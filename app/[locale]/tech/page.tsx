@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
-import { Package } from 'lucide-react';
 import EcommerceNavbar1 from '@/components/shadcnblocks/ecommerce-navbar-1';
 import SiteFooter from '@/components/shadcnblocks/site-footer';
 import ThemeToggle from '@/components/theme-toggle';
@@ -45,12 +44,26 @@ export default async function ElectronicsHubPage(
   const params = await props.params;
   const t = await getTranslations({ locale: params.locale, namespace: 'electronicsHub' });
 
-  const [featured, grid, counts, activity] = await Promise.all([
+  // Chain product queries so each section shows DIFFERENT items even
+  // when inventory is thin: featured runs first, activity excludes the
+  // featured IDs, and the full grid excludes both. Counts run in
+  // parallel since they touch a different table.
+  const [featured, counts] = await Promise.all([
     getFeaturedElectronics({ locale: params.locale, limit: 6 }),
-    getElectronicsForGrid({ locale: params.locale, limit: 24 }),
     getElectronicsSubCatCounts(),
-    getRecentElectronicsActivity({ locale: params.locale, limit: 12 }),
   ]);
+  const featuredIds = featured.map(f => f.id);
+  const activity = await getRecentElectronicsActivity({
+    locale: params.locale,
+    limit: 12,
+    excludeIds: featuredIds,
+  });
+  const usedIds = [...featuredIds, ...activity.map(a => a.id)];
+  const grid = await getElectronicsForGrid({
+    locale: params.locale,
+    limit: 24,
+    excludeIds: usedIds,
+  });
 
   const totalLive = SUB_CATS.reduce((sum, k) => sum + counts[k], 0);
   const inspectedCount = featured.filter(
@@ -100,42 +113,28 @@ export default async function ElectronicsHubPage(
 
         <TechTrustStrip />
 
-        <section className="border-b border-foreground/10 bg-background py-10 md:py-14">
-          <div className="mx-auto max-w-7xl px-6">
-            <header className="mb-5 flex items-end justify-between gap-4">
-              <h2 className="font-calSans text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-                {t('gridTitle')}
-              </h2>
-              {grid.length > 0 && (
+        {grid.length > 0 && (
+          <section className="border-b border-foreground/10 bg-background py-10 md:py-14">
+            <div className="mx-auto max-w-7xl px-6">
+              <header className="mb-5 flex items-end justify-between gap-4">
+                <h2 className="font-calSans text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+                  {t('gridTitle')}
+                </h2>
                 <Link
                   href={`/${params.locale}/categories/electronics`}
                   className="shrink-0 text-xs font-medium text-primary transition hover:underline"
                 >
                   {t('viewAll')}
                 </Link>
-              )}
-            </header>
-            {grid.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-foreground/15 py-14 text-center">
-                <Package size={32} className="text-foreground/30" />
-                <p className="font-semibold text-foreground">{t('emptyTitle')}</p>
-                <p className="text-sm text-foreground/60">{t('emptyBody')}</p>
-                <Link
-                  href={`/${params.locale}/sell/category`}
-                  className="mt-1 inline-flex rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-primary/90"
-                >
-                  {t('emptyCta')}
-                </Link>
-              </div>
-            ) : (
+              </header>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {grid.map(card => (
                   <ListingCardElectronics key={card.id} card={card} locale={params.locale} />
                 ))}
               </div>
-            )}
-          </div>
-        </section>
+            </div>
+          </section>
+        )}
 
         <ElectronicsArticlesStrip />
       </main>
