@@ -1,7 +1,7 @@
 import EcommerceNavbar1 from '@/components/shadcnblocks/ecommerce-navbar-1';
 import Feature283 from '@/components/shadcnblocks/feature-283';
 import FeaturedBrandsStrip from '@/components/shadcnblocks/featured-brands-strip';
-import AIProtectionStrip from '@/components/shadcnblocks/ai-protection-strip';
+import { Feature76 } from '@/components/feature76';
 import LiveFeed from '@/components/shadcnblocks/live-feed';
 import { FeaturedPartnersSection } from '@/components/shadcnblocks/live-feed-parts';
 import SiteFooter from '@/components/shadcnblocks/site-footer';
@@ -75,7 +75,7 @@ export default async function HomePage(
         <Feature283 images={heroImages} />
       </BackgroundPattern115>
       <FeaturedBrandsStrip />
-      <AIProtectionStrip />
+      <Feature76 />
       <LiveFeed initialFeed={initialFeed} activitySignals={ACTIVITY_SIGNALS} />
       <FeaturedPartnersSection />
       <SiteFooter />
