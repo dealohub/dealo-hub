@@ -17,6 +17,7 @@ import PropertiesFeaturedPremium from '@/components/shadcnblocks/properties-feat
 import PropertiesTrustStrip from '@/components/shadcnblocks/properties-trust-strip';
 import PropertiesMainGrid from '@/components/shadcnblocks/properties-main-grid';
 import PropertiesArticlesStrip from '@/components/shadcnblocks/properties-articles-strip';
+import PropertiesFinanceBanner from '@/components/shadcnblocks/properties-finance-banner';
 
 /**
  * /properties — property vertical hub.
@@ -114,6 +115,8 @@ export default async function PropertiesHubPage(
       <PropertiesBrowseByType counts={typeCounts} locale={params.locale} />
 
       <PropertiesFeaturedPremium featured={featured} locale={params.locale} />
+
+      <PropertiesFinanceBanner />
 
       <PropertiesLiveFeed items={activity} />
 

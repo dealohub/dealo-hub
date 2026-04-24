@@ -2113,6 +2113,24 @@
           "emptyTitle": "No properties match these filters",
           "emptyBody": "Try widening the sub-category or type selection."
         },
+        "financeBanner": {
+          "sponsored": "Sponsored · KFH Home Finance",
+          "maxLoan": "Max loan",
+          "pitch": "See exactly what you can afford in 60 seconds. Sharia-compliant, no early-payment penalties, instant pre-approval letter you can show sellers.",
+          "pillar1": "Decision in 60 seconds",
+          "pillar2": "Sharia-compliant",
+          "pillar3": "Up to 25-year terms",
+          "calcEyebrow": "Affordability check",
+          "calcTag": "Live",
+          "fieldIncome": "Monthly income",
+          "fieldDebts": "Existing debts",
+          "fieldTerm": "Term",
+          "fieldRate": "Profit rate",
+          "estimate": "Maximum loan",
+          "cta": "Check eligibility",
+          "disclosure": "Pre-approval by",
+          "disclosureTail": "Indicative. Final approval subject to KFH credit policy."
+        },
         "trustStrip": {
           "title": "Why Dealo Properties",
           "subline": "Five things Dubizzle doesn't do in Kuwait.",
