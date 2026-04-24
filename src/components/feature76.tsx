@@ -23,7 +23,7 @@ const Feature76 = ({ className }: Feature76Props) => {
   const t = useTranslations("marketplace.ai");
 
   return (
-    <section className={cn("relative pt-20 pb-8 md:pt-24", className)}>
+    <section className={cn("relative pt-10 pb-8 md:pt-14", className)}>
       <div className="relative z-10 container flex flex-col space-y-10">
         <div className="flex flex-col px-6 lg:px-10">
           <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-foreground/10 bg-foreground/[0.03] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/60">
