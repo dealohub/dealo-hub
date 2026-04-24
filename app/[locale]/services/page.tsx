@@ -39,11 +39,18 @@ export default async function ServicesHubPage(
   const t = await getTranslations('servicesHub');
   const locale = params.locale;
 
-  const [featured, grid, taskCounts] = await Promise.all([
+  // Dedup chain: Featured first, then Grid excludes featured IDs so
+  // "Top-rated providers" and "All home services" never repeat the same
+  // listing. taskCounts runs in parallel — different aggregation.
+  const [featured, taskCounts] = await Promise.all([
     getFeaturedServices({ locale, limit: 6 }),
-    getServicesForGrid({ locale, limit: 24 }),
     getServiceTaskTypeCounts(),
   ]);
+  const grid = await getServicesForGrid({
+    locale,
+    limit: 24,
+    excludeIds: featured.map(f => f.id),
+  });
 
   const totalLive = Object.values(taskCounts).reduce((a, b) => a + b, 0);
   const verifiedProviders = featured.filter(

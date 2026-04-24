@@ -324,6 +324,7 @@ export const getServicesForGrid = cache(
       subCat?: ServiceCategoryKey;
       taskType?: TaskType;
       governorate?: KwGovernorate;
+      excludeIds?: number[];
     } = { locale: 'ar' },
   ): Promise<ServiceCard[]> {
     const supabase = await createClient();
@@ -354,13 +355,17 @@ export const getServicesForGrid = cache(
     }
     if (categoryIds.length === 0) return [];
 
-    const { data } = await supabase
+    let q = supabase
       .from('listings')
       .select(CARD_SELECT)
       .in('category_id', categoryIds)
       .eq('status', 'live')
       .not('fraud_status', 'in', '(held,rejected)')
-      .is('soft_deleted_at', null)
+      .is('soft_deleted_at', null);
+    if (opts.excludeIds && opts.excludeIds.length > 0) {
+      q = q.not('id', 'in', `(${opts.excludeIds.join(',')})`);
+    }
+    const { data } = await q
       .order('published_at', { ascending: false, nullsFirst: false })
       .limit(opts.limit ?? 24);
 
